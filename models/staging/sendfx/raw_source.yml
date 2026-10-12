@@ -1,0 +1,495 @@
+version: 2
+
+sources:
+  - name: sendfx_raw
+    database: "{{ env_var('DBT_GROUP_RAW_DB') }}"
+    schema: "{{ env_var('DBT_SENDFX_SHARE_SCHEMA') }}"
+    tables:
+      - name: vw_ext_pbi_pexa_client_activity
+        columns:
+          - name: Affiliate_Branch
+            description: The affiliate employee's branch of the registration.
+            config:
+              tags:
+                - secure_field=PI_BUSINESS_NAME
+              meta:
+                alation_oid: oid=99144;otype=attribute
+                alation_title: Affiliate Branch
+
+          - name: Business_Name
+            description: The name of the business.
+            config:
+              tags:
+                - secure_field=PI_BUSINESS_NAME
+              meta:
+                alation_oid: oid=99150;otype=attribute
+                alation_title: Business Name
+
+          - name: Affiliate_Employee
+            description: The affiliate employee of the registration.
+            config:
+              tags:
+                - secure_field=PI_FULL_NAME
+              meta:
+                alation_oid: oid=99032;otype=attribute
+                alation_title: Affiliate Employee
+
+          - name: Full_Name
+            description: The full name of the registration.
+            config:
+              tags:
+                - secure_field=PI_FULL_NAME
+              meta:
+                alation_oid: oid=99469;otype=attribute
+                alation_title: Full Name
+
+          - name: Registration_Account_Manager
+            description: The account manager of the Registration.
+            config:
+              tags:
+                - secure_field=PI_FULL_NAME
+              meta:
+                alation_oid: oid=99427;otype=attribute
+                alation_title: Registration Account Manager
+
+          - name: Registration_Account_Manager_Email
+            description: The email address of the account manager.
+            config:
+              tags:
+                - secure_field=PI_EMAIL
+
+          - name: abn_acn
+            description: The unique identifier number of the business in Australia.
+            config:
+              meta:
+                alation_oid: oid=99380;otype=attribute
+                alation_title: Australian Business Number Australian Company Number
+
+          - name: day_of_lead_created_date_aest
+            description: The date of the lead is created in Newton.
+            config:
+              meta:
+                alation_oid: oid=99387;otype=attribute
+                alation_title: Day of Lead Created Date AEST
+
+          - name: day_of_registration_date_aest
+            description: The date of the registration is created in Newton.
+            config:
+              meta:
+                alation_oid: oid=99389;otype=attribute
+                alation_title: Day of Registration Date AEST
+
+          - name: domain_email_address
+            description: The customer's email domain address.
+            config:
+              meta:
+                alation_oid: oid=99200;otype=attribute
+                alation_title: Domain Email Address
+
+          - name: etl_insert_date_utc
+            description: Audit field, record insert date in UTC.
+            config:
+              meta:
+                alation_oid: oid=99124;otype=attribute
+                alation_title: ETL Insert Date UTC
+
+          - name: master_registration_id
+            description: "This field shows the Original Registration ID that was cloned\
+              \ to create a new registration for \u201CAPI\u201D."
+            config:
+              meta:
+                alation_oid: oid=99149;otype=attribute
+                alation_title: Master Registration Id
+
+          - name: max_trade_settled_for_accounting_date
+            description: Latest Date of the last trade settled for accounting
+            config:
+              meta:
+                alation_oid: oid=99437;otype=attribute
+                alation_title: Max Trade Settled For Accounting Date
+
+          - name: metadata_filename
+            description: Column contains the fully qualified name (full path) of the
+              file containing the current row.
+            config:
+              meta:
+                alation_oid: oid=99152;otype=attribute
+                alation_title: Metadata Filename
+
+          - name: min_trade_settled_for_accounting_date
+            description: Earliest Date of the last trade settled for accounting
+            config:
+              meta:
+                alation_oid: oid=99044;otype=attribute
+                alation_title: Minus Trade Settled For Accounting Date
+
+          - name: purpose
+            description: The purpose of the registration.
+            config:
+              meta:
+                alation_oid: oid=99309;otype=attribute
+                alation_title: Purpose
+
+          - name: registration_created_source
+            description: "This field is used to determine if the registration was\
+              \ created by \u201CAPI\u201D or by \u201CReferral\u201D."
+            config:
+              meta:
+                alation_oid: oid=99311;otype=attribute
+                alation_title: Registration Created Source
+
+          - name: registration_id
+            description: The unique identifier of the registrationrecord.
+            config:
+              meta:
+                alation_oid: oid=99188;otype=attribute
+                alation_title: Registration Id
+
+          - name: registrations_pexa_opt_in_date_aest
+            description: Incentive program start date Australian Eastern Standard
+              Time
+            config:
+              meta:
+                alation_oid: oid=99139;otype=attribute
+                alation_title: Registration PEXA Opt In Date AEST
+
+          - name: registrations_pexa_opt_in_flag
+            description: Flag to indicate the registration is part of incentive program.
+            config:
+              meta:
+                alation_oid: oid=99322;otype=attribute
+                alation_title: Registrations Pexa Opt In Flag
+
+          - name: state
+            description: "The customer\u2019s State they are living in."
+            config:
+              meta:
+                alation_oid: oid=99147;otype=attribute
+                alation_title: State
+
+          - name: sys_mv_source_partition
+            description: '<div><p>Column added as a result of ingestion into Snowflake.</p>
+
+              <p>The column name SYS_MV_SOURCE_PARTITION typically appears in the
+              context of materialized views or database systems. It is often associated
+              with internal system-generated metadata used to manage partitioning
+              in materialized views.</p></div>'
+            config:
+              meta:
+                alation_oid: oid=118780;otype=attribute
+                alation_title: SYS MV Source Partition
+        description: "View of table\_<a href=\"https://onedd-pexa.ap.alationcloud.com/app/table/3943/overview\"\
+          \ id=\"isPasted\">External PEXA Client Activity | Table</a>"
+        config:
+          meta:
+            alation_oid: oid=3946;otype=table
+            alation_title: View External PEXA Client Activity
+
+      - name: vw_ext_pbi_pexa_pexaalltimetransactionslist
+        columns:
+          - name: Affiliate_Branch
+            description: The affiliate employee's branch of the registration.
+            config:
+              tags:
+                - secure_field=PI_BUSINESS_NAME
+              meta:
+                alation_oid: oid=99049;otype=attribute
+                alation_title: Affiliate Branch
+
+          - name: Business_Name
+            description: The name of the business.
+            config:
+              tags:
+                - secure_field=PI_BUSINESS_NAME
+              meta:
+                alation_oid: oid=99146;otype=attribute
+                alation_title: Business Name
+
+          - name: Affiliate_Employee
+            description: The affiliate employee of the registration.
+            config:
+              tags:
+                - secure_field=PI_FULL_NAME
+              meta:
+                alation_oid: oid=99043;otype=attribute
+                alation_title: Affiliate Employee
+
+          - name: Full_Name
+            description: The full name of the registration.
+            config:
+              tags:
+                - secure_field=PI_FULL_NAME
+              meta:
+                alation_oid: oid=99314;otype=attribute
+                alation_title: Full Name
+
+          - name: Registration_Account_Manager
+            description: The account manager of the Registration.
+            config:
+              tags:
+                - secure_field=PI_FULL_NAME
+              meta:
+                alation_oid: oid=99453;otype=attribute
+                alation_title: Registration Account Manager
+
+          - name: abn_acn
+            description: The unique identifier number of the business in Australia.
+            config:
+              meta:
+                alation_oid: oid=99430;otype=attribute
+                alation_title: Australian Business Number Australian Company Number
+
+          - name: beneficiary_bank_account_country
+            description: The country of the Beneficiary Bank Account.
+            config:
+              meta:
+                alation_oid: oid=99479;otype=attribute
+                alation_title: Beneficiary Bank Account Country
+
+          - name: buy_currency
+            description: The currency the customer wants to buy.
+            config:
+              meta:
+                alation_oid: oid=99398;otype=attribute
+                alation_title: Buy Currency
+
+          - name: completed_date_settlement_date
+            description: The date when the trade has been completed.
+            config:
+              meta:
+                alation_oid: oid=99342;otype=attribute
+                alation_title: Completed Date Settlement Date
+
+          - name: conversion_id
+            description: The unique identifier of the trade.
+            config:
+              meta:
+                alation_oid: oid=99455;otype=attribute
+                alation_title: Conversion Id
+
+          - name: day_of_lead_created_date_aest
+            description: The date of the lead is created in Newton.
+            config:
+              meta:
+                alation_oid: oid=99403;otype=attribute
+                alation_title: Day of Lead Created Date AEST
+
+          - name: day_of_registration_date_aest
+            description: The date of the registration is created in Newton.
+            config:
+              meta:
+                alation_oid: oid=99348;otype=attribute
+                alation_title: Day of Registration Date AEST
+
+          - name: domain_email_address
+            description: The customer's email domain address.
+            config:
+              meta:
+                alation_oid: oid=99106;otype=attribute
+                alation_title: Domain Email Address
+
+          - name: etl_insert_date_utc
+            description: Audit field, record insert date in UTC.
+            config:
+              meta:
+                alation_oid: oid=99219;otype=attribute
+                alation_title: ETL insert Date UTC
+
+          - name: master_registration_id
+            description: "This field shows the Original Registration ID that was cloned\
+              \ to create a new registration for \u201CAPI\u201D."
+            config:
+              meta:
+                alation_oid: oid=99138;otype=attribute
+                alation_title: Master Registration Id
+
+          - name: metadata_filename
+            description: Column contains the fully qualified name (full path) of the
+              file containing the current row.
+            config:
+              meta:
+                alation_oid: oid=99332;otype=attribute
+                alation_title: Metadata Filename
+
+          - name: pexa_commission
+            description: PEXA commission is calculated based on the agreement.
+            config:
+              meta:
+                alation_oid: oid=99326;otype=attribute
+                alation_title: Pexa Commission
+
+          - name: purpose
+            description: The purpose of the registration.
+            config:
+              meta:
+                alation_oid: oid=99431;otype=attribute
+                alation_title: Purpose
+
+          - name: registration_created_source
+            description: "This field is used to determine if the registration was\
+              \ created by \u201CAPI\u201D or by \u201CReferral\u201D."
+            config:
+              meta:
+                alation_oid: oid=99308;otype=attribute
+                alation_title: Registration Created Source
+
+          - name: registration_id
+            description: The unique identifier of the registrationrecord.
+            config:
+              meta:
+                alation_oid: oid=99386;otype=attribute
+                alation_title: Registration Id
+
+          - name: sell_currency
+            description: The currency the customer is selling for the trade.
+            config:
+              meta:
+                alation_oid: oid=99186;otype=attribute
+                alation_title: Sell Currency
+
+          - name: settled_revenue
+            description: The Actual AUD revenue is made from the trade.
+            config:
+              meta:
+                alation_oid: oid=99447;otype=attribute
+                alation_title: Settled Revenue
+
+          - name: settled_turnover
+            description: The AUD amount that is made in the trade.
+            config:
+              meta:
+                alation_oid: oid=99405;otype=attribute
+                alation_title: Settled Turnover
+
+          - name: state
+            description: "The customer\u2019s State they are living in."
+            config:
+              meta:
+                alation_oid: oid=99129;otype=attribute
+                alation_title: State
+
+          - name: sys_mv_source_partition
+            description: '<div><p>Column added as a result of ingestion into Snowflake.</p>
+
+              <p>The column name SYS_MV_SOURCE_PARTITION typically appears in the
+              context of materialized views or database systems. It is often associated
+              with internal system-generated metadata used to manage partitioning
+              in materialized views.</p></div>'
+            config:
+              meta:
+                alation_oid: oid=117208;otype=attribute
+                alation_title: Sys MV Source Partition
+        description: "<a class=\"fr-deletable\" data-oid=\"788\" data-otype=\"glossary_term\"\
+          \ href=\"/app/document/788\">View</a> of table\_<a href=\"https://onedd-pexa.ap.alationcloud.com/app/table/3945/overview\"\
+          \ id=\"isPasted\">External PEXA All Time Transaction List | Table</a>"
+        config:
+          meta:
+            alation_oid: oid=3942;otype=table
+            alation_title: View External PEXA All Time Transaction List
+
+      - name: vw_ext_pbi_pexa_client_incomplete_applications
+        columns:
+          - name: Business_Name
+            description: The name of the business.
+            config:
+              tags:
+                - secure_field=PI_BUSINESS_NAME
+              meta:
+                alation_oid: oid=99367;otype=attribute
+                alation_title: Business Name
+
+          - name: Full_Name
+            description: The full name of the registration.
+            config:
+              tags:
+                - secure_field=PI_FULL_NAME
+              meta:
+                alation_oid: oid=99307;otype=attribute
+                alation_title: Full Name
+
+          - name: Registration_Account_Manager
+            description: The account manager of the Registration.
+            config:
+              tags:
+                - secure_field=PI_FULL_NAME
+              meta:
+                alation_oid: oid=99425;otype=attribute
+                alation_title: Registration Account Manager
+
+          - name: boomerang_reason_or_docs_required
+            description: Reason why the registration is in this status or if any document
+              is required.
+            config:
+              meta:
+                alation_oid: oid=99251;otype=attribute
+                alation_title: Boomerang Reason Or Docs Required
+
+          - name: day_of_lead_created_date_aest
+            description: The date of the lead is created in Newton.
+            config:
+              meta:
+                alation_oid: oid=99071;otype=attribute
+                alation_title: Day of Lead Created Date AEST
+
+          - name: domain_email_address
+            description: The customer's email domain address.
+            config:
+              meta:
+                alation_oid: oid=99360;otype=attribute
+                alation_title: Domain Email Address
+
+          - name: etl_insert_date_utc
+            description: Audit field, record insert date in UTC.
+            config:
+              meta:
+                alation_oid: oid=99216;otype=attribute
+                alation_title: ETL Insert Date UTC
+
+          - name: master_registration_id
+            description: "This field shows the Original Registration ID that was cloned\
+              \ to create a new registration for \u201CAPI\u201D."
+            config:
+              meta:
+                alation_oid: oid=99037;otype=attribute
+                alation_title: Master Registration Id
+
+          - name: metadata_filename
+            description: Column contains the fully qualified name (full path) of the
+              file containing the current row.
+            config:
+              meta:
+                alation_oid: oid=99280;otype=attribute
+                alation_title: Metadata Filename
+
+          - name: registration_id
+            description: The unique identifier of the registrationrecord.
+            config:
+              meta:
+                alation_oid: oid=99391;otype=attribute
+                alation_title: Registration Id
+
+          - name: registrations_status
+            description: Status of registration.
+            config:
+              meta:
+                alation_oid: oid=99211;otype=attribute
+                alation_title: Registrations Status
+
+          - name: sys_mv_source_partition
+            description: '<div><p>Column added as a result of ingestion into Snowflake.</p>
+
+              <p>The column name SYS_MV_SOURCE_PARTITION typically appears in the
+              context of materialized views or database systems. It is often associated
+              with internal system-generated metadata used to manage partitioning
+              in materialized views.</p></div>'
+            config:
+              meta:
+                alation_oid: oid=118783;otype=attribute
+                alation_title: SYS MV Source Partition
+        description: "<a class=\"fr-deletable\" data-oid=\"788\" data-otype=\"glossary_term\"\
+          \ href=\"/app/document/788\">View</a> of table\_<a href=\"https://onedd-pexa.ap.alationcloud.com/app/table/3944/overview\"\
+          \ id=\"isPasted\">External PEXA Client Incomplete Applications | Table</a>."
+        config:
+          meta:
+            alation_oid: oid=3947;otype=table
+            alation_title: View External PEXA Client Incomplete Applications

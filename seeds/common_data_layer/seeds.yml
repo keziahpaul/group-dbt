@@ -1,0 +1,18 @@
+version: 2
+
+seeds:
+  - name: dim_state
+    description: Reference dimension for Australian states and territories. Used across CDM models for state-level lookups and holiday calculations.
+    config:
+      copy_grants: true
+    columns:
+      - name: STATE_NAME
+        description: Full name of the Australian state or territory
+        data_tests:
+          - unique
+          - not_null
+      - name: STATE_ABBR
+        description: Standard abbreviation for the state or territory (e.g., NSW, VIC)
+        data_tests:
+          - unique
+          - not_null

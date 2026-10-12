@@ -1,0 +1,218 @@
+version: 2
+
+models:
+  - name: customer_feedback
+    description: As-is Customer Feedback table ingested from Kapiche into Snowflake
+      PEXA Group Account for analysis.
+    columns:
+      - name: Account Managenment Segment
+        description: Segments customers by how they are account managed in PEXA
+        quote: true
+        config:
+          meta:
+            alation_oid: oid=83613;otype=attribute
+            alation_title: Account Management Segment
+
+      - name: Account Owner
+        description: Full name of account owner.
+        quote: true
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=83576;otype=attribute
+            alation_title: Account Owner
+
+      - name: _airbyte_extracted_at
+        description: Airbyte Extracted At
+        config:
+          meta:
+            alation_oid: oid=97065;otype=attribute
+            alation_title: Airbyte Extracted At
+
+      - name: _airbyte_generate_id
+        description: Airbyte Generate Id
+        config:
+          meta:
+            alation_oid: oid=97061;otype=attribute
+            alation_title: Airbyte Generate Id
+
+      - name: _airbyte_meta
+        description: Airbyte Meta
+        config:
+          meta:
+            alation_oid: oid=97275;otype=attribute
+            alation_title: Airbyte Meta
+
+      - name: _airbyte_raw_id
+        description: Airbyte Raw Id
+        config:
+          meta:
+            alation_oid: oid=97169;otype=attribute
+            alation_title: Airbyte Raw Id
+
+      - name: creationdate
+        description: Values correspond to <a href="https://onedd-pexa.ap.alationcloud.com/attribute/69789/"
+          id="isPasted">CREATED_DATE | Column</a> in <a data-oid="3363" data-otype="table"
+          href="/table/3363/">prd_group_curate.salesforce.vw_all_survey_responses
+          (View All Survey Responses)</a> and renamed as Creation Date.
+        config:
+          meta:
+            alation_oid: oid=83594;otype=attribute
+            alation_title: Creation date
+
+      - name: CSAT Comment
+        description: CSAT Comment column is based on Pexa Positives, PEXA Improvements
+          and Customer Support Verbatim columns capured in ALL Survey Responses table
+          in Salesforce. A row is created for each comment captured in any of these
+          3 columns.
+        quote: true
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+          meta:
+            alation_oid: oid=83626;otype=attribute
+            alation_title: Csat Comment
+
+      - name: CSAT Rating
+        description: "<div><p><span id=\"isPasted\" style=\"\">Customer satisfaction\
+          \ score left by a customer.\_</span></p><p><span style=\"\">Values are taken\
+          \ from <a data-oid=\"70270\" data-otype=\"attribute\" href=\"/attribute/70270/\"\
+          >prd_group_curate.salesforce.vw_all_survey_responses.csat_c (Customer Satisfaction)</a>\
+          \ in table <a data-oid=\"3363\" data-otype=\"table\" href=\"/table/3363/\"\
+          >prd_group_curate.salesforce.vw_all_survey_responses (View All Survey Responses)</a>\
+          \ renamed CSAT Rating.</span></p></div>"
+        quote: true
+        config:
+          meta:
+            alation_oid: oid=83593;otype=attribute
+            alation_title: Csat Rating
+
+      - name: Customer Segment
+        description: PEXA customer segment level 1
+        quote: true
+        config:
+          meta:
+            alation_oid: oid=83587;otype=attribute
+            alation_title: Customer Segment
+
+      - name: Customer Type
+        description: "<div><p>Potential values are: Practitioner, Majors, Financial\
+          \ Institutions, Developer and Government.\_</p><p>These values are derived\
+          \ from Channel and Account Management Segment columns in Salesforce as follows:</p><div\
+          \ id=\"isPasted\" style=\"height: auto; overflow: hidden;\"><strong>Practitioner:</strong></div><div\
+          \ style=\"height: auto; overflow: hidden;\">IF PS_Channel (from account\
+          \ table) = \u2018Practitioner\u2019 AND Account Management Segment(from\
+          \ account table) = \u2018Tier One\u2019 or \u2018Tier Two\u2019 or \u2018\
+          Tier Three\u2019 THEN set the \u2018CustomerType\u2019 field to \u2018Practitioner\u2019\
+          </div><div style=\"height: auto; overflow: hidden;\"><strong>Majors:</strong></div><div\
+          \ style=\"height: auto; overflow: hidden;\">IF PS_Channel (from account\
+          \ table) = \u2018Practitioner\u2019 AND Account Management Segment(from\
+          \ account table) = \u2018Major\u2019 THEN set the \u2018Customer Type\u2019\
+          \ field to \u2018Major\u2019</div><div style=\"height: auto; overflow: hidden;\"\
+          ><strong>Financial institutions:</strong></div><div style=\"height: auto;\
+          \ overflow: hidden;\">IF PS_Channel (from account table) = \u2018Financial\
+          \ Institution\u2019 THEN set the \u2018CustomerType\u2019 field to \u2018\
+          Financial Institution\u2019</div><div style=\"height: auto; overflow: hidden;\"\
+          ><strong>Developer':</strong></div><div style=\"height: auto; overflow:\
+          \ hidden;\">IF PS_Channel (from account table) = \u2018Practitioner\u2019\
+          \ AND Customer Segment Level 1(from account table) = 'Developer' THEN set\
+          \ the \u2018Customer Type\u2019 field to 'Developer'</div><div style=\"\
+          height: auto; overflow: hidden;\"><strong>Government:</strong></div><div\
+          \ style=\"height: auto; overflow: hidden;\">IF PS_Channel (from account\
+          \ table) = \u2018Practitioner\u2019 AND Customer Segment Level 1(from account\
+          \ table) = 'Government/ Council'THEN set the \u2018Customer Type\u2019 field\
+          \ to 'Government/ Council'</div><div style=\"height: auto; overflow: hidden;\"\
+          ><br style=\"\"></div></div>"
+        quote: true
+        config:
+          meta:
+            alation_oid: oid=83615;otype=attribute
+            alation_title: Customer Type
+
+      - name: document_id__
+        description: '<div><p> Each document is identified a document_id integer key
+          that is assigned internally by Kapiche. </p><p>This field is added by Kapiche
+          and is not part of the original source data. Note that the name of this
+          field is given with two trailing underscores, for disambiguation: document_id__.</p></div>'
+        config:
+          meta:
+            alation_oid: oid=83624;otype=attribute
+            alation_title: Document Id
+
+      - name: inserted_at
+        description: The timestamp indicating when a record was inserted into the
+          target table, generated by the system at the time of loading from AWS S3.
+        config:
+          meta:
+            alation_oid: oid=83605;otype=attribute
+            alation_title: Inserted At
+
+      - name: Sentiment:CSAT Comment
+        description: This field is the sentiment analysis of the <a data-oid="83626"
+          data-otype="attribute" href="/attribute/83626/">prd_group_raw.kapiche.customer_feedback.csat
+          comment (Csat Comment)</a> (customer verbatim).
+        quote: true
+        config:
+          meta:
+            alation_oid: oid=83588;otype=attribute
+            alation_title: Sentiment CSAT Comment
+
+      - name: src_file_last_modified_date
+        description: Timestamp showing when the source file was last modified.
+        config:
+          meta:
+            alation_oid: oid=83607;otype=attribute
+            alation_title: Source File Last Modified Date
+
+      - name: src_filename
+        description: Name of the source file that is being ingested into Snowflake
+        config:
+          meta:
+            alation_oid: oid=83580;otype=attribute
+            alation_title: Source Filename
+
+      - name: Subscriber Id
+        description: "<div><p><span id=\"isPasted\">Individual subscriber identifier.</span></p><p><span\
+          \ id=\"isPasted\"><a data-oid=\"420\" data-otype=\"glossary_term\" href=\"\
+          /document/420/\">ELN Subscriber ID</a>\_</span></p></div>"
+        quote: true
+        config:
+          meta:
+            alation_oid: oid=83585;otype=attribute
+            alation_title: Subscriber Id
+
+      - name: Subscriber Name
+        description: "<div><p>Name of the organization.\_</p><p>Corresponds to Account\
+          \ Name in Salesforce which is in fact <a data-oid=\"713\" data-otype=\"\
+          glossary_term\" href=\"/document/713/\">Subscriber Full Name \_</a>.\_</p></div>"
+        quote: true
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+          meta:
+            alation_oid: oid=83599;otype=attribute
+            alation_title: Subscriber Name
+
+      - name: Subscriber State
+        description: <div><p>Abbreviation of the Australian state where the Subscriber
+          organization is operating.</p></div>
+        quote: true
+        config:
+          meta:
+            alation_oid: oid=83625;otype=attribute
+            alation_title: Subscriber State
+
+      - name: theme__
+        description: <div><p>Name of the Saved Theme in Kapiche.</p><p> A theme is
+          simply a category  applied to customer feedback in order to easily monitor
+          and report on change over time.</p></div>
+        config:
+          meta:
+            alation_oid: oid=83610;otype=attribute
+            alation_title: Theme
+    config:
+      meta:
+        orig_description: raw table for kapiche customer feedback table
+        alation_oid: oid=3686;otype=table
+        alation_title: Customer Feedback

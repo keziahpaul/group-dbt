@@ -1,0 +1,45 @@
+with source as (
+    select *
+    from {{ ref('stg_inventitemgroup') }}
+)
+
+select
+    id,
+    sink_created_on,
+    sink_modified_on,
+    asset_group_in,
+    revrec_exclude_from_carve_out,
+    revrec_median_price,
+    revrec_revenue_recognition_enabled,
+    revrec_revenue_type,
+    sys_data_state_code,
+    tax_item_group_id_sales,
+    due_date_limit_group_id_es,
+    item_group_id,
+    load_template_id,
+    name,
+    standard_item_allocate_id,
+    tax_item_group_id_purch,
+    retail_saft_standard_vat_code,
+    revrec_default_revenue_recognition_schedule,
+    revrec_median_price_maximum_tolerance,
+    revrec_median_price_minimum_tolerance,
+    modified_date_time,
+    modified_by,
+    modified_transaction_id,
+    created_date_time,
+    created_by,
+    created_transaction_id,
+    data_area_id,
+    recversion,
+    partition,
+    sysrowversion,
+    rec_id,
+    table_id,
+    version_number,
+    created_on,
+    modified_on,
+    is_delete,
+    inserted_at,
+    inserted_at as effective_to
+from source

@@ -1,0 +1,10 @@
+table_name,incremental_timestamp_column,path_prefix,path_date_format,file_datetime_format,need_file_ext,file_ext,output_path_format,unload_single_file
+Westpac_Daily_report,,Westpac_Daily_report,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/Westpac_Daily_report_%(au_file_date)s%(ext)s,true
+A00671_D_AE_WBC,,A00671_D_AE_WBC,%Y-%m-%d,%Y%m%d,true,.dat,/%(au_path_date)s/A00671_D_AE_WBC_%(au_file_date)s%(ext)s,true
+A00671_D_AE_SGB,,A00671_D_AE_SGB,%Y-%m-%d,%Y%m%d,true,.dat,/%(au_path_date)s/A00671_D_AE_SGB_%(au_file_date)s%(ext)s,true
+A00671_W_ED_WBC,,A00671_W_ED_WBC,%Y-%m-%d,%Y%m%d,true,.dat,/%(au_path_date)s/A00671_W_ED_WBC_%(au_file_date)s%(ext)s,true
+A00671_W_ED_SGB,,A00671_W_ED_SGB,%Y-%m-%d,%Y%m%d,true,.dat,/%(au_path_date)s/A00671_W_ED_SGB_%(au_file_date)s%(ext)s,true
+Westpac_Monthly_WBG_report,,Westpac_Monthly_report,%Y-%m-%d,%b%y,true,.csv,/%(au_path_date)s/Westpac_Monthly_report_%(au_file_lastmonthdate)s%(ext)s,true
+Westpac_Monthly_RAM_report,,Westpac_Monthly_report,%Y-%m-%d,%b%y,true,.csv,/%(au_path_date)s/Westpac_Rams_Monthly_report_%(au_file_lastmonthdate)s%(ext)s,true
+Westpac_Weekly_WBG_report,,Westpac_Weekly_report,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/Westpac_weekly_report%(ext)s,true
+Westpac_Weekly_RAM_report,,Westpac_Weekly_report,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/Westpac_Rams_weekly_report%(ext)s,true

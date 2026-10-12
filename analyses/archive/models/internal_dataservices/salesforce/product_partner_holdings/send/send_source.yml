@@ -1,0 +1,193 @@
+version: 2
+
+models:
+  - name: send_product_holdings
+    description: Send Product Holdings
+    columns:
+      - name: date_registered_c
+        config:
+          meta:
+            alation_oid: oid=83805;otype=attribute
+
+      - name: first_transaction_date__c
+        config:
+          meta:
+            alation_oid: oid=83791;otype=attribute
+
+      - name: inserted_at
+        description: Inserted At
+        config:
+          meta:
+            alation_oid: oid=83799;otype=attribute
+            alation_title: Inserted At
+
+      - name: last_transaction_date__c
+        config:
+          meta:
+            alation_oid: oid=83692;otype=attribute
+
+      - name: pexa_commission_c
+        config:
+          meta:
+            alation_oid: oid=83749;otype=attribute
+
+      - name: product_master_registration_id_c
+        config:
+          meta:
+            alation_oid: oid=83794;otype=attribute
+
+      - name: product_utilisation_c
+        config:
+          meta:
+            alation_oid: oid=83764;otype=attribute
+
+      - name: ps_status_c
+        config:
+          meta:
+            alation_oid: oid=83812;otype=attribute
+
+      - name: registration_am_c
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=83679;otype=attribute
+
+      - name: registration_am_email_c
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+
+      - name: send_integration_opt_in_c
+        config:
+          meta:
+            alation_oid: oid=83727;otype=attribute
+
+      - name: settled_turnover_c
+        config:
+          meta:
+            alation_oid: oid=83698;otype=attribute
+
+      - name: src_delta_extract_ts
+        description: Source Delta Extract Timestamp
+        config:
+          meta:
+            alation_oid: oid=83747;otype=attribute
+            alation_title: Source Delta Extract Timestamp
+
+      - name: subscriber_id
+        description: Subscriber Id
+        config:
+          meta:
+            alation_oid: oid=83663;otype=attribute
+            alation_title: Subscriber Id
+
+      - name: total_revenue_c
+        config:
+          meta:
+            alation_oid: oid=83735;otype=attribute
+
+      - name: total_volume_buyer_cfy__c
+        config:
+          meta:
+            alation_oid: oid=83645;otype=attribute
+
+      - name: total_volume_seller_cfy__c
+        config:
+          meta:
+            alation_oid: oid=83672;otype=attribute
+
+      - name: updated_at
+        description: Updated At
+        config:
+          meta:
+            alation_oid: oid=83780;otype=attribute
+            alation_title: Updated At
+    config:
+      meta:
+        alation_oid: oid=3694;otype=table
+        alation_title: Send Product Holdings
+
+  - name: send_transaction_details
+    description: Send Transaction Details
+    columns:
+      - name: completed_date_settlement_date
+        description: Completed Date Settlement Date
+        config:
+          meta:
+            alation_oid: oid=83739;otype=attribute
+            alation_title: Completed Date Settlement Date
+
+      - name: conversion_id
+        description: Conversion Id
+        config:
+          meta:
+            alation_oid: oid=83768;otype=attribute
+            alation_title: Conversion Id
+
+      - name: inserted_at
+        description: Inserted At
+        config:
+          meta:
+            alation_oid: oid=83756;otype=attribute
+            alation_title: Inserted At
+
+      - name: master_registration_id
+        description: Master Registration Id
+        config:
+          meta:
+            alation_oid: oid=83786;otype=attribute
+            alation_title: Master Registration Id
+
+      - name: pexa_commission
+        description: Pexa Commission
+        config:
+          meta:
+            alation_oid: oid=83675;otype=attribute
+            alation_title: Pexa Commission
+
+      - name: registration_id
+        description: Registration Id
+        config:
+          meta:
+            alation_oid: oid=83767;otype=attribute
+            alation_title: Registration Id
+
+      - name: settled_revenue
+        description: Settled Revenue
+        config:
+          meta:
+            alation_oid: oid=83695;otype=attribute
+            alation_title: Settled Revenue
+
+      - name: settled_turnover
+        description: Settled Turnover
+        config:
+          meta:
+            alation_oid: oid=83635;otype=attribute
+            alation_title: Settled Turnover
+
+      - name: src_delta_extract_ts
+        description: Source Delta Extract Timestamp
+        config:
+          meta:
+            alation_oid: oid=83803;otype=attribute
+            alation_title: Source Delta Extract Timestamp
+
+      - name: subscriber_id
+        description: Subscriber Id
+        config:
+          meta:
+            alation_oid: oid=83710;otype=attribute
+            alation_title: Subscriber Id
+
+      - name: updated_at
+        description: Updated At
+        config:
+          meta:
+            alation_oid: oid=83740;otype=attribute
+            alation_title: Updated At
+    config:
+      meta:
+        alation_oid: oid=3696;otype=table
+        alation_title: Send Transaction Details

@@ -1,0 +1,242 @@
+version: 2
+
+models:
+  - name: cj_fields
+    config:
+      alias: fields
+    columns:
+      - name: id
+        data_tests:
+          - not_null
+          - unique
+      - name: hash
+        data_tests:
+          - not_null
+
+  - name: cj_groups
+    config:
+      alias: groups
+    columns:
+      - name: id
+        data_tests:
+          - not_null
+          - unique
+      - name: hash
+        data_tests:
+          - not_null
+
+  - name: cj_issuelinktypes
+    config:
+      alias: issuelinktypes
+    columns:
+      - name: id
+        data_tests:
+          - not_null
+          - unique
+      - name: hash
+        data_tests:
+          - not_null
+
+  - name: cj_issues
+    config:
+      alias: issues
+    data_tests:
+      - dbt_constraints.primary_key:
+          arguments:
+            column_names:
+              - id
+              - updated
+    columns:
+      - name: id
+        data_tests:
+          - not_null
+      - name: updated
+        data_tests:
+          - not_null
+    #   - name: assignee_user_id
+    #     config:
+    #       tags: secure_field:userid
+    #   - name: attachment
+    #     config:
+    #       tags: secure_field:multi
+    #   - name: comment
+    #     config:
+    #       tags: secure_field:multi
+    #   - name: creator_user_id
+    #     config:
+    #       tags: secure_field:userid
+    #   - name: reporter_user_id
+    #     config:
+    #       tags: secure_field:userid
+    #   - name: customfields
+    #     config:
+    #       tags: secure_field:multi
+
+  - name: cj_issuetypes
+    config:
+      alias: issuetypes
+    columns:
+      - name: id
+        data_tests:
+          - not_null
+          - unique
+      - name: hash
+        data_tests:
+          - not_null
+
+  - name: cj_permissions
+    config:
+      alias: permissions
+    columns:
+      - name: id
+        data_tests:
+          - not_null
+          - unique
+      - name: hash
+        data_tests:
+          - not_null
+
+  - name: cj_priorities
+    config:
+      alias: priorities
+    columns:
+      - name: id
+        data_tests:
+          - not_null
+          - unique
+      - name: hash
+        data_tests:
+          - not_null
+
+  - name: cj_project_categories
+    config:
+      alias: project_categories
+    columns:
+      - name: id
+        data_tests:
+          - not_null
+          - unique
+      - name: hash
+        data_tests:
+          - not_null
+
+  - name: cj_projects
+    config:
+      alias: projects
+    columns:
+      - name: id
+        data_tests:
+          - not_null
+          - unique
+      - name: hash
+        data_tests:
+          - not_null
+
+  - name: cj_resolutions
+    config:
+      alias: resolutions
+    columns:
+      - name: id
+        data_tests:
+          - not_null
+          - unique
+      - name: hash
+        data_tests:
+          - not_null
+
+  - name: cj_statuscategories
+    config:
+      alias: statuscategories
+    columns:
+      - name: id
+        data_tests:
+          - not_null
+          - unique
+      - name: hash
+        data_tests:
+          - not_null
+
+  - name: cj_statuses
+    config:
+      alias: statuses
+    columns:
+      - name: id
+        data_tests:
+          - not_null
+          - unique
+      - name: hash
+        data_tests:
+          - not_null
+
+  - name: cj_users
+    config:
+      alias: users
+    columns:
+      - name: id
+        data_tests:
+          - not_null
+          - unique
+      - name: hash
+        data_tests:
+          - not_null
+    #     config:
+    #       tags: secure_field:userid
+    #   - name: displayname
+    #     config:
+    #       tags: secure_field:full_name
+    #   - name: emailaddress
+    #     config:
+    #       tags: secure_field:email
+    #   - name: self
+    #     config:
+    #       tags: secure_field:url
+    #   - name: avatarurl_16
+    #     config:
+    #       tags: secure_field:url
+    #   - name: avatarurl_24
+    #     config:
+    #       tags: secure_field:url
+    #   - name: avatarurl_32
+    #     config:
+    #       tags: secure_field:url
+    #   - name: avatarurl_48
+    #     config:
+    #       tags: secure_field:url
+
+  - name: pdb_issue_tracker
+    data_tests:
+      - dbt_constraints.primary_key:
+          arguments:
+            column_names:
+              - issue_id
+              - report_month
+    columns:
+      - name: issue_id
+        data_tests:
+          - not_null
+      - name: report_month
+        data_tests:
+          - not_null
+
+  - name: pdb_monthly_report
+    columns:
+      - name: report_month
+        data_tests:
+          - not_null
+          - unique
+
+  - name: pps_issue_tracker
+    columns:
+      - name: issue_id
+        data_tests:
+          - not_null
+          - unique
+
+  - name: cj_jira_incident_report
+    config:
+      alias: jira_incident_report
+    columns:
+      - name: Issue_key
+        data_tests:
+          - not_null
+          - unique

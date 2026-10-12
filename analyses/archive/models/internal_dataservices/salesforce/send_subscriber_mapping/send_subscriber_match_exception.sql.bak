@@ -1,0 +1,31 @@
+{{
+    config(
+        materialized='table'
+    )
+}}
+select
+    s.abn_acn,
+    s.affiliate_branch,
+    s.affiliate_employee,
+    s.business_name,
+    s.day_of_lead_created_date_aest,
+    s.day_of_registration_date_aest,
+    s.domain_email_address,
+    s.full_name,
+    s.master_registration_id,
+    s.purpose,
+    s.registration_account_manager,
+    s.registration_account_manager_email,
+    s.registration_created_source,
+    s.registration_id,
+    s.state,
+    s.max_trade_settled_for_accounting_date,
+    s.min_trade_settled_for_accounting_date,
+    s.registrations_pexa_opt_in_flag,
+    s.registrations_pexa_opt_in_date_aest,
+    s.subscriber_id,
+    s.match_method,
+    s.subscriber_status
+from {{ ref('send_subscriber_match_process') }} as s
+where LOWER(s.match_method) in ('no_match', 'new registration for existing subscriber')
+    or LOWER(s.match_method) like 'duplicate%'

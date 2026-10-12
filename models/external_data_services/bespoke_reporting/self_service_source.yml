@@ -1,0 +1,6 @@
+sources:
+  - name: selfservice_source
+    database: "{{env_var('DBT_SSA_DB')}}"
+    schema: "{{env_var('DBT_SSA_SCHEMA')}}"
+    tables:
+      - name: on_time_settlements_subscribers

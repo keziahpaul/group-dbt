@@ -1,0 +1,290 @@
+unit_tests:
+  # Test 1: Basic functionality with all fields populated
+  - name: test_user_details_basic_functionality
+    description: "Test basic user details extraction with all required fields populated"
+    model: user_details
+    overrides:
+      macros:
+        is_incremental: false
+    given:
+      - input: source('exchange_share', 'vw_users')
+        rows:
+          - {subscriber_id: 1001, user_id: 2001, first_name: 'JohnThisisaverylongnamewithmorethanfortycharcters', last_name: 'Doe', email_address1: 'john.doe@example.com', phone_number: '0412345678', status: 'ACTIVE', reason_date: '2025-01-15 10:30:00', inserted_at: '2025-01-15 09:00:00', updated_at: '2025-01-15 09:00:00'}
+      - input: source('exchange_share', 'vw_user_application_roles')
+        rows:
+          - {user_id: 2001, application_role_id: 3001, inserted_at: '2025-01-15 09:05:00', updated_at: '2025-01-15 09:05:00'}
+      - input: source('exchange_share', 'vw_application_roles')
+        rows:
+          - {application_role_id: 3001, description: 'Administrator', inserted_at: '2025-01-15 08:00:00', updated_at: '2025-01-15 08:00:00'}
+      - input: source('exchange_share', 'vw_primary_contacts')
+        rows:
+          - {user_id: 2001, inserted_at: '2025-01-15 08:30:00', updated_at: '2025-01-15 08:30:00'}
+      - input: source('exchange_share', 'vw_user_permissions')
+        rows:
+          - {user_id: 2001, permission_id: 5001, inserted_at: '2025-01-15 08:00:00', updated_at: '2025-01-15 08:00:00'}
+      - input: source('exchange_share', 'vw_permissions')
+        rows:
+          - {permission_id: 5001, name: 'READ_WRITE', inserted_at: '2025-01-15 07:00:00', updated_at: '2025-01-15 07:00:00'}
+    expect:
+      rows:
+        - {subscriber_id: 1001, user_id: 2001, first_name: 'JohnThisisaverylongnamewithmorethanforty', last_name: 'Doe', email_address: 'john.doe@example.com', phone_number: '+0412345678', user_role: 'Administrator', primary_subscriber_manager_flag: true, user_status: 'ACTIVE', user_status_reason_changed_date: '2025-01-15T10:30:00.000Z', user_permissions: 'READ_WRITE'}
+
+  # Test 2: Email address cleaning with apostrophe replacement
+  - name: test_email_apostrophe_replacement
+    description: "Test that &apos; in email addresses is properly replaced with single quote"
+    model: user_details
+    overrides:
+      macros:
+        is_incremental: false
+    given:
+      - input: source('exchange_share', 'vw_users')
+        rows:
+          - {subscriber_id: 1002, user_id: 2002, first_name: 'Jane', last_name: "O'Connor", email_address1: 'jane.o&apos;connor@example.com', phone_number: '0423456789', status: 'ACTIVE', reason_date: null, inserted_at: '2025-01-15 10:00:00', updated_at: '2025-01-15 10:00:00'}
+      - input: source('exchange_share', 'vw_user_application_roles')
+        rows:
+          - {user_id: 2002, application_role_id: 3002, inserted_at: '2025-01-15 10:05:00', updated_at: '2025-01-15 10:05:00'}
+      - input: source('exchange_share', 'vw_application_roles')
+        rows:
+          - {application_role_id: 3002, description: 'User', inserted_at: '2025-01-15 09:00:00', updated_at: '2025-01-15 09:00:00'}
+      - input: source('exchange_share', 'vw_primary_contacts')
+        rows: []
+      - input: source('exchange_share', 'vw_user_permissions')
+        rows:
+          - {user_id: 2002, permission_id: 5002, inserted_at: '2025-01-15 10:00:00', updated_at: '2025-01-15 10:00:00'}
+      - input: source('exchange_share', 'vw_permissions')
+        rows:
+          - {permission_id: 5002, name: 'READ_ONLY', inserted_at: '2025-01-15 09:00:00', updated_at: '2025-01-15 09:00:00'}
+    expect:
+      rows:
+        - {subscriber_id: 1002, user_id: 2002, first_name: 'Jane', last_name: "O'Connor", email_address: "jane.o'connor@example.com", phone_number: '+0423456789', user_role: 'User', primary_subscriber_manager_flag: false}
+
+  # Test 3: Phone number formatting - adding + prefix when missing
+  - name: test_phone_number_formatting
+    description: "Test phone number formatting - adding + prefix and removing existing +"
+    model: user_details
+    overrides:
+      macros:
+        is_incremental: false
+    given:
+      - input: source('exchange_share', 'vw_users')
+        rows:
+          - {subscriber_id: 1003, user_id: 2003, first_name: 'Bob', last_name: 'Smith', email_address1: 'bob.smith@example.com', phone_number: '+61412345678', status: 'ACTIVE', reason_date: null, inserted_at: '2025-01-15 11:00:00', updated_at: '2025-01-15 11:00:00'}
+          - {subscriber_id: 1004, user_id: 2004, first_name: 'Alice', last_name: 'Brown', email_address1: 'alice.brown@example.com', phone_number: '61423456789', status: 'ACTIVE', reason_date: null, inserted_at: '2025-01-15 11:00:00', updated_at: '2025-01-15 11:00:00'}
+      - input: source('exchange_share', 'vw_user_application_roles')
+        rows:
+          - {user_id: 2003, application_role_id: 3001, inserted_at: '2025-01-15 11:05:00', updated_at: '2025-01-15 11:05:00'}
+          - {user_id: 2004, application_role_id: 3001, inserted_at: '2025-01-15 11:05:00', updated_at: '2025-01-15 11:05:00'}
+      - input: source('exchange_share', 'vw_application_roles')
+        rows:
+          - {application_role_id: 3001, description: 'Administrator', inserted_at: '2025-01-15 10:00:00', updated_at: '2025-01-15 10:00:00'}
+      - input: source('exchange_share', 'vw_primary_contacts')
+        rows: []
+      - input: source('exchange_share', 'vw_user_permissions')
+        rows:
+          - {user_id: 2003, permission_id: 5001, inserted_at: '2025-01-15 11:00:00', updated_at: '2025-01-15 11:00:00'}
+          - {user_id: 2004, permission_id: 5001, inserted_at: '2025-01-15 11:00:00', updated_at: '2025-01-15 11:00:00'}
+      - input: source('exchange_share', 'vw_permissions')
+        rows:
+          - {permission_id: 5001, name: 'READ_WRITE', inserted_at: '2025-01-15 10:00:00', updated_at: '2025-01-15 10:00:00'}
+    expect:
+      rows:
+        - {subscriber_id: 1003, user_id: 2003, phone_number: '+61412345678'}
+        - {subscriber_id: 1004, user_id: 2004, phone_number: '+61423456789'}
+
+  # Test 4: Primary subscriber manager flag logic
+  - name: test_primary_subscriber_manager_flag_logic
+    description: "Test the case when logic for primary_subscriber_manager_flag"
+    model: user_details
+    overrides:
+      macros:
+        is_incremental: false
+    given:
+      - input: source('exchange_share', 'vw_users')
+        rows:
+          - {subscriber_id: 1005, user_id: 2005, first_name: 'Manager', last_name: 'Primary', email_address1: 'manager.primary@example.com', phone_number: '0434567890', status: 'ACTIVE', reason_date: null, inserted_at: '2025-01-15 12:00:00', updated_at: '2025-01-15 12:00:00'}
+          - {subscriber_id: 1006, user_id: 2006, first_name: 'Regular', last_name: 'User', email_address1: 'regular.user@example.com', phone_number: '0445678901', status: 'ACTIVE', reason_date: null, inserted_at: '2025-01-15 12:00:00', updated_at: '2025-01-15 12:00:00'}
+      - input: source('exchange_share', 'vw_user_application_roles')
+        rows:
+          - {user_id: 2005, application_role_id: 3001, inserted_at: '2025-01-15 12:05:00', updated_at: '2025-01-15 12:05:00'}
+          - {user_id: 2006, application_role_id: 3002, inserted_at: '2025-01-15 12:05:00', updated_at: '2025-01-15 12:05:00'}
+      - input: source('exchange_share', 'vw_application_roles')
+        rows:
+          - {application_role_id: 3001, description: 'Primary Manager', inserted_at: '2025-01-15 11:00:00', updated_at: '2025-01-15 11:00:00'}
+          - {application_role_id: 3002, description: 'Regular User', inserted_at: '2025-01-15 11:00:00', updated_at: '2025-01-15 11:00:00'}
+      - input: source('exchange_share', 'vw_primary_contacts')
+        rows:
+          - {user_id: 2005, inserted_at: '2025-01-15 11:30:00', updated_at: '2025-01-15 11:30:00'}
+      - input: source('exchange_share', 'vw_user_permissions')
+        rows:
+          - {user_id: 2005, permission_id: 5003, inserted_at: '2025-01-15 12:00:00', updated_at: '2025-01-15 12:00:00'}
+          - {user_id: 2006, permission_id: 5004, inserted_at: '2025-01-15 12:00:00', updated_at: '2025-01-15 12:00:00'}
+      - input: source('exchange_share', 'vw_permissions')
+        rows:
+          - {permission_id: 5003, name: 'ADMIN', inserted_at: '2025-01-15 11:00:00', updated_at: '2025-01-15 11:00:00'}
+          - {permission_id: 5004, name: 'VIEW', inserted_at: '2025-01-15 11:00:00', updated_at: '2025-01-15 11:00:00'}
+    expect:
+      rows:
+        - {subscriber_id: 1005, user_id: 2005, primary_subscriber_manager_flag: true}
+        - {subscriber_id: 1006, user_id: 2006, primary_subscriber_manager_flag: false}
+
+  # Test 5: Date formatting for user_status_reason_changed_date
+  - name: test_date_formatting_reason_changed
+    description: "Test the to_char formatting for user status reason changed date"
+    model: user_details
+    overrides:
+      macros:
+        is_incremental: false
+    given:
+      - input: source('exchange_share', 'vw_users')
+        rows:
+          - {subscriber_id: 1007, user_id: 2007, first_name: 'Test', last_name: 'User', email_address1: 'test.user@example.com', phone_number: '0456789012', status: 'INACTIVE', reason_date: '2025-01-15 14:25:30', inserted_at: '2025-01-15 13:00:00', updated_at: '2025-01-15 13:00:00'}
+      - input: source('exchange_share', 'vw_user_application_roles')
+        rows:
+          - {user_id: 2007, application_role_id: 3001, inserted_at: '2025-01-15 13:05:00', updated_at: '2025-01-15 13:05:00'}
+      - input: source('exchange_share', 'vw_application_roles')
+        rows:
+          - {application_role_id: 3001, description: 'Test Role', inserted_at: '2025-01-15 12:00:00', updated_at: '2025-01-15 12:00:00'}
+      - input: source('exchange_share', 'vw_primary_contacts')
+        rows: []
+      - input: source('exchange_share', 'vw_user_permissions')
+        rows:
+          - {user_id: 2007, permission_id: 5001, inserted_at: '2025-01-15 13:00:00', updated_at: '2025-01-15 13:00:00'}
+      - input: source('exchange_share', 'vw_permissions')
+        rows:
+          - {permission_id: 5001, name: 'READ_WRITE', inserted_at: '2025-01-15 12:00:00', updated_at: '2025-01-15 12:00:00'}
+    expect:
+      rows:
+        - {subscriber_id: 1007, user_id: 2007, user_status: 'INACTIVE', user_status_reason_changed_date: '2025-01-15T14:25:30.000Z'}
+
+  # Test 6: Email filtering logic - exclude .OLD emails unless recently updated
+  - name: test_old_email_filtering_logic
+    description: "Test filtering of .OLD email addresses based on sf_old_email_cutoff_date variable"
+    model: user_details
+    overrides:
+      macros:
+        is_incremental: false
+      vars:
+        sf_old_email_cutoff_date: '2025-01-10'
+    given:
+      - input: source('exchange_share', 'vw_users')
+        rows:
+          # Should be included 
+          - {subscriber_id: 1008, user_id: 2008, first_name: 'Old', last_name: 'Email1', email_address1: 'old.email1.OLD@example.com', phone_number: '0467890123', status: 'ACTIVE', reason_date: null, inserted_at: '2025-01-05 10:00:00', updated_at: '2025-01-05 10:00:00'}
+          # Should be included
+          - {subscriber_id: 1009, user_id: 2009, first_name: 'Old', last_name: 'Email2', email_address1: 'old.email2.OLD@example.com', phone_number: '0478901234', status: 'ACTIVE', reason_date: null, inserted_at: '2025-01-05 10:00:00', updated_at: '2025-01-12 10:00:00'}
+          # Should be included - normal email
+          - {subscriber_id: 1010, user_id: 2010, first_name: 'Normal', last_name: 'Email', email_address1: 'normal.email@example.com', phone_number: '0489012345', status: 'ACTIVE', reason_date: null, inserted_at: '2025-01-05 10:00:00', updated_at: '2025-01-05 10:00:00'}
+          # Should be included -old in last name
+          - {subscriber_id: 1011, user_id: 2011, first_name: 'Old', last_name: 'Email2', email_address1: 'fred.oldsworth@example.com', phone_number: '0478901234', status: 'ACTIVE', reason_date: null, inserted_at: '2025-01-05 10:00:00', updated_at: '2025-01-05 10:00:00'}
+          # Should be excluded - old email with preceded by characters other than dot 
+          - {subscriber_id: 1012, user_id: 2012, first_name: 'Old', last_name: 'Email2', email_address1: 'fred.oldsworth@example.com_old', phone_number: '0478901234', status: 'ACTIVE', reason_date: null, inserted_at: '2025-01-05 10:00:00', updated_at: '2025-01-05 10:00:00'}
+          # Should be included - old email but recently updated
+          - {subscriber_id: 1013, user_id: 2013, first_name: 'fn', last_name: 'Email3', email_address1: 'fn.email3@example.com.old', phone_number: '0478901234', status: 'ACTIVE', reason_date: null, inserted_at: '2025-01-05 10:00:00', updated_at: '2025-01-12 10:00:00'}
+          # Should be excluded - old email but not recently updated
+          - {subscriber_id: 1014, user_id: 2014, first_name: 'fn', last_name: 'Email4', email_address1: 'fn.email4@example.com.old', phone_number: '0478901234', status: 'ACTIVE', reason_date: null, inserted_at: '2025-01-05 10:00:00', updated_at: '2025-01-05 10:00:00'}
+             
+
+      - input: source('exchange_share', 'vw_user_application_roles')
+        rows:
+          - {user_id: 2008, application_role_id: 3001, inserted_at: '2025-01-05 10:05:00', updated_at: '2025-01-05 10:05:00'}
+          - {user_id: 2009, application_role_id: 3001, inserted_at: '2025-01-05 10:05:00', updated_at: '2025-01-05 10:05:00'}
+          - {user_id: 2010, application_role_id: 3001, inserted_at: '2025-01-05 10:05:00', updated_at: '2025-01-05 10:05:00'}
+          - {user_id: 2011, application_role_id: 3001, inserted_at: '2025-01-05 10:05:00', updated_at: '2025-01-05 10:05:00'}
+          - {user_id: 2012, application_role_id: 3001, inserted_at: '2025-01-05 10:05:00', updated_at: '2025-01-05 10:05:00'}
+          - {user_id: 2013, application_role_id: 3001, inserted_at: '2025-01-05 10:05:00', updated_at: '2025-01-05 10:05:00'}
+      - input: source('exchange_share', 'vw_application_roles')
+        rows:
+          - {application_role_id: 3001, description: 'Test Role', inserted_at: '2025-01-05 09:00:00', updated_at: '2025-01-05 09:00:00'}
+      - input: source('exchange_share', 'vw_primary_contacts')
+        rows: []
+      - input: source('exchange_share', 'vw_user_permissions')
+        rows:
+          - {user_id: 2008, permission_id: 5001, inserted_at: '2025-01-05 10:00:00', updated_at: '2025-01-05 10:00:00'}
+          - {user_id: 2009, permission_id: 5001, inserted_at: '2025-01-05 10:00:00', updated_at: '2025-01-05 10:00:00'}
+          - {user_id: 2010, permission_id: 5001, inserted_at: '2025-01-05 10:00:00', updated_at: '2025-01-05 10:00:00'}
+          - {user_id: 2011, permission_id: 5001, inserted_at: '2025-01-05 10:00:00', updated_at: '2025-01-05 10:00:00'}
+          - {user_id: 2012, permission_id: 5001, inserted_at: '2025-01-05 10:00:00', updated_at: '2025-01-05 10:00:00'}
+          - {user_id: 2013, permission_id: 5001, inserted_at: '2025-01-05 10:00:00', updated_at: '2025-01-05 10:00:00'}
+      - input: source('exchange_share', 'vw_permissions')
+        rows:
+          - {permission_id: 5001, name: 'READ_WRITE', inserted_at: '2025-01-05 09:00:00', updated_at: '2025-01-05 09:00:00'}
+    expect:
+      rows:
+        # Only 2012 and 2014 should be included
+        - {subscriber_id: 1008, user_id: 2008, email_address: 'old.email1.OLD@example.com'}
+        - {subscriber_id: 1009, user_id: 2009, email_address: 'old.email2.OLD@example.com'}
+        - {subscriber_id: 1010, user_id: 2010, email_address: 'normal.email@example.com'}
+        - {subscriber_id: 1011, user_id: 2011, email_address: 'fred.oldsworth@example.com'}
+        - {subscriber_id: 1013, user_id: 2013, email_address: 'fn.email3@example.com.old'}
+
+  # Test 7: Incremental loading logic
+  - name: test_incremental_loading_logic
+    description: "Test incremental loading based on src_delta_extract_ts comparisons"
+    model: user_details
+    overrides:
+      macros:
+        is_incremental: true
+    given:
+      - input: this
+        rows:
+          - {subscriber_id: 1011, user_id: 2011, first_name: 'Existing', last_name: 'User', email_address: 'existing@example.com', phone_number: '+0490123456', user_role: 'User', primary_subscriber_manager_flag: false, user_status: 'ACTIVE', user_status_reason_changed_date: null, src_delta_extract_ts: '2025-01-15 08:00:00', inserted_at: '2025-01-15 08:00:00', updated_at: '2025-01-15 08:00:00'}
+      - input: source('exchange_share', 'vw_users')
+        rows:
+          # Should be included - recently inserted
+          - {subscriber_id: 1012, user_id: 2012, first_name: 'New', last_name: 'User', email_address1: 'new.user@example.com', phone_number: '0401234567', status: 'ACTIVE', reason_date: null, inserted_at: '2025-01-15 09:00:00', updated_at: '2025-01-15 09:00:00'}
+          # Should be excluded - old record
+          - {subscriber_id: 1013, user_id: 2013, first_name: 'Old', last_name: 'User', email_address1: 'old.user@example.com', phone_number: '0412345678', status: 'ACTIVE', reason_date: null, inserted_at: '2025-01-15 07:00:00', updated_at: '2025-01-15 07:00:00'}
+      - input: source('exchange_share', 'vw_user_application_roles')
+        rows:
+          - {user_id: 2012, application_role_id: 3001, inserted_at: '2025-01-15 09:05:00', updated_at: '2025-01-15 09:05:00'}
+          - {user_id: 2013, application_role_id: 3001, inserted_at: '2025-01-15 07:05:00', updated_at: '2025-01-15 07:05:00'}
+      - input: source('exchange_share', 'vw_application_roles')
+        rows:
+          - {application_role_id: 3001, description: 'User Role', inserted_at: '2025-01-15 06:00:00', updated_at: '2025-01-15 09:10:00'}  # Recently updated
+      - input: source('exchange_share', 'vw_primary_contacts')
+        rows: []
+      - input: source('exchange_share', 'vw_user_permissions')
+        rows:
+          - {user_id: 2012, permission_id: 5001, inserted_at: '2025-01-15 09:00:00', updated_at: '2025-01-15 09:00:00'}
+          - {user_id: 2013, permission_id: 5001, inserted_at: '2025-01-15 07:00:00', updated_at: '2025-01-15 07:00:00'}
+      - input: source('exchange_share', 'vw_permissions')
+        rows:
+          - {permission_id: 5001, name: 'READ_WRITE', inserted_at: '2025-01-15 06:00:00', updated_at: '2025-01-15 06:00:00'}
+    expect:
+      rows:
+        # Only new records should be included
+        - {subscriber_id: 1012, user_id: 2012, first_name: 'New', last_name: 'User'}
+
+
+  # Test 8: Null subscriber_id filtering
+  - name: test_null_subscriber_id_filtering
+    description: "Test that records with null subscriber_id are filtered out"
+    model: user_details
+    overrides:
+      macros:
+        is_incremental: false
+    given:
+      - input: source('exchange_share', 'vw_users')
+        rows:
+          - {subscriber_id: null, user_id: 2015, first_name: 'Null', last_name: 'Subscriber', email_address1: 'null.subscriber@example.com', phone_number: '0434567890', status: 'ACTIVE', reason_date: null, inserted_at: '2025-01-15 13:00:00', updated_at: '2025-01-15 13:00:00'}
+          - {subscriber_id: 1015, user_id: 2016, first_name: 'Valid', last_name: 'Subscriber', email_address1: 'valid.subscriber@example.com', phone_number: '0445678901', status: 'ACTIVE', reason_date: null, inserted_at: '2025-01-15 13:00:00', updated_at: '2025-01-15 13:00:00'}
+      - input: source('exchange_share', 'vw_user_application_roles')
+        rows:
+          - {user_id: 2015, application_role_id: 3001, inserted_at: '2025-01-15 13:05:00', updated_at: '2025-01-15 13:05:00'}
+          - {user_id: 2016, application_role_id: 3001, inserted_at: '2025-01-15 13:05:00', updated_at: '2025-01-15 13:05:00'}
+      - input: source('exchange_share', 'vw_application_roles')
+        rows:
+          - {application_role_id: 3001, description: 'Test Role', inserted_at: '2025-01-15 12:00:00', updated_at: '2025-01-15 12:00:00'}
+      - input: source('exchange_share', 'vw_primary_contacts')
+        rows: []
+      - input: source('exchange_share', 'vw_user_permissions')
+        rows:
+          - {user_id: 2015, permission_id: 5001, inserted_at: '2025-01-15 13:00:00', updated_at: '2025-01-15 13:00:00'}
+          - {user_id: 2016, permission_id: 5001, inserted_at: '2025-01-15 13:00:00', updated_at: '2025-01-15 13:00:00'}
+      - input: source('exchange_share', 'vw_permissions')
+        rows:
+          - {permission_id: 5001, name: 'READ_WRITE', inserted_at: '2025-01-15 12:00:00', updated_at: '2025-01-15 12:00:00'}
+    expect:
+      rows:
+        # Only valid subscriber should be included
+        - {subscriber_id: 1015, user_id: 2016, first_name: 'Valid', last_name: 'Subscriber'}

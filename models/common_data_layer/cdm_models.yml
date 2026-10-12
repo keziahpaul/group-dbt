@@ -1,0 +1,110 @@
+version: 2
+
+models:
+  - name: dim_date
+    description: Date dimension table with Australian fiscal year, state-level public holidays, and working day calculations for all states/territories.
+    config:
+      meta:
+        dim_date_start: "{{ var('dim_date_start') }}"
+        dim_date_end: "{{ var('dim_date_end') }}"
+    columns:
+      - name: DATE_KEY
+        description: Integer surrogate key in YYYYMMDD format (e.g., 20250610)
+      - name: DATE
+        description: Calendar date value
+      - name: YEAR
+        description: Calendar year (e.g., 2025)
+      - name: MONTH
+        description: Calendar month number (1-12)
+      - name: DAY
+        description: Day of the month (1-31)
+      - name: MONTH_NAME
+        description: Full name of the calendar month (e.g., January)
+      - name: DAY_NAME
+        description: Full name of the day of week (e.g., Monday)
+      - name: DAY_OF_YEAR
+        description: Sequential day number within the calendar year (1-366)
+      - name: QUARTER
+        description: Calendar quarter (1-4)
+      - name: IS_WEEKEND
+        description: Boolean flag indicating if the date falls on Saturday or Sunday
+      - name: FISCAL_YEAR
+        description: Australian fiscal year (July-June). A date in March 2025 belongs to FY2025 (Jul 2024 - Jun 2025)
+      - name: FISCAL_MONTH
+        description: Month number within the fiscal year (1-12, where 1 = July)
+      - name: FISCAL_QUARTER
+        description: Quarter within the fiscal year (1-4, where Q1 = Jul-Sep)
+      - name: FISCAL_YEAR_START_DATE
+        description: Start date of the fiscal year in YYYYMMDD integer format
+      - name: FISCAL_YEAR_END_DATE
+        description: End date of the fiscal year in YYYYMMDD integer format
+      - name: FISCAL_WEEK
+        description: Week number within the fiscal year, calculated from Monday-aligned weeks starting from the fiscal year start
+      - name: FISCAL_WEEK_START_DATE
+        description: Monday start date of the fiscal week in YYYYMMDD integer format
+      - name: FISCAL_WEEK_END_DATE
+        description: Sunday end date of the fiscal week in YYYYMMDD integer format
+      - name: HOLIDAY_IN_NSW
+        description: Whether the date is a public holiday in New South Wales (Yes/No)
+      - name: HOLIDAY_IN_VIC
+        description: Whether the date is a public holiday in Victoria (Yes/No)
+      - name: HOLIDAY_IN_QLD
+        description: Whether the date is a public holiday in Queensland (Yes/No)
+      - name: HOLIDAY_IN_SA
+        description: Whether the date is a public holiday in South Australia (Yes/No)
+      - name: HOLIDAY_IN_WA
+        description: Whether the date is a public holiday in Western Australia (Yes/No)
+      - name: HOLIDAY_IN_TAS
+        description: Whether the date is a public holiday in Tasmania (Yes/No)
+      - name: HOLIDAY_IN_NT
+        description: Whether the date is a public holiday in Northern Territory (Yes/No)
+      - name: HOLIDAY_IN_ACT
+        description: Whether the date is a public holiday in Australian Capital Territory (Yes/No)
+      - name: WORKING_DAY_OF_WEEK_NSW
+        description: Working day sequence within the current week for NSW (0 if non-working day)
+      - name: WORKING_DAY_OF_WEEK_VIC
+        description: Working day sequence within the current week for VIC (0 if non-working day)
+      - name: WORKING_DAY_OF_WEEK_QLD
+        description: Working day sequence within the current week for QLD (0 if non-working day)
+      - name: WORKING_DAY_OF_WEEK_SA
+        description: Working day sequence within the current week for SA (0 if non-working day)
+      - name: WORKING_DAY_OF_WEEK_WA
+        description: Working day sequence within the current week for WA (0 if non-working day)
+      - name: WORKING_DAY_OF_WEEK_TAS
+        description: Working day sequence within the current week for TAS (0 if non-working day)
+      - name: WORKING_DAY_OF_WEEK_NT
+        description: Working day sequence within the current week for NT (0 if non-working day)
+      - name: WORKING_DAY_OF_WEEK_ACT
+        description: Working day sequence within the current week for ACT (0 if non-working day)
+      - name: WORKING_DAY_OF_MONTH_NSW
+        description: Working day sequence within the current month for NSW (0 if non-working day)
+      - name: WORKING_DAY_OF_MONTH_VIC
+        description: Working day sequence within the current month for VIC (0 if non-working day)
+      - name: WORKING_DAY_OF_MONTH_QLD
+        description: Working day sequence within the current month for QLD (0 if non-working day)
+      - name: WORKING_DAY_OF_MONTH_SA
+        description: Working day sequence within the current month for SA (0 if non-working day)
+      - name: WORKING_DAY_OF_MONTH_WA
+        description: Working day sequence within the current month for WA (0 if non-working day)
+      - name: WORKING_DAY_OF_MONTH_TAS
+        description: Working day sequence within the current month for TAS (0 if non-working day)
+      - name: WORKING_DAY_OF_MONTH_NT
+        description: Working day sequence within the current month for NT (0 if non-working day)
+      - name: WORKING_DAY_OF_MONTH_ACT
+        description: Working day sequence within the current month for ACT (0 if non-working day)
+      - name: WORKING_DAY_SEQ_NSW
+        description: Cumulative working day counter for NSW since the start of the date range (0 if non-working day, resets never)
+      - name: WORKING_DAY_SEQ_VIC
+        description: Cumulative working day counter for VIC since the start of the date range (0 if non-working day)
+      - name: WORKING_DAY_SEQ_QLD
+        description: Cumulative working day counter for QLD since the start of the date range (0 if non-working day)
+      - name: WORKING_DAY_SEQ_SA
+        description: Cumulative working day counter for SA since the start of the date range (0 if non-working day)
+      - name: WORKING_DAY_SEQ_WA
+        description: Cumulative working day counter for WA since the start of the date range (0 if non-working day)
+      - name: WORKING_DAY_SEQ_TAS
+        description: Cumulative working day counter for TAS since the start of the date range (0 if non-working day)
+      - name: WORKING_DAY_SEQ_NT
+        description: Cumulative working day counter for NT since the start of the date range (0 if non-working day)
+      - name: WORKING_DAY_SEQ_ACT
+        description: Cumulative working day counter for ACT since the start of the date range (0 if non-working day)

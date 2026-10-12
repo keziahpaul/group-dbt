@@ -1,0 +1,128 @@
+version: 2
+
+sources:
+  - name: selfservice_source
+    database: "{{env_var('DBT_SSA_DB')}}"
+    schema: "{{env_var('DBT_SSA_SCHEMA')}}"
+    tables:
+      - name: tg_settlements
+      - name: workspace_partroles
+      - name: participants
+      - name: invitations_detailed
+      - name: workspace_created_master
+      - name: tg_first_proceeds_entered
+      - name: tg_last_proceeds_entered
+      - name: tg_first_payout_entered
+      - name: tg_last_payout_entered
+      - name: tg_authority_to_debit
+      - name: signed_on_time
+
+models:
+  - name: tg_weekly_report
+    config:
+      materialized: table
+    description: This report provides FMS with weekly Transfer Guideline metrics for transfer settlements completed during the previous week.
+    columns:
+      - name: workspace_number
+        description: Unique PEXA Exchange workspace reference number for the settlement workspace
+
+      - name: jurisdiction
+        description: Australian state or territory jurisdiction in which the property title is being settled
+
+      - name: subscriber_name
+        description: Name of the PEXA Subscriber organisation participating in the workspace, such as a financial institution, legal practice, or conveyancing organisation.
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+
+      - name: workspace_role
+        description: Role in which the Subscriber organisation is transacting in the workspace
+
+      - name: party_represented
+        description: Name of the party represented by the Subscriber in the workspace
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: reference
+        description: Subscriber-entered workspace reference used by the Subscriber to identify or manage the matter
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+
+      - name: first_settlement_date_accepted
+        description: Date and time when the settlement date was first accepted by all parties
+
+      - name: settlement_date
+        description: Actual date and time when settlement occurred. Because the report covers completed or lodged workspaces, the value represents the settlement completion time.
+
+      - name: invitation_received
+        description: Earliest date and time when FMS received an invitation to join the workspace for the relevant workspace role
+
+      - name: first_proceeds_entered
+        description: Date and time when the Subscriber first entered loan proceeds. This is applicable when the Subscriber acts as INCOMING_MORTGAGEE and supports Transfer Guideline G12.
+
+      - name: last_proceeds_entered
+        description: Date and time when the Subscriber most recently entered or updated loan proceeds. This is applicable when the Subscriber acts as INCOMING_MORTGAGEE and supports Transfer Guideline M4.
+
+      - name: first_payout_entered
+        description: Date and time when the Subscriber first entered the payout amount. This is applicable when the Subscriber acts as MORTGAGEE_ON_TITLE and supports Transfer Guideline G16.
+
+      - name: last_payout_entered
+        description: Date and time when the Subscriber most recently entered or updated the payout amount. This is applicable when the Subscriber acts as MORTGAGEE_ON_TITLE and supports Transfer Guideline G18a.
+
+      - name: first_auth_to_debt_entered
+        description: Date and time when the Subscriber first entered the Authority to Debit. This is applicable when the Subscriber acts as INCOMING_MORTGAGEE and supports Transfer Guideline G13.
+
+      - name: proceed_flag
+        description: Boolean indicator showing whether the Loan Proceeds timing requirement for Transfer Guideline M4 was met. TRUE means the last Loan Proceeds event occurred before 10:00 am on the settlement day; FALSE means it did not. Applicable to INCOMING_MORTGAGEE.
+
+      - name: payout_flag
+        description: Boolean indicator showing whether the Payout Figure timing requirement for Transfer Guideline G18a was met. TRUE means the last payout amount was entered before 10:00 am on the settlement day; FALSE means it was not. Applicable to MORTGAGEE_ON_TITLE.
+
+      - name: auth_to_debit_flag
+        description: Boolean indicator showing whether the Authority to Debit timing requirement for Transfer Guideline G13 was met. TRUE means the Authority to Debit was provided at least five business days before settlement; FALSE means it was not. Applicable to INCOMING_MORTGAGEE.
+
+  - name: Sot_weekly_report
+    config:
+      materialized: table
+    description: This report provides FMS with weekly Signed on Time metrics for transfer settlements completed during the previous week.
+    columns:
+      - name: workspace_number
+        description: Unique PEXA Exchange workspace reference number for the settlement workspace
+
+      - name: jurisdiction
+        description: Australian state or territory jurisdiction in which the property title is being settled.
+
+      - name: subscriber_name
+        description: Name of the PEXA Subscriber organisation participating in the workspace, such as a financial institution, legal practice, or conveyancing organisation.
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+
+      - name: workspace_role
+        description: Role in which the Subscriber organisation is transacting in the workspace
+
+      - name: party_represented
+        description: Name of the party represented by the Subscriber in the workspace
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME        
+
+      - name: reference
+        description: Subscriber-entered workspace reference used by the Subscriber to identify or manage the matter
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+
+      - name: first_settlement_date_accepted
+        description: Date and time when the settlement date was first accepted by all parties in the workspace. It is the first point at which the final number of participating parties had all agreed to a settlement date/time; it may differ from both the originally proposed and the final settlement date/time. This is the reference date used for the Signed on Time metric.
+
+      - name: settlement_date
+        description: Actual date and time at which settlement occurred. The report is limited to completed transfer settlements from the preceding reporting week.
+
+      - name: signed_date
+        description: First date and time by which all documents and the Financial Settlement Schedule (FSS) had been signed.
+
+      - name: metric_met
+        description: Signed on Time assessment comparing SIGNED_DATE with FIRST_SETTLEMENT_DATE_ACCEPTED.

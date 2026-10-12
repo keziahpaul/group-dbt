@@ -1,0 +1,69 @@
+version: 2
+
+models:
+  - name: cg_call_centre_data
+    config:
+      alias: call_centre_data
+    columns:
+      - name: queue_id
+        data_tests:
+          - not_null
+      - name: interval_start
+        data_tests:
+          - not_null
+    data_tests:
+      - dbt_expectations.expect_compound_columns_to_be_unique:
+          arguments:
+            column_list: ["queue_id", "interval_start"]
+
+  - name: cg_conversation
+    config:
+      alias: conversation
+    columns:
+      - name: conversation_id
+        data_tests:
+          - not_null
+          - unique
+      - name: date
+        data_tests:
+          - not_null
+
+  - name: cg_global_queue_aggregate
+    config:
+      alias: global_queue_aggregate
+    columns:
+      - name: created_date
+        data_tests:
+          - not_null
+      - name: media_type
+        data_tests:
+          - not_null
+    data_tests:
+      - dbt_expectations.expect_compound_columns_to_be_unique:
+          arguments:
+            column_list: ["created_date", "media_type"]
+
+  - name: cg_queue_aggregate
+    config:
+      alias: queue_aggregate
+    columns:
+      - name: queue_id
+        data_tests:
+          - not_null
+      - name: created_date
+        data_tests:
+          - not_null
+      - name: media_type
+        data_tests:
+          - not_null
+    data_tests:
+      - dbt_expectations.expect_compound_columns_to_be_unique:
+          arguments:
+            column_list: ["queue_id", "created_date", "media_type"]
+
+  - name: postgres_queue_aggregate
+    columns:
+      - name: key
+        data_tests:
+          - not_null
+          - unique

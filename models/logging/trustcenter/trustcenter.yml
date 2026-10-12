@@ -1,0 +1,196 @@
+version: 2
+
+models:
+  - name: findings
+    description: Incremental Table for TrustCenter Findings in Group Account
+    columns:
+      - name: scanner_package_id
+        data_type: varchar
+        description: Scanner Package Identifier
+
+      - name: scanner_package_name
+        data_type: varchar
+        description: Scanner Package Name
+
+      - name: scanner_package_description
+        data_type: varchar
+        description: Scanner Package Description
+
+      - name: scanner_package_short_description
+        data_type: varchar
+        description: Scanner Package Short Description
+
+      - name: scanner_id
+        data_type: varchar
+        description: Scanner Identifier
+
+      - name: scanner_name
+        data_type: varchar
+        description: Scanner Name
+
+      - name: scanner_description
+        data_type: varchar
+        description: Scanner Description
+
+      - name: scanner_short_description
+        data_type: varchar
+        description: Short Description of the identified violation
+
+      - name: event_id
+        data_type: number
+        description: Event ID of the identified violation
+
+      - name: scanner_type
+        data_type: varchar
+        description: Violation category. Threat or Vulnerability
+
+      - name: completion_status
+        data_type: varchar
+        description: Scanner run status
+
+      - name: suggested_action
+        data_type: varchar
+        description: Suggested action to resolve this violation
+
+      - name: impact
+        data_type: varchar
+        description: Impact to the account until the violation is resolved
+
+      - name: severity
+        data_type: varchar
+        description: Severity of the violation.
+
+      - name: total_at_risk_count
+        data_type: number
+        description: No. of entities detected with this violation
+
+      - name: at_risk_entities
+        data_type: variant
+        description: Detailed list about entities detected with this violation
+
+      - name: start_timestamp
+        data_type: timestamp_tz
+        description: Timestamp when this scanner run started
+
+      - name: end_timestamp
+        data_type: timestamp_tz
+        description: Timestamp when this scanner run ended
+
+      - name: created_on
+        data_type: timestamp_tz
+        description: Timestamp when the violation was captured
+
+      - name: finding_identifier
+        data_type: varchar
+        description: Finding Identifier
+
+      - name: state
+        data_type: varchar
+        description: Current State of the violation
+        
+      - name: state_last_modified_on
+        data_type: timestamp_tz
+        description: Timestamp when the state was last modified
+        
+      - name: inserted_at
+        data_type: timestamp_tz
+        description: Timestamp when this voilation was loaded into snowflake
+
+  - name: vw_all_findings 
+    description: View that brings findings from all accounts into a single place
+    columns:
+      - name: account
+        data_type: varchar
+        description: Account Name (Example - nonprod_group, prod_exchange)
+
+      - name: scanner_package_id
+        data_type: varchar
+        description: Scanner Package Identifier
+
+      - name: scanner_package_name
+        data_type: varchar
+        description: Scanner Package Name
+
+      - name: scanner_package_description
+        data_type: varchar
+        description: Scanner Package Description
+
+      - name: scanner_package_short_description
+        data_type: varchar
+        description: Scanner Package Short Description
+
+      - name: scanner_id
+        data_type: varchar
+        description: Scanner Identifier
+
+      - name: scanner_name
+        data_type: varchar
+        description: Scanner Name
+
+      - name: scanner_description
+        data_type: varchar
+        description: Scanner Description
+
+      - name: scanner_short_description
+        data_type: varchar
+        description: Short Description of the identified violation
+
+      - name: event_id
+        data_type: number
+        description: Event ID of the identified violation
+
+      - name: scanner_type
+        data_type: varchar
+        description: Violation category. Threat or Vulnerability
+
+      - name: completion_status
+        data_type: varchar
+        description: Scanner run status
+
+      - name: suggested_action
+        data_type: varchar
+        description: Suggested action to resolve this violation
+
+      - name: impact
+        data_type: varchar
+        description: Impact to the account until the violation is resolved
+
+      - name: severity
+        data_type: varchar
+        description: Severity of the violation.
+
+      - name: total_at_risk_count
+        data_type: number
+        description: No. of entities detected with this violation
+
+      - name: at_risk_entities
+        data_type: variant
+        description: Detailed list about entities detected with this violation
+
+      - name: start_timestamp
+        data_type: timestamp_tz
+        description: Timestamp when this scanner run started
+
+      - name: end_timestamp
+        data_type: timestamp_tz
+        description: Timestamp when this scanner run ended
+
+      - name: created_on
+        data_type: timestamp_tz
+        description: Timestamp when the violation was captured
+
+      - name: finding_identifier
+        data_type: varchar
+        description: Finding Identifier
+
+      - name: state
+        data_type: varchar
+        description: Current State of the violation
+        
+      - name: state_last_modified_on
+        data_type: timestamp_tz
+        description: Timestamp when the state was last modified
+        
+      - name: inserted_at
+        data_type: timestamp_tz
+        description: Timestamp when this voilation was loaded into snowflake

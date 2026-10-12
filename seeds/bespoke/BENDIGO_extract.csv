@@ -1,0 +1,4 @@
+table_name,incremental_timestamp_column,path_prefix,path_date_format,file_datetime_format,need_file_ext,file_ext,output_path_format,unload_single_file
+Bendigo_ADL_ODS,,Bendigo_ADL_ODS,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/Bendigo_ADL_On_Day_Settlement_%(au_file_date)s%(ext)s,true
+Bendigo_BBL_ODS,,Bendigo_BBL_ODS,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/Bendigo_BBL_On_Day_Settlement_%(au_file_date)s%(ext)s,true
+Bendigo_BBLBA_ODS,,Bendigo_BBLBA_ODS,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/Bendigo_BBLBA_On_Day_Settlement_%(au_file_date)s%(ext)s,true

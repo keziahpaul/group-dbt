@@ -1,0 +1,7 @@
+table_name,incremental_timestamp_column,path_prefix,path_date_format,file_datetime_format,need_file_ext,file_ext,output_path_format,unload_single_file
+NAB_Incident_Reporting_1PM,,NAB_Incident_Reporting_1PM,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/NAB_Incident_Reporting_1PM_%(au_file_date)s%(ext)s,true
+NAB_Incident_Reporting_AM,,NAB_Incident_Reporting_AM,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/NAB_Incident_Reporting_AM_%(au_file_date)s%(ext)s,true
+NAB_Incident_Reporting_PM_from_Today,,NAB_Incident_Reporting_PM_from_Today,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/NAB_Incident_Reporting_PM_from_Today_%(au_file_date)s%(ext)s,true
+NAB_Incident_Reporting_PM_Settled,,NAB_Incident_Reporting_PM_Settled,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/NAB_Incident_Reporting_PM_Settled_%(au_file_date)s%(ext)s,true
+NAB_ODS,,NAB_ODS,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/NAB_On_Day_Settlement_%(au_file_date)s%(ext)s,true
+NAB_Sign_Not_On_Time,,NAB_Sign_Not_On_Time,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/NAB_Sign_Not_On_Time_Extract_%(au_file_date)s%(ext)s,true

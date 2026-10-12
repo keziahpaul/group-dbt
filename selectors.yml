@@ -1,0 +1,41 @@
+selectors:
+  - name: build_jira_hourly
+    description: "Incrementally update the JIRA issues model throughout the day"
+    definition:
+      # --select issues+
+      method: fqn
+      value: issues
+      children: true
+      indirect_selection: buildable
+
+  - name: build_jira_daily
+    description: "Update all the JIRA support tables nightly"
+    definition:
+      # --select path:models/raw/jira/*.py+ --exclude issues+
+      union:
+        - method: path
+          value: models/raw/jira/*.py
+          children: true
+          indirect_selection: buildable
+        - exclude:
+            - method: fqn
+              value: issues
+              children: true
+
+  - name: seed_genesys
+    description: "Seed the Genesys configuration. Use with seed and test commands to validate the configuration details."
+    definition:
+      # --select _genesys_config+
+      method: file
+      value: _genesys_config
+      children: true
+      indirect_selection: buildable
+
+  - name: build_genesys_daily
+    description: "Update all the Genesys data nightly"
+    definition:
+      # --select path:models/raw/genesys/*.py+
+      method: path
+      value: models/raw/genesys/*.py
+      children: true
+      indirect_selection: buildable

@@ -1,0 +1,21 @@
+seeds:
+  - name: _jira_config
+    config:
+      column_types:
+        target: varchar
+        is_paged: boolean
+        max_pages: integer
+        id_path: varchar
+        endpoint_uri: varchar
+        endpoint_title: varchar
+        endpoint_doc_url: varchar
+    columns:
+      - name: target
+        data_tests:
+          - not_null
+      - name: is_paged
+        data_tests:
+          - not_null
+      - name: endpoint_uri
+        data_tests:
+          - not_null

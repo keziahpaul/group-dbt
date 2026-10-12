@@ -1,0 +1,331 @@
+version: 2
+
+models:
+  - name: buyer_seller_volume_per_workspace
+    description: <div><p>The Buyer Seller Volume per Workspace table tracks the volume
+      of transactions between buyers and sellers within each workspace in the Salesforce
+      system, including settlement dates, financial years, and timestamps for data
+      extraction and updates.</p></div>
+    columns:
+      - name: buyer_settlement_date
+        description: Buyer Settlement Date
+        config:
+          meta:
+            alation_oid: oid=83677;otype=attribute
+            alation_title: Buyer Settlement Date
+
+      - name: financial_year
+        description: Financial Year
+        config:
+          meta:
+            alation_oid: oid=83682;otype=attribute
+            alation_title: Financial Year
+
+      - name: id
+        description: Id
+        config:
+          meta:
+            alation_oid: oid=83668;otype=attribute
+            alation_title: Id
+
+      - name: inserted_at
+        description: Inserted At
+        config:
+          meta:
+            alation_oid: oid=83697;otype=attribute
+            alation_title: Inserted At
+
+      - name: seller_settlement_date
+        description: Seller Settlement Date
+        config:
+          meta:
+            alation_oid: oid=83773;otype=attribute
+            alation_title: Seller Settlement Date
+
+      - name: settlement_date
+        description: Settlement Date
+        config:
+          meta:
+            alation_oid: oid=83643;otype=attribute
+            alation_title: Settlement Date
+
+      - name: settlement_id
+        description: Settlement Id
+        config:
+          meta:
+            alation_oid: oid=83681;otype=attribute
+            alation_title: Settlement Id
+
+      - name: src_delta_extract_ts
+        description: Source Delta Extract Timestamp
+        config:
+          meta:
+            alation_oid: oid=83738;otype=attribute
+            alation_title: Source Delta Extract Timestamp
+
+      - name: subscriber_id
+        description: Subscriber Id
+        config:
+          meta:
+            alation_oid: oid=83717;otype=attribute
+            alation_title: Subscriber Id
+
+      - name: updated_at
+        description: Updated At
+        config:
+          meta:
+            alation_oid: oid=83795;otype=attribute
+            alation_title: Updated At
+
+      - name: workspace_role_id
+        description: Workspace Role Id
+        config:
+          meta:
+            alation_oid: oid=83639;otype=attribute
+            alation_title: Workspace Role Id
+    config:
+      meta:
+        alation_oid: oid=3698;otype=table
+        alation_title: Buyer Seller Volume per Workspace
+
+  - name: exchange_holdings
+    description: Exchange Holdings
+    columns:
+      - name: first_transaction_date__c
+        config:
+          meta:
+            alation_oid: oid=83109;otype=attribute
+
+      - name: inserted_at
+        description: Inserted At
+        config:
+          meta:
+            alation_oid: oid=83096;otype=attribute
+            alation_title: Inserted At
+
+      - name: last_transaction_date__c
+        config:
+          meta:
+            alation_oid: oid=83063;otype=attribute
+
+      - name: src_delta_extract_ts
+        description: Source Delta Extract Timestamp
+        config:
+          meta:
+            alation_oid: oid=83090;otype=attribute
+            alation_title: Source Delta Extract Timestamp
+
+      - name: subscriber_id
+        description: Subscriber Id
+        config:
+          meta:
+            alation_oid: oid=83098;otype=attribute
+            alation_title: Subscriber Id
+
+      - name: total_transactionsl12m__c
+        config:
+          meta:
+            alation_oid: oid=83139;otype=attribute
+
+      - name: transfer_transactions_l12m__c
+        config:
+          meta:
+            alation_oid: oid=83135;otype=attribute
+
+      - name: updated_at
+        description: Updated At
+        config:
+          meta:
+            alation_oid: oid=83136;otype=attribute
+            alation_title: Updated At
+
+      - name: workspace_revenue_l12m__c
+        config:
+          meta:
+            alation_oid: oid=83052;otype=attribute
+    config:
+      meta:
+        alation_oid: oid=3683;otype=table
+        alation_title: Exchange Holdings
+
+  - name: transactions
+    description: Transactions
+    columns:
+      - name: date_lodged
+        description: Date Lodged
+        config:
+          meta:
+            alation_oid: oid=51573;otype=attribute
+            alation_title: Date Lodged
+
+      - name: doc_group
+        description: Document Group
+        config:
+          meta:
+            alation_oid: oid=51559;otype=attribute
+            alation_title: Document Group
+
+      - name: document_id
+        description: Document Id
+        config:
+          meta:
+            alation_oid: oid=51614;otype=attribute
+            alation_title: Document Id
+
+      - name: document_type
+        description: Document Type
+        config:
+          meta:
+            alation_oid: oid=51601;otype=attribute
+            alation_title: Document Type
+
+      - name: id
+        description: Id
+        config:
+          meta:
+            alation_oid: oid=51609;otype=attribute
+            alation_title: Id
+
+      - name: inserted_at
+        description: Inserted At
+        config:
+          meta:
+            alation_oid: oid=51568;otype=attribute
+            alation_title: Inserted At
+
+      - name: src_delta_extract_ts
+        description: Source Delta Extract Timestamp
+        config:
+          meta:
+            alation_oid: oid=51605;otype=attribute
+            alation_title: Source Delta Extract Timestamp
+
+      - name: subscriber_id
+        description: Subscriber Id
+        config:
+          meta:
+            alation_oid: oid=51584;otype=attribute
+            alation_title: Subscriber Id
+
+      - name: transaction_type
+        description: Transaction Type
+        config:
+          meta:
+            alation_oid: oid=51590;otype=attribute
+            alation_title: Transaction Type
+
+      - name: updated_at
+        description: Updated At
+        config:
+          meta:
+            alation_oid: oid=51587;otype=attribute
+            alation_title: Updated At
+    config:
+      meta:
+        alation_oid: oid=2723;otype=table
+        alation_title: Transactions
+
+  - name: workspace_revenue
+    description: Workspace Revenue
+    columns:
+      - name: billing_subscriber_id
+        description: Billing Subscriber Id
+        config:
+          meta:
+            alation_oid: oid=51616;otype=attribute
+            alation_title: Billing Subscriber Id
+
+      - name: datetime_lodged
+        description: Datetime Lodged
+        config:
+          meta:
+            alation_oid: oid=51600;otype=attribute
+            alation_title: Datetime Lodged
+
+      - name: document_id
+        description: Document Id
+        config:
+          meta:
+            alation_oid: oid=51604;otype=attribute
+            alation_title: Document Id
+
+      - name: document_type
+        description: Document Type
+        config:
+          meta:
+            alation_oid: oid=51608;otype=attribute
+            alation_title: Document Type
+
+      - name: id
+        description: Id
+        config:
+          meta:
+            alation_oid: oid=51569;otype=attribute
+            alation_title: Id
+
+      - name: inserted_at
+        description: Inserted At
+        config:
+          meta:
+            alation_oid: oid=51586;otype=attribute
+            alation_title: Inserted At
+
+      - name: pexa_fee_gst
+        description: Pexa Fee GST
+        config:
+          meta:
+            alation_oid: oid=51607;otype=attribute
+            alation_title: Pexa Fee GST
+
+      - name: pexa_fee_net
+        description: Pexa Fee Net
+        config:
+          meta:
+            alation_oid: oid=51579;otype=attribute
+            alation_title: Pexa Fee Net
+
+      - name: pexa_fee_total
+        description: Pexa Fee Total
+        config:
+          meta:
+            alation_oid: oid=51578;otype=attribute
+            alation_title: Pexa Fee Total
+
+      - name: src_delta_extract_ts
+        description: Source Delta Extract Timestamp
+        config:
+          meta:
+            alation_oid: oid=51574;otype=attribute
+            alation_title: Source Delta Extract Timestamp
+
+      - name: subscriber_id
+        description: Subscriber Id
+        config:
+          meta:
+            alation_oid: oid=51564;otype=attribute
+            alation_title: Subscriber Id
+
+      - name: transaction_type
+        description: Transaction Type
+        config:
+          meta:
+            alation_oid: oid=51598;otype=attribute
+            alation_title: Transaction Type
+
+      - name: updated_at
+        description: Updated At
+        config:
+          meta:
+            alation_oid: oid=51591;otype=attribute
+            alation_title: Updated At
+
+      - name: workspace_role
+        description: Workspace Role
+        config:
+          meta:
+            alation_oid: oid=51583;otype=attribute
+            alation_title: Workspace Role
+    config:
+      meta:
+        alation_oid: oid=2726;otype=table
+        alation_title: Workspace Revenue

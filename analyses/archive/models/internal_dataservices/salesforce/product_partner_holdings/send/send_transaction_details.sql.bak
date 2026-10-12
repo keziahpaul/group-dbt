@@ -1,0 +1,65 @@
+{{
+    config(
+        materialized='incremental',
+        unique_key='conversion_id',
+        merge_exclude_columns = ['inserted_at']
+    )
+}}
+
+with
+{%if is_incremental()%}
+target_max_timestamp as 
+(
+    select max(src_delta_extract_ts) as last_load_max_timestamp from {{this}}
+),
+{%endif%}
+
+send_transactions_updated as
+( 
+select *,
+    {{ extract_financial_year('completed_date_settlement_date') }} as financial_year
+from {{ ref('pbi_pexa_pexaalltimetransactionslist') }}
+where effective_to ='9999-12-31 00:00:00.000'
+),
+
+
+final_output as 
+(
+select 
+    c.subscriber_id, 
+    t.conversion_id,
+    c.master_registration_id,
+    c.registration_id,
+    c.day_of_registration_date_aest,
+    c.registration_account_manager,
+    completed_date_settlement_date,
+    settled_revenue,
+    settled_turnover,
+    pexa_commission,
+    financial_year,
+    greatest_ignore_nulls(c.updated_at,t.updated_at) as src_delta_extract_ts
+from  {{ ref('send_subscriber_match') }} c
+inner join send_transactions_updated t
+on c.registration_id = t.registration_id
+{% if is_incremental()%}
+    where ( c.updated_at > (select last_load_max_timestamp from target_max_timestamp)
+         or t.updated_at > (select last_load_max_timestamp from target_max_timestamp)
+        )
+{%endif%}
+)
+
+
+select 
+    subscriber_id,
+    conversion_id,
+    master_registration_id,
+    registration_id,
+    completed_date_settlement_date,
+    settled_revenue,
+    settled_turnover,
+    pexa_commission,
+    financial_year,
+    CONVERT_TIMEZONE('Australia/Sydney',src_delta_extract_ts) as src_delta_extract_ts,
+    {{ var('inserted_at') }} as inserted_at,
+    {{ var('updated_at') }} as updated_at
+from final_output

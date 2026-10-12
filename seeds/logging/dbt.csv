@@ -1,0 +1,13 @@
+table_name,incremental_timestamp_column,path_prefix,path_date_format,file_datetime_format,need_file_ext,file_ext
+DIM_DBT__MODELS,RUN_STARTED_AT,group/dbt,%Y/%m/%d,%Y%m%d%H%M%S,false,
+DIM_DBT__SEEDS,RUN_STARTED_AT,group/dbt,%Y/%m/%d,%Y%m%d%H%M%S,false,
+FCT_DBT__INVOCATIONS,RUN_STARTED_AT,group/dbt,%Y/%m/%d,%Y%m%d%H%M%S,false,
+DIM_DBT__SNAPSHOTS,RUN_STARTED_AT,group/dbt,%Y/%m/%d,%Y%m%d%H%M%S,false,
+DIM_DBT__CURRENT_MODELS,RUN_STARTED_AT,group/dbt,%Y/%m/%d,%Y%m%d%H%M%S,false,
+DIM_DBT__SOURCES,RUN_STARTED_AT,group/dbt,%Y/%m/%d,%Y%m%d%H%M%S,false,
+FCT_DBT__MODEL_EXECUTIONS,RUN_STARTED_AT,group/dbt,%Y/%m/%d,%Y%m%d%H%M%S,false,
+FCT_DBT__SNAPSHOT_EXECUTIONS,RUN_STARTED_AT,group/dbt,%Y/%m/%d,%Y%m%d%H%M%S,false,
+FCT_DBT__TEST_EXECUTIONS,RUN_STARTED_AT,group/dbt,%Y/%m/%d,%Y%m%d%H%M%S,false,
+DIM_DBT__TESTS,RUN_STARTED_AT,group/dbt,%Y/%m/%d,%Y%m%d%H%M%S,false,
+FCT_DBT__SEED_EXECUTIONS,RUN_STARTED_AT,group/dbt,%Y/%m/%d,%Y%m%d%H%M%S,false,
+DIM_DBT__EXPOSURES,RUN_STARTED_AT,group/dbt,%Y/%m/%d,%Y%m%d%H%M%S,false,

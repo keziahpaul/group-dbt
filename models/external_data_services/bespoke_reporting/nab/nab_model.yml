@@ -1,0 +1,193 @@
+version: 2
+
+models:
+  - name: NAB_Incident_Reporting_AM
+    config:
+      materialized: table
+    description: Identify the workspaces that will be settled today
+    columns:
+      - name: workspace_number
+
+      - name: settlement_date
+
+      - name: settlement_status
+
+      - name: subscriber
+
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+      - name: workspace_role
+
+      - name: subscriber_reference
+
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+      - name: settle_acceptance_status
+
+      - name: extract_date
+
+  - name: NAB_Incident_Reporting_1PM
+    config:
+      materialized: table
+    description: Identify the workspaces that will be settled today that flow through between 8AM-1PM
+    columns:
+      - name: workspace_number
+
+      - name: settlement_date
+
+      - name: settlement_status
+
+      - name: subscriber
+
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+      - name: workspace_role
+
+      - name: subscriber_reference
+
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+      - name: settle_acceptance_status
+
+      - name: extract_date
+
+  - name: NAB_Incident_Reporting_PM_Settled
+    description: Status of workspaces that settled/did not settle today
+    config:
+      materialized: table
+    columns:
+      - name: workspace_number
+
+      - name: settlement_date
+
+      - name: settlement_status
+
+      - name: subscriber
+
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+      - name: workspace_role
+
+      - name: subscriber_reference
+
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+      - name: settle_acceptance_status
+
+      - name: extract_date      
+
+  - name: NAB_Incident_Reporting_PM_from_Today
+    config:
+      materialized: table
+    description: Status of workspaces that settled/did not settle today from 8AM extract
+    columns:
+      - name: workspace_number
+
+      - name: settlement_status
+
+      - name: settlement_date
+
+      - name: extract_date
+
+  - name: NAB_Incident_Reporting_Live
+    config:
+      materialized: view
+    description: data of the workspaces that will be settled 
+    columns:
+      - name: workspace_number
+
+      - name: settlement_date
+
+      - name: settlement_status
+
+      - name: subscriber
+
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+      - name: workspace_role
+
+      - name: subscriber_reference
+
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+      - name: settle_acceptance_status
+
+      - name: extract_date
+
+  - name: NAB_ODS
+    config:
+      materialized: table
+    description: NAB ODS weekly report
+    columns:
+      - name: workspace_number
+        description: Unique PEXA workspace number used to identify the property transaction workspace in the NAB On-Day Settlement report.
+
+      - name: subscriber_name
+        description: Registered name of the PEXA subscriber participating in the workspace.
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+
+      - name: subscriber_reference
+        description: Free-text reference assigned to the workspace by the subscriber for its own identification and tracking.
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+
+      - name: workspace_role
+        description: Role in which the subscriber participates in the workspace. For the NAB ODS report, the population is filtered to the Financial Institution roles INCOMING_MORTGAGEE and MORTGAGEE_ON_TITLE.
+
+      - name: scheduled_date_time
+        description: Current scheduled date and time of the property settlement attempt. The weekly NAB ODS report includes scheduled settlement times from the start of the previous week up to, but not including, the start of the current week, using Monday as the start of the week.
+
+      - name: end_of_day_outcome_category
+        description: >-
+          End-of-day outcome assigned to the settlement attempt. Values:
+          Abandoned - the workspace was abandoned on the scheduled date; Settled -
+          On Time - settled at the scheduled date and time; End of Day Roll -
+          failed or rolled at the end of the day; Settled - On Day (Roll/Resch) -
+          settled on the scheduled date after a roll or reschedule; Rescheduled
+          Future Day - rescheduled to another day; Other - no preceding outcome
+          rule applied.
+
+      - name: readiness_category
+        description: Category describing the readiness of the subscriber or workspace for the scheduled settlement attempt, based on the applicable settlement prerequisites recorded for ODS reporting.
+
+      - name: first_attempt_to_settle
+        description: Indicates whether this record relates to the first scheduled settlement attempt. True means the scheduled date and time equals the earliest attempted settlement date; False means it is a later attempt; blank indicates no first-attempt date was recorded.
+
+      - name: current_settlement_date
+        description: Latest settlement date recorded for the workspace, used in the report as the current settlement date after any roll or reschedule.
+
+      - name: current_status_outcome
+        description: >-
+          Latest settlement outcome as at reporting, distinct from the
+          end-of-day outcome for a particular attempt. Values: Settled On Time -
+          settled at the first scheduled date and time; Settled On Day - settled
+          on the scheduled date after one or more same-day rolls; Settled Post Day
+          - settled at least one day after the first scheduled date; Not Settled -
+          Future Date - did not settle and was rescheduled to a future date; Not
+          Settled - No Date - did not settle and had no new date when reported.
+
+      - name: accepted_prior_subscriber
+        description: Indicates whether the subscriber accepted the proposed scheduled settlement date and time before the relevant settlement attempt.
+
+      - name: scheduled_date_time_accepted
+        description: Earliest date and time at which the subscriber accepted the proposed settlement schedule. Derived from the first PROPOSAL_ACCEPTED activity recorded for that participant; blank where no acceptance was recorded.
+
+      - name: fss_signed_subscriber
+        description: Indicator showing whether the subscriber signed the Financial Settlement Schedule (FSS) for the workspace.
+
+      - name: first_fss_signed_date
+        description: Earliest date and time at which the subscriber signed the Financial Settlement Schedule (FSS) for the workspace.
+
+
+

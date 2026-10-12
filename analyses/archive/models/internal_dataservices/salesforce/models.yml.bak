@@ -1,0 +1,526 @@
+version: 2
+
+models:
+
+  - name: fss_line_item
+    columns:
+      - name: Settlement_Schedule_ID
+        description: Settlement Schedule Id
+        config:
+          meta:
+            alation_oid: oid=83634;otype=attribute
+            alation_title: Settlement Schedule Id
+        data_tests:
+          - not_null
+
+          - unique
+
+      - name: account_id
+        description: Account Id
+        config:
+          meta:
+            alation_oid: oid=83782;otype=attribute
+            alation_title: Account Id
+
+      - name: account_id_type
+        description: Account Id Type
+        config:
+          meta:
+            alation_oid: oid=83741;otype=attribute
+            alation_title: Account Id Type
+
+      - name: account_type
+        description: Account Type
+        config:
+          meta:
+            alation_oid: oid=83742;otype=attribute
+            alation_title: Account Type
+
+      - name: bsb
+        description: Bank State Branch
+        config:
+          tags:
+            - secure_field=PI_SENSITIVE_FINANCIAL
+          meta:
+            alation_oid: oid=83708;otype=attribute
+            alation_title: Bank State Branch
+
+      - name: financial_account_id
+        description: Financial Account Id
+        config:
+          meta:
+            alation_oid: oid=83766;otype=attribute
+            alation_title: Financial Account Id
+
+      - name: inserted_at
+        description: Inserted At
+        config:
+          meta:
+            alation_oid: oid=83760;otype=attribute
+            alation_title: Inserted At
+
+      - name: jurisdiction
+        description: Jurisdiction
+        config:
+          meta:
+            alation_oid: oid=83688;otype=attribute
+            alation_title: Jurisdiction
+
+      - name: pexa_projects_id
+        description: Pexa Projects Id
+        config:
+          meta:
+            alation_oid: oid=83669;otype=attribute
+            alation_title: Pexa Projects Id
+
+      - name: pexa_projects_name
+        description: Pexa Projects Name
+        config:
+          meta:
+            alation_oid: oid=83723;otype=attribute
+            alation_title: Pexa Projects Name
+
+      - name: settlement_date
+        description: Settlement Date
+        config:
+          meta:
+            alation_oid: oid=83775;otype=attribute
+            alation_title: Settlement Date
+
+      - name: settlement_type
+        description: Settlement Type
+        config:
+          meta:
+            alation_oid: oid=83683;otype=attribute
+            alation_title: Settlement Type
+
+      - name: src_delta_extract_ts
+        description: Source Delta Extract Timestamp
+        config:
+          meta:
+            alation_oid: oid=83755;otype=attribute
+            alation_title: Source Delta Extract Timestamp
+
+      - name: ss_amount
+        config:
+          meta:
+            alation_oid: oid=83638;otype=attribute
+
+      - name: ss_category
+        config:
+          meta:
+            alation_oid: oid=83685;otype=attribute
+
+      - name: ss_type
+        config:
+          meta:
+            alation_oid: oid=83720;otype=attribute
+
+      - name: subscriber_id
+        description: Subscriber Id
+        config:
+          meta:
+            alation_oid: oid=83636;otype=attribute
+            alation_title: Subscriber Id
+
+      - name: subscriber_name
+        description: Subscriber Name
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+          meta:
+            alation_oid: oid=83633;otype=attribute
+            alation_title: Subscriber Name
+
+      - name: subscriber_state
+        description: Subscriber State
+        config:
+          meta:
+            alation_oid: oid=83687;otype=attribute
+            alation_title: Subscriber State
+
+      - name: subscriber_status
+        description: Subscriber Status
+        config:
+          meta:
+            alation_oid: oid=83771;otype=attribute
+            alation_title: Subscriber Status
+
+      - name: updated_at
+        description: Updated At
+        config:
+          meta:
+            alation_oid: oid=83729;otype=attribute
+            alation_title: Updated At
+
+      - name: workspace_id
+        description: Workspace Id
+        config:
+          meta:
+            alation_oid: oid=83650;otype=attribute
+            alation_title: Workspace Id
+
+      - name: workspace_number
+        description: Workspace Number
+        config:
+          meta:
+            alation_oid: oid=83728;otype=attribute
+            alation_title: Workspace Number
+
+      - name: workspace_role
+        description: Workspace Role
+        config:
+          meta:
+            alation_oid: oid=83665;otype=attribute
+            alation_title: Workspace Role
+
+      - name: workspace_status
+        description: Workspace Status
+        config:
+          meta:
+            alation_oid: oid=83716;otype=attribute
+            alation_title: Workspace Status
+    description: Financial Settlement Schedule Line Item
+    config:
+      meta:
+        alation_oid: oid=3695;otype=table
+        alation_title: Financial Settlement Schedule Line Item
+
+  - name: property
+    columns:
+      - name: participant_id
+        description: Participant Id
+        config:
+          meta:
+            alation_oid: oid=58600;otype=attribute
+            alation_title: Participant Id
+        data_tests:
+          - not_null
+
+          - unique
+
+      - name: subscriber_reference
+        description: Subscriber Reference
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+          meta:
+            alation_oid: oid=58590;otype=attribute
+            alation_title: Subscriber Reference
+
+      - name: src_delta_extract_ts
+        description: Source Delta Extract Timestamp
+        config:
+          meta:
+            alation_oid: oid=58597;otype=attribute
+            alation_title: Source Delta Extract Timestamp
+        data_tests:
+          - not_null
+
+      - name: inserted_at
+        description: Inserted At
+        config:
+          meta:
+            alation_oid: oid=58588;otype=attribute
+            alation_title: Inserted At
+        data_tests:
+          - not_null
+
+      - name: updated_at
+        description: Updated At
+        config:
+          meta:
+            alation_oid: oid=58576;otype=attribute
+            alation_title: Updated At
+        data_tests:
+          - not_null
+
+      - name: account_name
+        description: Account Name
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=58615;otype=attribute
+            alation_title: Account Name
+
+      - name: country
+        description: Country
+        config:
+          meta:
+            alation_oid: oid=58580;otype=attribute
+            alation_title: Country
+
+      - name: full_workspace_number
+        description: Full Workspace Number
+        config:
+          meta:
+            alation_oid: oid=58610;otype=attribute
+            alation_title: Full Workspace Number
+
+      - name: purchase_price
+        description: Purchase Price
+        config:
+          meta:
+            alation_oid: oid=58624;otype=attribute
+            alation_title: Purchase Price
+
+      - name: registrations_pexa_opt_in_date_aest
+        config:
+          meta:
+            alation_oid: oid=58582;otype=attribute
+
+      - name: registrations_pexa_opt_in_flag
+        description: Registrations Pexa Opt In Flag
+        config:
+          meta:
+            alation_oid: oid=58593;otype=attribute
+            alation_title: Registrations Pexa Opt In Flag
+
+      - name: send_integrated
+        description: Send Integrated
+        config:
+          meta:
+            alation_oid: oid=58604;otype=attribute
+            alation_title: Send Integrated
+
+      - name: send_registration_id
+        description: Send Registration Id
+        config:
+          meta:
+            alation_oid: oid=58614;otype=attribute
+            alation_title: Send Registration Id
+
+      - name: settlement_date
+        description: Settlement Date
+        config:
+          meta:
+            alation_oid: oid=58587;otype=attribute
+            alation_title: Settlement Date
+
+      - name: source_field
+        description: Source Field
+        config:
+          meta:
+            alation_oid: oid=58584;otype=attribute
+            alation_title: Source Field
+
+      - name: state
+        description: State
+        config:
+          meta:
+            alation_oid: oid=58595;otype=attribute
+            alation_title: State
+
+      - name: subscriber_id
+        description: Subscriber Id
+        config:
+          meta:
+            alation_oid: oid=58622;otype=attribute
+            alation_title: Subscriber Id
+
+      - name: toggle_on
+        description: Toggle On
+        config:
+          meta:
+            alation_oid: oid=58591;otype=attribute
+            alation_title: Toggle On
+
+      - name: user_role
+        description: User Role
+        config:
+          meta:
+            alation_oid: oid=58577;otype=attribute
+            alation_title: User Role
+
+      - name: workspace_create_date
+        description: Workspace Create Date
+        config:
+          meta:
+            alation_oid: oid=58608;otype=attribute
+            alation_title: Workspace Create Date
+    description: Property
+    config:
+      meta:
+        alation_oid: oid=2934;otype=table
+        alation_title: Property
+
+  - name: international_parties
+    columns:
+      - name: reference
+        description: Reference
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+          meta:
+            alation_oid: oid=58620;otype=attribute
+            alation_title: Reference
+
+      - name: consideration_amount
+        description: Consideration Amount
+        config:
+          meta:
+            alation_oid: oid=58586;otype=attribute
+            alation_title: Consideration Amount
+
+      - name: country
+        description: Country
+        config:
+          meta:
+            alation_oid: oid=58594;otype=attribute
+            alation_title: Country
+
+      - name: imt_account_id
+        description: International Money Transfer Account Id
+        config:
+          meta:
+            alation_oid: oid=58618;otype=attribute
+            alation_title: International Money Transfer Account Id
+
+      - name: imt_create_date
+        config:
+          meta:
+            alation_oid: oid=58583;otype=attribute
+
+      - name: imt_name
+        description: International Money Transfer Name
+        config:
+          meta:
+            alation_oid: oid=58578;otype=attribute
+            alation_title: International Money Transfer Name
+
+      - name: imt_provider_id
+        config:
+          meta:
+            alation_oid: oid=58619;otype=attribute
+
+      - name: inserted_at
+        description: Inserted At
+        config:
+          meta:
+            alation_oid: oid=58606;otype=attribute
+            alation_title: Inserted At
+
+      - name: is_send_assisted
+        description: Is Send Assisted
+        config:
+          meta:
+            alation_oid: oid=58596;otype=attribute
+            alation_title: Is Send Assisted
+
+      - name: jurisdiction
+        description: Jurisdiction
+        config:
+          meta:
+            alation_oid: oid=58609;otype=attribute
+            alation_title: Jurisdiction
+
+      - name: participant_id
+        description: Participant Id
+        config:
+          meta:
+            alation_oid: oid=58572;otype=attribute
+            alation_title: Participant Id
+
+      - name: rn
+        config:
+          meta:
+            alation_oid: oid=58612;otype=attribute
+
+      - name: settlement_date
+        description: Settlement Date
+        config:
+          meta:
+            alation_oid: oid=58575;otype=attribute
+            alation_title: Settlement Date
+
+      - name: settlement_status
+        description: Settlement Status
+        config:
+          meta:
+            alation_oid: oid=58613;otype=attribute
+            alation_title: Settlement Status
+
+      - name: source
+        description: Source
+        config:
+          meta:
+            alation_oid: oid=58573;otype=attribute
+            alation_title: Source
+
+      - name: src_delta_extract_ts
+        description: Source Delta Extract Timestamp
+        config:
+          meta:
+            alation_oid: oid=58605;otype=attribute
+            alation_title: Source Delta Extract Timestamp
+
+      - name: stamp_duty
+        description: Stamp Duty
+        config:
+          meta:
+            alation_oid: oid=58589;otype=attribute
+            alation_title: Stamp Duty
+
+      - name: subscriber
+        description: Subscriber
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+          meta:
+            alation_oid: oid=58603;otype=attribute
+            alation_title: Subscriber
+
+      - name: subscriber_id
+        description: Subscriber Id
+        config:
+          meta:
+            alation_oid: oid=58592;otype=attribute
+            alation_title: Subscriber Id
+
+      - name: subscriber_id_workspace_number
+        description: Subscriber Id Workspace Number
+        config:
+          meta:
+            alation_oid: oid=58607;otype=attribute
+            alation_title: Subscriber Id Workspace Number
+
+      - name: updated_at
+        description: Updated At
+        config:
+          meta:
+            alation_oid: oid=58623;otype=attribute
+            alation_title: Updated At
+
+      - name: workspace
+        description: Workspace
+        config:
+          meta:
+            alation_oid: oid=58599;otype=attribute
+            alation_title: Workspace
+
+      - name: workspace_number
+        description: Workspace Number
+        config:
+          meta:
+            alation_oid: oid=58602;otype=attribute
+            alation_title: Workspace Number
+
+      - name: workspace_role
+        description: Workspace Role
+        config:
+          meta:
+            alation_oid: oid=58601;otype=attribute
+            alation_title: Workspace Role
+
+      - name: ws_create_date
+        description: Was Create Date
+        config:
+          meta:
+            alation_oid: oid=58616;otype=attribute
+            alation_title: Was Create Date
+    description: International Parties
+    config:
+      meta:
+        alation_oid: oid=2933;otype=table
+        alation_title: International Parties

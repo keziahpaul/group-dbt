@@ -1,0 +1,211 @@
+version: 2
+
+models:
+  - name: ANZ_FSS_signatures
+    description: "<div><p>ANZ Financial Settlement Schedule Signatures provides information\
+      \ about who signs the FSS for every workspace.\_</p><p>More information is available\
+      \ here: <a href=\"https://pexa.atlassian.net/wiki/spaces/EDP/pages/1492091028/ANZ+FSS+Extract+-+DNA1011\"\
+      \ id=\"isPasted\">ANZ FSS Extract - DNA1011 - Enterprise Data Platform - Confluence</a></p></div>"
+    columns:
+      - name: first_name
+        description: First name of user signing
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=105047;otype=attribute
+            alation_title: First Name
+
+      - name: last_name
+        description: Last name of user signing
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=105060;otype=attribute
+            alation_title: Last Name
+
+      - name: settlement_date
+        description: <div><p>Link to definition:</p><p><a class="fr-deletable" data-oid="689"
+          data-otype="glossary_term" href="/app/document/689">Settlement Date</a></p></div>
+        config:
+          meta:
+            alation_oid: oid=105085;otype=attribute
+            alation_title: Settlement Date
+
+      - name: signature_date
+        description: Date and time of signature
+        config:
+          meta:
+            alation_oid: oid=105052;otype=attribute
+            alation_title: Signature Date
+
+      - name: username
+        description: User account username of signer in email address format
+        config:
+          tags:
+            - secure_field=PI_USERID
+          meta:
+            alation_oid: oid=105062;otype=attribute
+            alation_title: Username
+
+      - name: workspace_id
+        description: "<div><p><span id=\"isPasted\" style=\"\">An Identifier assigned\
+          \ by an Electronic Lodgement Network to a <a class=\"fr-deletable\" data-oid=\"\
+          760\" data-otype=\"glossary_term\" href=\"/app/document/760\">Workspace</a>\
+          \ .</span></p><p><span id=\"isPasted\"><a class=\"fr-deletable\" data-oid=\"\
+          421\" data-otype=\"glossary_term\" href=\"/app/document/421\">ELN Workspace\
+          \ ID</a>\_</span></p></div>"
+        config:
+          meta:
+            alation_oid: oid=105057;otype=attribute
+            alation_title: Workspace Id
+    config:
+      meta:
+        orig_description: ANZ FSS Extract
+        alation_oid: oid=4042;otype=table
+        alation_title: ANZ FSS Signatures
+
+  - name: ANZ_Proceeds_no_MORT
+    description: "<div><p>ANZ Proceeds no Mortgage report contains workspace, settlement\
+      \ and transaction information where ANZ is the incoming mortgagee and contributing\
+      \ loan proceeds, but mortgage document has not been created yet.</p><p>More\
+      \ information is available here:\_<a href=\"https://pexa.atlassian.net/wiki/spaces/EDP/pages/1494253713/ANZ+Proceeds+No+Mortgage+-+DNA1008\"\
+      \ id=\"isPasted\">ANZ Proceeds No Mortgage - DNA1008 - Enterprise Data Platform\
+      \ - Confluence</a></p></div>"
+    columns:
+      - name: amount
+        description: Total dollar value of transaction for this record entry
+        config:
+          meta:
+            alation_oid: oid=105070;otype=attribute
+            alation_title: Amount
+
+      - name: amount_type
+        description: Settlement category eg. Loan Proceeds, Loan Payout
+        config:
+          meta:
+            alation_oid: oid=105092;otype=attribute
+            alation_title: Amount Type
+
+      - name: document_type
+        description: 'Type of mortgage-related document: Mortgage, National Mortgage,
+          or Discharge of Mortgage'
+        config:
+          meta:
+            alation_oid: oid=105077;otype=attribute
+            alation_title: Document Type
+
+      - name: legal_entity_name
+        description: The name of the legal entity involved in the transaction
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+          meta:
+            alation_oid: oid=105082;otype=attribute
+            alation_title: Legal Entity Name
+
+      - name: mortgage_doc_lodged
+        description: Binary indicator where 0 = mortgage document not lodged or closed,
+          1 = mortgage document lodged or closed
+        config:
+          meta:
+            alation_oid: oid=105069;otype=attribute
+            alation_title: Mortgage Documents Lodged
+
+      - name: participant_id
+        description: Unique identifier for participants in a workspace. <br> A participant
+          is a subscriber acting in a particular role within a workspace.
+        config:
+          meta:
+            alation_oid: oid=105045;otype=attribute
+            alation_title: Participant Id
+
+      - name: party_name
+        description: The name of the party involved in the transaction.
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+          meta:
+            alation_oid: oid=105107;otype=attribute
+            alation_title: Party Name
+
+      - name: settlement_date
+        description: <div><p>Link to definition:</p><p><a class="fr-deletable" data-oid="689"
+          data-otype="glossary_term" href="/app/document/689">Settlement Date</a></p><p><br></p><p><br></p></div>
+        config:
+          meta:
+            alation_oid: oid=105076;otype=attribute
+            alation_title: Settlement Date
+
+      - name: settlement_id
+        description: "Unique Identifier of a\_<a class=\"fr-deletable\" data-oid=\"\
+          686\" data-otype=\"glossary_term\" href=\"/app/document/686\">Settlement</a>\_\
+          ."
+        config:
+          meta:
+            alation_oid: oid=105100;otype=attribute
+            alation_title: Settlement Id
+
+      - name: status
+        description: Status of lodgement
+        config:
+          meta:
+            alation_oid: oid=105071;otype=attribute
+            alation_title: Status
+
+      - name: subscriber_id
+        description: <div><p>Link to definition:</p><p><a class="fr-deletable" data-oid="420"
+          data-otype="glossary_term" href="/app/document/420">ELN Subscriber ID</a></p><p><br></p></div>
+        config:
+          meta:
+            alation_oid: oid=105111;otype=attribute
+            alation_title: Subscriber Id
+
+      - name: subscriber_ref
+        description: A reference number or identifier used by subscribers to track
+          their transactions or workspaces
+        config:
+          meta:
+            alation_oid: oid=105118;otype=attribute
+            alation_title: Subscriber Reference
+
+      - name: titles
+        description: Concatenated string of land titles associated with this workspace,
+          separated by commas
+        config:
+          meta:
+            alation_oid: oid=105117;otype=attribute
+            alation_title: Titles
+
+      - name: transaction_type
+        description: Lodgement transaction type eg. DTM (Discharge of Mortgage, Transfer,
+          National Mortgage)
+        config:
+          meta:
+            alation_oid: oid=105074;otype=attribute
+            alation_title: Transaction Type
+
+      - name: workspace_id
+        description: "<div><p><span id=\"isPasted\" style=\"\">An Identifier assigned\
+          \ by an Electronic Lodgement Network to a\_<a class=\"fr-deletable\" data-oid=\"\
+          760\" data-otype=\"glossary_term\" href=\"/app/document/760\">Workspace</a>\_\
+          </span></p><p><a class=\"fr-deletable\" data-oid=\"421\" data-otype=\"glossary_term\"\
+          \ href=\"/app/document/421\">ELN Workspace ID</a></p></div>"
+        config:
+          meta:
+            alation_oid: oid=105099;otype=attribute
+            alation_title: Workspace Id
+
+      - name: workspace_role
+        description: Name of the workspace role. A workspace role governs the representation
+          of parties and the documents that a participant can create in a workspace.
+        config:
+          meta:
+            alation_oid: oid=105046;otype=attribute
+            alation_title: Workspace Role
+    config:
+      meta:
+        orig_description: ANZ Proceeds No Mortgage
+        alation_oid: oid=4043;otype=table
+        alation_title: ANZ Proceeds no Mortgage

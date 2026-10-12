@@ -1,0 +1,2 @@
+table_name,incremental_timestamp_column,path_prefix,path_date_format,file_datetime_format,need_file_ext,file_ext
+property,SRC_DELTA_EXTRACT_TS,daily,%Y-%m-%d,%Y_%m_%d_%H_%M_%S,true,.csv

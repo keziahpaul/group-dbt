@@ -1,0 +1,44 @@
+version: 2
+
+models:
+  - name: pexa_projects_holdings
+    description: Pexa Projects Holdings
+    columns:
+      - name: inserted_at
+        description: Inserted At
+        config:
+          meta:
+            alation_oid: oid=83130;otype=attribute
+            alation_title: Inserted At
+
+      - name: src_delta_extract_ts
+        description: Source Delta Extract Timestamp
+        config:
+          meta:
+            alation_oid: oid=83101;otype=attribute
+            alation_title: Source Delta Extract Timestamp
+
+      - name: subscriber_id
+        description: Subscriber Id
+        config:
+          meta:
+            alation_oid: oid=83120;otype=attribute
+            alation_title: Subscriber Id
+
+      - name: updated_at
+        description: Updated At
+        config:
+          meta:
+            alation_oid: oid=83073;otype=attribute
+            alation_title: Updated At
+
+      - name: ws_last_created_date
+        description: Was Last Created Date
+        config:
+          meta:
+            alation_oid: oid=83083;otype=attribute
+            alation_title: Was Last Created Date
+    config:
+      meta:
+        alation_oid: oid=3680;otype=table
+        alation_title: Pexa Projects Holdings

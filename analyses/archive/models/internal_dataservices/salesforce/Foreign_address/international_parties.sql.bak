@@ -1,0 +1,342 @@
+
+{{
+    config(
+        materialized='incremental',
+        unique_key='participant_id',
+        merge_exclude_columns = ['inserted_at']
+    )
+}}
+With
+{%if is_incremental()%}
+target_max_timestamp as 
+(
+    select max(src_delta_extract_ts) as last_load_max_timestamp from {{this}}
+),
+{%endif%}
+
+
+not_send_serve_countries as 
+(
+  select $1 AS country,
+    FROM 
+    (VALUES  
+     ('Central African Republic'),('Crimea'),('Cuba'),('Democratic Republic of Congo'),
+     ('Eritrea'),('Guinea-Bissau'),('Iran'),('Iraq'),('Lebanon'),('Libya'),('Myanmar'),('North Korea'),
+     ('Russia'),('Somalia'),('South Sudan'),('Sudan'),('Syria'),('Ukraine'),('Venezula'),('Zimbabwe')
+    )
+),
+
+party_details as (
+   select 
+    ad.address_type,
+    c.name as country,
+    p.workspace_id,
+    p.party_id,
+    case when c.name in (select country from not_send_serve_countries) then 0
+    else 1 end as is_send_assisted
+    from {{ source('exchange_share', 'vw_partys') }} p
+    join {{ source('exchange_share', 'vw_party_addresses') }} a on p.party_id = a.party_id 
+    join {{ source('exchange_share', 'vw_addresses') }} ad on a.address_id = ad.address_id and ad.country_id != 1
+    join {{ source('exchange_share', 'vw_countrys') }} c on ad.country_id =  c.country_id 
+    left join not_send_serve_countries s on lower(c.name) = lower(country)
+),
+workspace_details as (
+    select 
+        s.date1 as settlement_date,
+        w.workspace_id workspace,
+        w.number1 as workspace_number,
+        s.status as settlement_status,
+        w.jurisdiction,
+        sb.name as subscriber,
+        sb.subscriber_id as subscriber_id,
+        par.participant_id, 
+        wr.name as workspace_role,
+        CASE WHEN ppd.address in ('No Street Address Information Available','NO ADDRESS HELD') or ppd.address is null   
+            then pa.address_id else ppd.address_id END as address_id,
+        country,
+        is_send_assisted,
+        address_type,
+        par.reference,
+        t.consideration_amount,
+        ip.imt_name,
+        ip.imt_account_id,
+        ip.imt_provider_id,
+        ip.created_date as imt_create_date,
+        greatest_ignore_nulls(s.inserted_at,l.inserted_at,d.inserted_at,dt.inserted_at,w.inserted_at,pp.inserted_at,par.inserted_at,sb.inserted_at,wr.inserted_at,p.inserted_at,t.inserted_at,ppd.inserted_at,pa.inserted_at,sip.inserted_at,ip.inserted_at) as src_delta_extract_ts
+    from party_details pd
+        join {{ source('exchange_share', 'vw_settlements') }} s on pd.workspace_id = s.workspace_id 
+        join {{ source('exchange_share', 'vw_lodgements') }} l on s.settlement_id = l.settlement_id 
+        join {{ source('exchange_share', 'vw_documents') }} d   on l.lodgement_id = d.lodgement_id
+        join {{ source('exchange_share','vw_document_types') }} dt on d.document_type_id = dt.document_type_id 
+        join {{ source('exchange_share', 'vw_workspaces') }} w on l.workspace_id = w.workspace_id and w.status != 'ABANDONED'   
+        join {{ source('exchange_share','vw_participant_partys') }} pp on pd.party_id = pp.party_id 
+        join {{ source('exchange_share','vw_participants') }} par on pp.participant_id = par.participant_id and par.status = 'ACTIVE' 
+        join {{ source('exchange_share','vw_subscribers') }} sb on par.subscriber_id = sb.subscriber_id
+        join {{ source('exchange_share','vw_workspace_roles') }} wr on par.workspace_role_id = wr.workspace_role_id
+        join {{ source('exchange_share','vw_propertys') }} p on w.workspace_id = p.workspace_id 
+        join {{ source('exchange_share', 'vw_transfers') }}  t on d.document_id = t.transfer_id 
+        left join {{ source('exchange_share','vw_property_details') }} ppd on p.property_detail_id = ppd.property_detail_id -- when address is automated through RIS 
+        left join {{ source('exchange_share','vw_propertys_address') }} pa on p.property_id = pa.property_id -- when addresses is manually inputted               
+        left join {{ source('exchange_share', 'vw_subscriber_imt_provider') }} sip on sb.subscriber_id = sip.subscriber_id 
+        left join {{ source('exchange_share','vw_imt_providers') }} ip on sip.imt_provider_id = ip.imt_provider_id 
+    where wr.name in ('INCOMING_PROPRIETOR', 'PROPRIETOR_ON_TITLE')
+        and (s.date1::date >= current_date - interval '14 month' or s.date1::date is null)
+        and t.consideration_amount is not null 
+    {% if is_incremental()%}
+        and ( s.inserted_at >  (select last_load_max_timestamp from target_max_timestamp)
+            or l.inserted_at >  (select last_load_max_timestamp from target_max_timestamp)
+            or d.inserted_at >  (select last_load_max_timestamp from target_max_timestamp)
+            or dt.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+            or w.inserted_at >  (select last_load_max_timestamp from target_max_timestamp)
+            or pp.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+            or par.inserted_at >(select last_load_max_timestamp from target_max_timestamp)
+            or sb.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+            or wr.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+            or p.inserted_at >  (select last_load_max_timestamp from target_max_timestamp)
+            or t.inserted_at >  (select last_load_max_timestamp from target_max_timestamp)
+            or ppd.inserted_at >(select last_load_max_timestamp from target_max_timestamp)
+            or pa.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+            or sip.inserted_at >(select last_load_max_timestamp from target_max_timestamp)
+            or ip.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+        )
+    {%endif%}
+),
+
+max_src_delta_extract_int as 
+(
+    select participant_id, max(CONVERT_TIMEZONE('Australia/Sydney',src_delta_extract_ts)) as max_src_delta_extract_ts
+    from workspace_details
+    group by participant_id
+),
+
+international_parties as (  
+    select 
+        wd.settlement_date, 
+        wd.workspace, 
+        wd.workspace_number,
+        wd.participant_id,
+        wd.settlement_status,
+        wd.jurisdiction,
+        wd.subscriber,
+        wd.subscriber_id,
+        wd.workspace_role,
+        wd.country,
+        wd.is_send_assisted,
+        wd.reference,
+        max(consideration_amount) as consideration_amount,
+        0 as stamp_duty,
+        imt_name,
+        imt_account_id,
+        imt_provider_id,
+        imt_create_date,
+        max_src_delta_extract_ts as src_delta_extract_ts
+    from workspace_details wd
+    join max_src_delta_extract_int m
+    on wd.participant_id = m.participant_id
+    group by 
+        wd.settlement_date, 
+        wd.workspace, 
+        wd.workspace_number, 
+        wd.participant_id,
+        wd.settlement_status,
+        wd.jurisdiction,
+        wd.subscriber,
+        wd.subscriber_id,
+        wd.workspace_role,
+        wd.country,
+        wd.is_send_assisted,
+        wd.reference,
+        stamp_duty,
+        imt_name,
+        imt_account_id,
+        imt_provider_id,
+        imt_create_date,
+        max_src_delta_extract_ts
+),
+
+international_parties_final as 
+(
+    select 
+        concat(f.subscriber_id,f.workspace_number) as subscriber_id_workspace_number,
+        be.created_date as ws_create_date,
+        'international_parties' as source,
+        f.settlement_date, 
+        f.workspace, 
+        f.workspace_number,
+        f.participant_id,
+        f.settlement_status,
+        f.jurisdiction,
+        f.subscriber,
+        f.subscriber_id,
+        f.workspace_role,
+        f.country,
+        f.is_send_assisted,
+        f.reference,
+        f.consideration_amount,
+        f.stamp_duty,
+        f.imt_name,
+        f.imt_account_id,
+        f.imt_provider_id,
+        f.imt_create_date,
+        CONVERT_TIMEZONE('Australia/Sydney',f.src_delta_extract_ts) as src_delta_extract_ts,
+        {{ var('inserted_at') }} as inserted_at,
+        {{ var('updated_at') }} as updated_at
+    from international_parties f 
+    join {{ source('exchange_share', 'vw_business_event') }} be on f.workspace = be.workspace_id and be.business_event_type_id = 1
+    order by 1
+),
+
+stamp_duty as 
+(
+    select 
+        s.date1 as settlement_date,
+        w.workspace_id workspace,
+        w.number1 workspace_number,
+        par.participant_id, 
+        s.status as settlement_status,
+        w.jurisdiction,
+        sb.name as subscriber,
+        sb.subscriber_id as subscriber_id,
+        wr.name as workspace_role,
+        null as country,
+        null as is_send_assisted,
+        par.reference as reference,
+        t.consideration_amount,
+        sd.duty_payable_amount/100 as stamp_duty,
+        ip.imt_name,
+        ip.imt_account_id,
+        ip.imt_provider_id,
+        ip.created_date as imt_create_date,
+        greatest_ignore_nulls(s.inserted_at,l.inserted_at,w.inserted_at,par.inserted_at,sb.inserted_at,wr.inserted_at,p.inserted_at,d.inserted_at,t.inserted_at,sd.inserted_at,sip.inserted_at,ip.inserted_at) as src_delta_extract_ts
+    from {{ source('exchange_share', 'vw_settlements') }} s 
+        join  {{ source('exchange_share', 'vw_lodgements') }} l on s.settlement_id = l.settlement_id 
+        join {{ source('exchange_share', 'vw_workspaces') }}  w on l.workspace_id = w.workspace_id and w.status != 'ABANDONED'   
+        join {{ source('exchange_share','vw_participants') }} par on w.workspace_id = par.workspace_id and par.status = 'ACTIVE'  
+        join {{ source('exchange_share','vw_subscribers') }} sb on par.subscriber_id = sb.subscriber_id
+        join {{ source('exchange_share','vw_workspace_roles') }} wr on par.workspace_role_id = wr.workspace_role_id
+        join {{ source('exchange_share','vw_propertys') }} p on w.workspace_id = p.workspace_id 
+        join {{ source('exchange_share', 'vw_documents') }} d on l.lodgement_id = d.lodgement_id 
+        join  {{ source('exchange_share', 'vw_transfers') }}  t on d.document_id = t.transfer_id 
+        join {{ source('exchange_share', 'vw_stamp_duty') }}  sd on d.stamp_duty_id = sd.stamp_duty_id
+        left join {{ source('exchange_share', 'vw_subscriber_imt_provider') }} sip on sb.subscriber_id = sip.subscriber_id 
+        left join {{ source('exchange_share','vw_imt_providers') }} ip on sip.imt_provider_id = ip.imt_provider_id 
+    where wr.name in ('INCOMING_PROPRIETOR', 'PROPRIETOR_ON_TITLE')
+            and (s.date1::date >= current_date - interval '14 month')
+            and w.jurisdiction = 'NSW'
+            and duty_payable_amount>0
+            and t.consideration_amount >=400000
+            and sd.duty_payable_amount is not null
+    {% if is_incremental()%}
+        and ( s.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+        or l.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+        or w.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+        or par.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+        or sb.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+        or wr.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+        or p.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+        or d.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+        or t.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+        or sd.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+        or sip.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+        or ip.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+        )
+    {%endif%}
+
+),
+
+
+max_src_delta_extract_sd as 
+(
+    select participant_id, max(CONVERT_TIMEZONE('Australia/Sydney',src_delta_extract_ts)) as max_src_delta_extract_ts
+    from stamp_duty
+    group by participant_id
+),
+
+stamp_duty_group as 
+(
+    select 
+        settlement_date,
+        workspace,
+        workspace_number,
+        s.participant_id, 
+        settlement_status,
+        jurisdiction,
+        subscriber,
+        subscriber_id,
+        workspace_role,
+        country,
+        is_send_assisted,
+        reference,
+        max(consideration_amount) as consideration_amount,
+        max(stamp_duty) as stamp_duty,
+        imt_name,
+        imt_account_id,
+        imt_provider_id,
+        imt_create_date,
+        max_src_delta_extract_ts as src_delta_extract_ts
+    from stamp_duty s
+    join max_src_delta_extract_int m
+    on s.participant_id = m.participant_id
+    group by  
+        settlement_date,
+        workspace,
+        workspace_number,
+        s.participant_id, 
+        settlement_status,
+        jurisdiction,
+        subscriber,
+        subscriber_id,
+        workspace_role,
+        country,
+        is_send_assisted,
+        reference,
+        imt_name,
+        imt_account_id,
+        imt_provider_id,
+        imt_create_date,
+        max_src_delta_extract_ts
+),
+
+stamp_duty_final as(
+    select
+        concat(c.subscriber_id,c.workspace_number) as subscriber_id_workspace_number,
+        be.created_date,
+        'stamp_duty' as source,
+        c.settlement_date, 
+        c.workspace, 
+        c.workspace_number,
+        c.participant_id,
+        c.settlement_status,
+        c.jurisdiction,
+        c.subscriber,
+        c.subscriber_id,
+        c.workspace_role,
+        c.country,
+        c.is_send_assisted,
+        c.reference,
+        c.consideration_amount,
+        c.stamp_duty,
+        c.imt_name,
+        c.imt_account_id,
+        c.imt_provider_id,
+        c.imt_create_date,
+        CONVERT_TIMEZONE('Australia/Sydney',c.src_delta_extract_ts) as src_delta_extract_ts,
+        {{ var('inserted_at') }} as inserted_at,
+        {{ var('updated_at') }} as updated_at
+        from stamp_duty_group c
+        join {{ source('exchange_share', 'vw_business_event') }} be on c.workspace = be.workspace_id and business_event_type_id = 1 
+        where stamp_duty/consideration_amount >= .15
+),
+        
+
+t as (       
+select * from international_parties_final
+union 
+select * from stamp_duty_final
+)
+
+select *
+from(    
+    select *, ROW_NUMBER() OVER(PARTITION BY t.participant_id order by is_send_assisted, country desc)  rn
+    from  t)
+Where rn = 1

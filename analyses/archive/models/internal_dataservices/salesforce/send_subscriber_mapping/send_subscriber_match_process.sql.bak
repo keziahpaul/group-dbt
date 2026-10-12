@@ -1,0 +1,443 @@
+{{
+    config(
+        materialized='incremental',
+        unique_key='registration_id',
+        merge_exclude_columns = ['inserted_at'],
+        on_schema_change='append_new_columns'
+    )
+}}
+
+WITH
+{% if is_incremental() %}
+target_max_timestamp AS (
+    SELECT max(src_delta_extract_ts) AS last_load_max_timestamp FROM {{ this }}
+),
+
+unmatched AS (
+    SELECT registration_id FROM {{ this }}
+    WHERE lower(match_method) IN ('no_match', 'new registration for existing subscriber')
+    or lower(match_method) like 'duplicate%'
+),
+{% endif %}
+
+base_activity AS (
+    SELECT DISTINCT
+        registration_id,
+        master_registration_id,
+        effective_to,
+        inserted_at,
+        abn_acn,
+        affiliate_branch,
+        affiliate_employee,
+        business_name,
+        day_of_lead_created_date_aest,
+        day_of_registration_date_aest,
+        domain_email_address,
+        full_name,
+        purpose,
+        registration_account_manager,
+        registration_account_manager_email,
+        registration_created_source,
+        state,
+        max_trade_settled_for_accounting_date,
+        min_trade_settled_for_accounting_date,
+        registrations_pexa_opt_in_flag,
+        registrations_pexa_opt_in_date_aest
+    FROM {{ ref('pbi_pexa_client_activity') }}
+    WHERE effective_to::date = '{{ var('active_date') }}'
+    {% if is_incremental() %}
+        AND (
+            inserted_at > (SELECT last_load_max_timestamp FROM target_max_timestamp)
+            OR registration_id IN (SELECT registration_id FROM unmatched)
+        )
+        AND registration_id not in (select registration_id FROM {{ ref('manual_send_subscriber_match') }})
+        {% endif %}
+),
+
+referrals AS (
+    SELECT registration_id
+    FROM base_activity
+    WHERE abn_acn IS NULL
+        AND registration_created_source = 'Referral'
+),
+
+send_registrations AS (
+    SELECT
+        b.*,
+        CASE WHEN length(replace(replace(b.abn_acn, ' ', ''), 'ABN', '')) = 11
+                THEN replace(replace(b.abn_acn, ' ', ''), 'ABN', '')
+        END AS abn,
+        CASE WHEN length(replace(replace(b.abn_acn, ' ', ''), 'ABN', '')) = 9
+                THEN replace(replace(b.abn_acn, ' ', ''), 'ABN', '')
+        END AS acn
+    FROM base_activity AS b
+    WHERE NOT EXISTS (
+            SELECT 1 FROM referrals AS r WHERE b.registration_id = r.registration_id
+        )
+),
+
+
+active_subscribers AS (
+    SELECT
+        subscriber_id::varchar AS subscriber_id,
+        name,
+        abn,
+        acn,
+        reg_business_name,
+        trading_name,
+        legal_entity_name,
+        status
+    FROM {{ source('exchange_share', 'vw_subscribers') }}
+    WHERE status = 'ACTIVE'
+    --AND name not ilike '%DO NOT INVITE%' 
+),
+
+active_users AS (
+    SELECT
+        subscriber_id::varchar AS subscriber_id,
+        email_address1,
+        first_name,
+        middle_name,
+        last_name
+    FROM {{ source('exchange_share', 'vw_users') }}
+    WHERE status = 'ACTIVE'
+        AND subscriber_id IN (SELECT DISTINCT subscriber_id FROM active_subscribers)
+),
+
+active_matches AS (
+    -- salesforce ABN matches
+    SELECT
+        'abn_sf' AS match_type,
+        ps_abn_c AS match_key,
+        ps_external_id_c AS subscriber_id
+    FROM
+        (
+            SELECT
+                a.ps_abn_c,
+                a.ps_external_id_c,
+                count(DISTINCT a.ps_abn_c) OVER (PARTITION BY a.ps_external_id_c) AS abn_count,
+                count(DISTINCT a.ps_external_id_c) OVER (PARTITION BY a.ps_abn_c) AS sub_count
+            FROM {{ ref('account') }} AS a
+            INNER JOIN {{ ref('opportunity') }} AS o
+                ON a.id = o.account_id
+                    AND o.effective_to = '9999-12-31 00:00:00.000 -0800'
+            WHERE o.product_name_c = 'Send'
+                AND o.stage_name = 'Closed Won'
+                AND a.effective_to = '9999-12-31 00:00:00.000 -0800'
+        --and a.ps_abn_c ='97163390145'
+        )
+    WHERE abn_count = 1 AND sub_count = 1
+
+    UNION ALL
+    -- ABN matches
+    SELECT
+        'abn' AS match_type,
+        abn AS match_key,
+        subscriber_id
+    FROM (
+        SELECT
+            abn,
+            subscriber_id,
+            count(*) OVER (PARTITION BY abn) AS abn_count,
+            count(DISTINCT subscriber_id) OVER (PARTITION BY abn) AS sub_count
+        FROM active_subscribers
+        WHERE abn IS NOT NULL
+    )
+    WHERE abn_count = 1 AND sub_count = 1
+
+    UNION ALL
+
+    -- ACN matches
+    SELECT
+        'acn' AS match_type,
+        acn AS match_key,
+        subscriber_id
+    FROM (
+        SELECT
+            acn,
+            subscriber_id,
+            count(*) OVER (PARTITION BY acn) AS acn_count,
+            count(DISTINCT subscriber_id) OVER (PARTITION BY acn) AS sub_count
+        FROM active_subscribers
+        WHERE acn IS NOT NULL
+    )
+    WHERE acn_count = 1 AND sub_count = 1
+
+    UNION ALL
+
+    -- Consolidated name matches
+    SELECT
+        match_type,
+        match_key,
+        subscriber_id
+    FROM (
+        SELECT
+            match_type,
+            match_key,
+            subscriber_id,
+            count(DISTINCT subscriber_id) OVER (PARTITION BY match_type, match_key) AS sub_count
+        FROM (
+            -- Business names
+            SELECT
+                'bname' AS match_type,
+                regexp_replace(upper(trim(reg_business_name)), '[^A-Z0-9\s]', '') AS match_key,
+                subscriber_id
+            FROM active_subscribers
+            WHERE reg_business_name IS NOT NULL
+
+            UNION ALL
+
+            -- Legal names
+            SELECT
+                'lname' AS match_type,
+                regexp_replace(upper(trim(legal_entity_name)), '[^A-Z0-9\s]', '') AS match_key,
+                subscriber_id
+            FROM active_subscribers
+            WHERE legal_entity_name IS NOT NULL
+
+            UNION ALL
+
+            -- Trading names
+            SELECT
+                'tname' AS match_type,
+                regexp_replace(upper(trim(trading_name)), '[^A-Z0-9\s]', '') AS match_key,
+                subscriber_id
+            FROM active_subscribers
+            WHERE trading_name IS NOT NULL
+
+            UNION ALL
+
+            -- name
+            SELECT
+                'name' AS match_type,
+                regexp_replace(upper(trim(name)), '[^A-Z0-9\s]', '') AS match_key,
+                subscriber_id
+            FROM active_subscribers
+            WHERE name IS NOT NULL
+        ) AS name_matches
+    )
+    WHERE sub_count = 1
+
+    UNION ALL
+
+    -- Email domain matches
+    SELECT DISTINCT
+        'email' AS match_type,
+        domain_email_address AS match_key,
+        subscriber_id
+    FROM (
+        SELECT
+            subscriber_id,
+            split_part(email_address1, '@', 2) AS domain_email_address,
+            count(DISTINCT subscriber_id) OVER (PARTITION BY split_part(email_address1, '@', 2)) AS sub_count
+        FROM active_users
+        WHERE split_part(email_address1, '@', 2) NOT IN (
+                'pexa.com.au', 'gmail.com', 'hotmail.com', 'outlook.com',
+                'yahoo.com.au', 'yahoo.com', 'bigpond.com', 'iinet.net.au',
+                'live.com.au', 'optusnet.com.au', 'bigpond.net.au'
+            )
+    )
+    WHERE sub_count = 1
+
+    UNION ALL
+    -- first name & last name matches
+    SELECT DISTINCT
+        'fnl_name' AS match_type,
+        regexp_replace(upper(trim(full_name)), '[^A-Z0-9\s]', '') AS match_key,
+        subscriber_id
+    FROM (
+        SELECT
+            subscriber_id,
+            concat(first_name, ' ', last_name) AS full_name,
+            count(DISTINCT subscriber_id) OVER (PARTITION BY concat(first_name, ' ', last_name)) AS sub_count
+        FROM active_users
+    )
+    WHERE sub_count = 1
+
+    UNION ALL
+    -- full name matches
+    SELECT DISTINCT
+        'full_name' AS match_type,
+        regexp_replace(upper(trim(full_name)), '[^A-Z0-9\s]', '') AS match_key,
+        subscriber_id
+    FROM (
+        SELECT
+            subscriber_id,
+            concat(first_name, ' ', middle_name, ' ', last_name) AS full_name,
+            count(DISTINCT subscriber_id) OVER (PARTITION BY concat(first_name, ' ', middle_name, ' ', last_name)) AS sub_count
+        FROM active_users
+    )
+    WHERE sub_count = 1
+
+    UNION ALL
+    -- manual matches
+    SELECT
+        lower(match_status) AS match_type,
+        registration_id AS match_key,
+        manual_sub_id::varchar AS subscriber_id
+    FROM {{ ref('manual_send_subscriber_match') }}
+
+),
+
+prioritized_matches AS (
+    SELECT
+        s.*,
+        m.subscriber_id,
+        m.match_type,
+        CASE m.match_type
+            WHEN 'match' THEN 1
+            WHEN 'manual' THEN 1
+            WHEN 'referral' THEN 1
+            WHEN 'cannot match' THEN 1
+            WHEN 'orphan' THEN 1
+            WHEN 'abn_sf' THEN 2
+            WHEN 'abn' THEN 3
+            WHEN 'acn' THEN 4
+            WHEN 'email' THEN 5
+            WHEN 'bname' THEN 6
+            WHEN 'lname' THEN 7
+            WHEN 'tname' THEN 8
+            WHEN 'name' THEN 9
+            WHEN 'fnl_name' THEN 10
+            WHEN 'full_name' THEN 11
+            ELSE 12
+        END AS match_priority
+    FROM send_registrations AS s
+    LEFT JOIN active_matches AS m
+        ON (
+            (m.match_type IN ('match', 'manual', 'referral', 'cannot match', 'orphan') AND s.registration_id = m.match_key)
+            OR (m.match_type IN ('abn', 'abn_sf') AND s.abn = m.match_key)
+            OR (m.match_type = 'acn' AND s.acn = m.match_key)
+            OR (m.match_type = 'email' AND s.domain_email_address = m.match_key)
+            OR (
+                m.match_type IN ('bname', 'lname', 'tname', 'name')
+                AND (regexp_replace(upper(trim(s.business_name)), '[^A-Z0-9\s]', '') = m.match_key
+                or regexp_replace(upper(trim(s.affiliate_branch)), '[^A-Z0-9\s]', '') = m.match_key
+                )
+
+            )
+            OR (
+                m.match_type IN ('full_name', 'fnl_name')
+                AND regexp_replace(upper(trim(s.full_name)), '[^A-Z0-9\s]', '') = m.match_key
+            )
+        )
+) --select * from prioritized_matches
+,
+
+best_matches AS (
+    SELECT
+        *,
+        row_number() OVER (
+            PARTITION BY registration_id
+            ORDER BY match_priority
+        ) AS rn
+    FROM prioritized_matches
+)
+,
+
+matches AS (
+    SELECT
+        *,
+        coalesce(subscriber_id, NULL) AS final_subscriber_id,
+        coalesce(match_type, 'no_match') AS match_method
+    FROM best_matches
+    WHERE rn = 1
+
+    UNION ALL
+
+    SELECT
+        b.*,
+        NULL AS abn,
+        NULL AS acn,
+        NULL AS subscriber_id,
+        NULL AS match_type,
+        999 AS match_priority,
+        1 AS rn,
+        NULL AS final_subscriber_id,
+        'referral' AS match_method
+    FROM base_activity AS b
+    WHERE registration_id IN (SELECT registration_id FROM referrals)
+
+    -- UNION ALL
+
+    -- SELECT 
+    --     b.*,
+    --     NULL as abn,
+    --     NULL as acn,
+    --     NULL as subscriber_id,
+    --     NULL as match_type,
+    --     999 as match_priority,
+    --     1 as rn,
+    --     NULL as final_subscriber_id,
+    --     'orphan' as match_method
+    -- FROM base_activity b
+    -- WHERE registration_id IN (SELECT registration_id FROM orphans)
+),
+
+
+duplicates AS (
+    SELECT DISTINCT
+        x.registration_id,
+        CASE
+            WHEN x.reg_count > 1 THEN concat('duplicate registration match found with ', x.match_method)
+            WHEN x.sub_count > 1 THEN 'duplicate subscribers'
+            {% if is_incremental() %}
+            WHEN t.registration_id IS NOT NULL THEN 'new registration for existing subscriber'
+            {% endif %}
+            ELSE NULL
+        END AS match_method
+    FROM (
+        SELECT
+            registration_id,
+            final_subscriber_id AS subscriber_id,
+            master_registration_id,
+            match_method,
+            count(DISTINCT master_registration_id) OVER (PARTITION BY final_subscriber_id) AS reg_count,
+            count(DISTINCT final_subscriber_id) OVER (PARTITION BY registration_id) AS sub_count
+        FROM matches
+        WHERE final_subscriber_id IS NOT NULL
+            AND lower(match_method) NOT IN ('referral')
+    ) AS x
+    {% if is_incremental() %}
+    LEFT JOIN {{ this }} t
+        ON x.subscriber_id = t.subscriber_id
+        AND x.master_registration_id != t.master_registration_id
+        AND lower(t.match_method) NOT IN ('referral')
+    {% endif %}
+    WHERE x.reg_count > 1
+        OR x.sub_count > 1
+    {% if is_incremental() %}
+        OR t.registration_id IS NOT NULL
+        {% endif %}
+)
+
+SELECT DISTINCT
+    m.abn_acn,
+    m.affiliate_branch,
+    m.affiliate_employee,
+    m.business_name,
+    m.day_of_lead_created_date_aest,
+    m.day_of_registration_date_aest,
+    m.domain_email_address,
+    m.full_name,
+    m.master_registration_id,
+    m.purpose,
+    m.registration_account_manager,
+    m.registration_account_manager_email,
+    m.registration_created_source,
+    m.registration_id,
+    m.state,
+    m.max_trade_settled_for_accounting_date,
+    m.min_trade_settled_for_accounting_date,
+    m.registrations_pexa_opt_in_flag,
+    m.registrations_pexa_opt_in_date_aest,
+    m.final_subscriber_id AS subscriber_id,
+    s.status AS subscriber_status,
+    coalesce(d.match_method, m.match_method) AS match_method,
+    convert_timezone('Australia/Sydney', m.inserted_at) AS src_delta_extract_ts,
+    convert_timezone('Australia/Sydney', current_timestamp(2)) AS inserted_at,
+    convert_timezone('Australia/Sydney', current_timestamp(2)) AS updated_at
+FROM matches AS m
+LEFT JOIN duplicates AS d ON m.registration_id = d.registration_id
+LEFT JOIN {{ source('exchange_share', 'vw_subscribers') }} AS s ON m.final_subscriber_id = s.subscriber_id
+

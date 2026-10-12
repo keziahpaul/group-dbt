@@ -1,0 +1,661 @@
+version: 2
+
+models:
+ 
+  - name: subscribers
+    columns:
+      - name: PS_SubscriberID__c
+        config:
+          meta:
+            alation_oid: oid=89211;otype=attribute
+        data_tests:
+          - not_null
+
+          - unique
+
+      - name: inserted_at
+        description: Inserted At
+        config:
+          meta:
+            alation_oid: oid=89225;otype=attribute
+            alation_title: Inserted At
+
+      - name: name
+        description: Name
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+          meta:
+            alation_oid: oid=89219;otype=attribute
+            alation_title: Name
+
+      - name: ps_account__c
+        config:
+          meta:
+            alation_oid: oid=109546;otype=attribute
+
+      - name: ps_reasonforsuspension__c
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+          meta:
+            alation_oid: oid=89213;otype=attribute
+
+      - name: ps_reasonfortermination__c
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+          meta:
+            alation_oid: oid=89221;otype=attribute
+
+      - name: ps_status__c
+        config:
+          meta:
+            alation_oid: oid=89231;otype=attribute
+
+      - name: ps_suspensionterminationdate__c
+        config:
+          meta:
+            alation_oid: oid=92710;otype=attribute
+
+      - name: ps_terminationother__c
+        config:
+          meta:
+            alation_oid: oid=89234;otype=attribute
+
+      - name: record_id
+        description: Record Id
+        config:
+          meta:
+            alation_oid: oid=109552;otype=attribute
+            alation_title: Record Id
+
+      - name: src_delta_extract_ts
+        description: Source Delta Extract Timestamp
+        config:
+          meta:
+            alation_oid: oid=89224;otype=attribute
+            alation_title: Source Delta Extract Timestamp
+
+      - name: updated_at
+        description: Updated At
+        config:
+          meta:
+            alation_oid: oid=89217;otype=attribute
+            alation_title: Updated At
+    description: Subscribers
+    config:
+      meta:
+        alation_oid: oid=3714;otype=table
+        alation_title: Subscribers
+
+  - name: product_servicestatus
+    columns:
+      - name: id
+        description: Id
+        config:
+          meta:
+            alation_oid: oid=51593;otype=attribute
+            alation_title: Id
+        data_tests:
+          - not_null:
+              config:
+                severity: error
+
+          - unique:
+              config:
+                severity: error
+
+      - name: subscriber_id
+        description: Subscriber Id
+        config:
+          meta:
+            alation_oid: oid=51567;otype=attribute
+            alation_title: Subscriber Id
+        data_tests:
+          - not_null:
+              config:
+                severity: error
+
+      - name: product_name
+        description: Product Name
+        config:
+          meta:
+            alation_oid: oid=51581;otype=attribute
+            alation_title: Product Name
+        data_tests:
+          - not_null
+
+          - accepted_values:
+              arguments:
+                values:
+                  - PEXA Exchange
+
+                  - PEXA Projects
+
+                  - Send FX
+
+                  - Mobile Signing
+
+      - name: registration_am_c
+        description: Registration Account Manager
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=83700;otype=attribute
+            alation_title: Registration Account Manager
+
+      - name: registration_am_email_c
+        description: Registration Account Manager Email
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+
+      - name: src_delta_extract_ts
+        description: Source Delta Extract Timestamp
+        config:
+          meta:
+            alation_oid: oid=51611;otype=attribute
+            alation_title: Source Delta Extract Timestamp
+        data_tests:
+          - not_null
+
+      - name: inserted_at
+        description: Inserted At
+        config:
+          meta:
+            alation_oid: oid=51594;otype=attribute
+            alation_title: Inserted At
+        data_tests:
+          - not_null
+
+      - name: updated_at
+        description: Updated At
+        config:
+          meta:
+            alation_oid: oid=51603;otype=attribute
+            alation_title: Updated At
+        data_tests:
+          - not_null
+
+      - name: Authoriser_Exchange_User_ID__c
+        description: Authorizer Exchange User ID
+        config:
+          tags:
+            - secure_field=PI_USERID
+          meta:
+            alation_oid: oid=121787;otype=attribute
+            alation_title: Authorizer Exchange User ID
+
+      - name: account_id
+        description: Account Id
+        config:
+          meta:
+            alation_oid: oid=58617;otype=attribute
+            alation_title: Account Id
+
+      - name: api_call_types_used__c
+        description: API Call Types Used
+        config:
+          meta:
+            alation_oid: oid=51596;otype=attribute
+            alation_title: API Call Types Used
+
+      - name: date_registered_c
+        description: Date Registered
+        config:
+          meta:
+            alation_oid: oid=83647;otype=attribute
+            alation_title: Date Registered
+
+      - name: first_transaction_date__c
+        description: First Transaction Date
+        config:
+          meta:
+            alation_oid: oid=51597;otype=attribute
+            alation_title: First Transaction Date
+
+      - name: last_transaction_date__c
+        description: Last Transaction Date
+        config:
+          meta:
+            alation_oid: oid=51585;otype=attribute
+            alation_title: Last Transaction Date
+
+      - name: mobile_signing_contact__c
+        description: Mobile Signing Contract
+        config:
+          tags:
+            - secure_field=PI_CONTACT_NUMBER
+          meta:
+            alation_oid: oid=92702;otype=attribute
+            alation_title: Mobile Signing Contract
+
+      - name: mobile_signing_transition_date__c
+        description: Mobile Signing Transition Date
+        config:
+          meta:
+            alation_oid: oid=92694;otype=attribute
+            alation_title: Mobile Signing Transition Date
+
+      - name: mobile_signing_transition_status__c
+        description: Mobile Signing Transition Status
+        config:
+          meta:
+            alation_oid: oid=92725;otype=attribute
+            alation_title: Mobile Signing Transition Status
+
+      - name: pexa_commission_c
+        description: PEXA Commission
+        config:
+          meta:
+            alation_oid: oid=83757;otype=attribute
+            alation_title: PEXA Commission
+
+      - name: product_master_registration_id_c
+        description: Product Master Registration ID
+        config:
+          meta:
+            alation_oid: oid=83696;otype=attribute
+            alation_title: Product Master Registration ID
+
+      - name: product_utilisation_c
+        description: Product Utilisation
+        config:
+          meta:
+            alation_oid: oid=83694;otype=attribute
+            alation_title: Product Utilisation
+
+      - name: ps_status_c
+        description: PS Status
+        config:
+          meta:
+            alation_oid: oid=83718;otype=attribute
+            alation_title: PS Status
+
+      - name: registrationinvite_link_sent__c
+        description: Registration Invite Link Sent
+        config:
+          meta:
+            alation_oid: oid=51595;otype=attribute
+            alation_title: Registration Invite Link Sent
+
+      - name: send_integration_opt_in_c
+        description: SEND integration Opt In
+        config:
+          meta:
+            alation_oid: oid=83629;otype=attribute
+            alation_title: SEND integration Opt In
+
+      - name: settled_turnover_c
+        description: Settled Turnover
+        config:
+          meta:
+            alation_oid: oid=83705;otype=attribute
+            alation_title: Settled Turnover
+
+      - name: total_revenue_c
+        description: Total Revenue
+        config:
+          meta:
+            alation_oid: oid=83658;otype=attribute
+            alation_title: Total Revenue
+
+      - name: total_transactionsl12m__c
+        description: Count of total (transfer and non-transfered transactions) that
+          have occurred in the last 12months
+        config:
+          meta:
+            alation_oid: oid=51577;otype=attribute
+            alation_title: Total Transactions L12M
+
+      - name: total_volume_buyer_cfy__c
+        description: Total Volume Buyer CFY
+        config:
+          meta:
+            alation_oid: oid=83699;otype=attribute
+            alation_title: Total Volume Buyer CFY
+
+      - name: total_volume_seller_cfy__c
+        description: Total Volume Seller CFY
+        config:
+          meta:
+            alation_oid: oid=83736;otype=attribute
+            alation_title: Total Volume Seller CFY
+
+      - name: transfer_transactions_l12m__c
+        description: Count of transfer transactions occurred in the last 12months
+        config:
+          meta:
+            alation_oid: oid=51620;otype=attribute
+            alation_title: Transfer Transaction L12M
+
+      - name: workspace_revenue_l12m__c
+        description: Workspace Revenue Last 12M
+        config:
+          meta:
+            alation_oid: oid=51565;otype=attribute
+            alation_title: Workspace Revenue Last 12M
+    description: Product Service Status
+    config:
+      meta:
+        alation_oid: oid=2724;otype=table
+        alation_title: Product Service Status
+
+  - name: contacts
+    columns:
+      - name: user_id
+        description: User Id
+        config:
+          tags:
+            - secure_field=PI_USERID
+          meta:
+            alation_oid: oid=51606;otype=attribute
+            alation_title: User Id
+        data_tests:
+          - not_null
+
+          - unique
+
+      - name: first_name
+        description: First Name
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=58598;otype=attribute
+            alation_title: First Name
+
+      - name: last_name
+        description: Last Name
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=58574;otype=attribute
+            alation_title: Last Name
+
+      - name: email_address
+        description: Email Address
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+          meta:
+            alation_oid: oid=58571;otype=attribute
+            alation_title: Email Address
+
+      - name: phone_number
+        description: Phone Number
+        config:
+          tags:
+            - secure_field=PI_CONTACT_NUMBER
+          meta:
+            alation_oid: oid=58611;otype=attribute
+            alation_title: Phone Number
+
+      - name: user_role
+        description: User Role
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+          meta:
+            alation_oid: oid=58585;otype=attribute
+            alation_title: User Role
+
+      - name: src_delta_extract_ts
+        description: Source Delta Extract Timestamp
+        config:
+          meta:
+            alation_oid: oid=51561;otype=attribute
+            alation_title: Source Delta Extract Timestamp
+        data_tests:
+          - not_null
+
+      - name: status__c
+        description: default status is Processing Answers
+        data_tests:
+          - not_null
+
+      - name: inserted_at
+        description: Inserted At
+        config:
+          meta:
+            alation_oid: oid=51599;otype=attribute
+            alation_title: Inserted At
+        data_tests:
+          - not_null
+
+      - name: updated_at
+        description: Updated At
+        config:
+          meta:
+            alation_oid: oid=51562;otype=attribute
+            alation_title: Updated At
+        data_tests:
+          - not_null
+
+      - name: exchange_last_login__c
+        description: '.... C is because of contacts tables in Salesforce'
+        config:
+          meta:
+            alation_oid: oid=51617;otype=attribute
+            alation_title: Exchange Last Login
+
+      - name: exchange_user_login_days_count__c
+        description: Exchange User Login Days Count
+        config:
+          meta:
+            alation_oid: oid=51610;otype=attribute
+            alation_title: Exchange User Login Days Count
+
+      - name: primary_subscriber_manager_flag
+        description: Primary Subscriber Manager Flag
+        config:
+          meta:
+            alation_oid: oid=58621;otype=attribute
+            alation_title: Primary Subscriber Manager Flag
+
+      - name: subscriber_id
+        description: Subscriber Id
+        config:
+          meta:
+            alation_oid: oid=58579;otype=attribute
+            alation_title: Subscriber Id
+
+      - name: user_status
+        description: User Status
+        config:
+          meta:
+            alation_oid: oid=58581;otype=attribute
+            alation_title: User Status
+    description: Contacts
+    config:
+      meta:
+        alation_oid: oid=2722;otype=table
+        alation_title: Contacts
+
+  - name: user_details
+    columns:
+      - name: user_id
+        description: User Id
+        config:
+          tags:
+            - secure_field=PI_USERID
+          meta:
+            alation_oid: oid=51563;otype=attribute
+            alation_title: User Id
+
+      - name: first_name
+        description: First Name
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=51592;otype=attribute
+            alation_title: First Name
+
+      - name: last_name
+        description: Last Name
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=51575;otype=attribute
+            alation_title: Last Name
+
+      - name: email_address
+        description: Email Address
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+          meta:
+            alation_oid: oid=51618;otype=attribute
+            alation_title: Email Address
+
+      - name: phone_number
+        description: Phone Number
+        config:
+          tags:
+            - secure_field=PI_CONTACT_NUMBER
+          meta:
+            alation_oid: oid=51560;otype=attribute
+            alation_title: Phone Number
+
+      - name: user_role
+        description: User Role
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+          meta:
+            alation_oid: oid=51612;otype=attribute
+            alation_title: User Role
+
+      - name: inserted_at
+        description: Inserted At
+        config:
+          meta:
+            alation_oid: oid=51571;otype=attribute
+            alation_title: Inserted At
+
+      - name: primary_subscriber_manager_flag
+        description: Primary Subscriber Manager Flag
+        config:
+          meta:
+            alation_oid: oid=51576;otype=attribute
+            alation_title: Primary Subscriber Manager Flag
+
+      - name: src_delta_extract_ts
+        description: Source Delta Extract Timestamp
+        config:
+          meta:
+            alation_oid: oid=51582;otype=attribute
+            alation_title: Source Delta Extract Timestamp
+
+      - name: subscriber_id
+        description: <a data-oid="420" data-otype="glossary_term" href="/document/420/">ELN
+          Subscriber ID</a>
+        config:
+          meta:
+            alation_oid: oid=51589;otype=attribute
+            alation_title: Subscriber Id
+
+      - name: updated_at
+        description: Updated At
+        config:
+          meta:
+            alation_oid: oid=51570;otype=attribute
+            alation_title: Updated At
+
+      - name: user_status
+        description: User Status
+        config:
+          meta:
+            alation_oid: oid=51566;otype=attribute
+            alation_title: User Status
+
+      - name: user_status_reason_changed_date
+        description: User Status Reason Changed Date
+        config:
+          meta:
+            alation_oid: oid=51580;otype=attribute
+            alation_title: User Status Reason Changed Date
+    description: User Details
+    config:
+      meta:
+        alation_oid: oid=2725;otype=table
+        alation_title: User Details
+
+  - name: mobile_signing
+    columns:
+      - name: Authoriser_Exchange_User_ID
+        description: Authoriser Exchange User Id
+        config:
+          tags:
+            - secure_field=PI_USERID
+          meta:
+            alation_oid: oid=121445;otype=attribute
+            alation_title: Authoriser Exchange User Id
+
+      - name: created_by
+        description: Created By
+        config:
+          tags:
+            - secure_field=PI_USERID
+          meta:
+            alation_oid: oid=92708;otype=attribute
+            alation_title: Created By
+
+      - name: created_date
+        description: Created Date
+        config:
+          meta:
+            alation_oid: oid=92723;otype=attribute
+            alation_title: Created Date
+
+      - name: inserted_at
+        description: Inserted At
+        config:
+          meta:
+            alation_oid: oid=92703;otype=attribute
+            alation_title: Inserted At
+
+      - name: src_delta_extract_ts
+        description: Source Delta Extract Timestamp
+        config:
+          meta:
+            alation_oid: oid=92715;otype=attribute
+            alation_title: Source Delta Extract Timestamp
+
+      - name: status
+        description: Status
+        config:
+          meta:
+            alation_oid: oid=92699;otype=attribute
+            alation_title: Status
+
+      - name: status_rank
+        description: Status Rank
+        config:
+          meta:
+            alation_oid: oid=92695;otype=attribute
+            alation_title: Status Rank
+
+      - name: subscriber_id
+        description: Subscriber Id
+        config:
+          meta:
+            alation_oid: oid=92716;otype=attribute
+            alation_title: Subscriber Id
+
+      - name: updated_at
+        description: Updated At
+        config:
+          meta:
+            alation_oid: oid=92726;otype=attribute
+            alation_title: Updated At
+    description: Mobile Signing
+    config:
+      meta:
+        alation_oid: oid=3808;otype=table
+        alation_title: Mobile Signing

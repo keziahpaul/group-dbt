@@ -1,0 +1,13 @@
+sources:
+  - name: ssa_source
+    database: "{{env_var('DBT_SSA_DB')}}"
+    schema: "{{env_var('DBT_SSA_SCHEMA')}}"
+    tables:
+      - name: subscribers_enriched_master
+        description: table from self-service analytics that contains fields from transaction_sdbe, salesforce Account and exchange subscriber.
+
+      - name: settlements
+        description: table from self-service analytics DB that has the settlements in exchange
+
+      - name: lodgement_participants
+        description: table from self-service analytics DB that has the lodgement details for both billable and nonbillable subscriber

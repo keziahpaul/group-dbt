@@ -1,0 +1,29 @@
+{{
+    config(
+        materialized='incremental',
+        unique_key='registration_id'
+    )
+}}
+select
+    registration_id,
+    manual_sub_id,
+    inserted_at::timestamp_ntz as inserted_at,
+    inserted_by::varchar as inserted_by,
+    updated_at::timestamp_ntz as updated_at,
+    updated_by::varchar as updated_by,
+    match_status::varchar as match_status,
+    subscriber_status::varchar as subscriber_status
+from
+    (
+        values
+        ('b593b2a5-b71f-495e-83f0-b8cfb527a45d', null, '2025-08-18 13:50:38.428', 'SYSTEM', '2025-08-18 13:50:38.428', 'SYSTEM', 'Orphan', null)
+    ) as manual_rego_match (
+        registration_id,
+        manual_sub_id,
+        inserted_at,
+        inserted_by,
+        updated_at,
+        updated_by,
+        match_status,
+        subscriber_status
+    )

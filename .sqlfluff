@@ -1,0 +1,11 @@
+[sqlfluff]
+templater = dbt
+max_line_length = 0
+exclude_rules = AM04
+
+[sqlfluff:indentation]
+allow_implicit_indents = True
+
+[sqlfluff:templater:jinja]
+
+[sqlfluff:templater:dbt]

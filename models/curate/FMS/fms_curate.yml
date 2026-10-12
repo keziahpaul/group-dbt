@@ -1,0 +1,124 @@
+models:
+  - name: companyinfo
+    config:
+      alias: vw_companyinfo
+
+  - name: cooexportcontroljurisdictioninuse
+    config:
+      alias: vw_cooexportcontroljurisdictioninuse
+
+  - name: custgroup
+    config:
+      alias: vw_custgroup
+
+  - name: custinvoicejour
+    config:
+      alias: vw_custinvoicejour
+
+  - name: custinvoicetrans
+    config:
+      alias: vw_custinvoicetrans
+
+  - name: custtable
+    config:
+      alias: vw_custtable
+
+  - name: dimensionattribute
+    config:
+      alias: vw_dimensionattribute
+
+  - name: dimensionattributedircategory
+    config:
+      alias: vw_dimensionattributedircategory
+
+  - name: dimensionattributevalue
+    config:
+      alias: vw_dimensionattributevalue
+
+  - name: dimensionattributevaluecombination
+    config:
+      alias: vw_dimensionattributevaluecombination
+
+  - name: dimensionfinancialtag
+    config:
+      alias: vw_dimensionfinancialtag
+
+  - name: dimensionfocusbalance
+    config:
+      alias: vw_dimensionfocusbalance
+
+  - name: dimensionfocusledgerdimensionreference
+    config:
+      alias: vw_dimensionfocusledgerdimensionreference
+
+  - name: dimensionhierarchy
+    config:
+      alias: vw_dimensionhierarchy
+
+  - name: dirpartytable
+    config:
+      alias: vw_dirpartytable
+
+  - name: ecoresproduct
+    config:
+      alias: vw_ecoresproduct
+
+  - name: ecoresproducttranslation
+    config:
+      alias: vw_ecoresproducttranslation
+
+  - name: fiscalcalendarperiod
+    config:
+      alias: vw_fiscalcalendarperiod
+
+  - name: generaljournalaccountentry
+    config:
+      alias: vw_generaljournalaccountentry
+
+  - name: generaljournalentry
+    config:
+      alias: vw_generaljournalentry
+
+  - name: inventitemgroup
+    config:
+      alias: vw_inventitemgroup
+
+  - name: inventitemgroupitem
+    config:
+      alias: vw_inventitemgroupitem
+
+  - name: inventtable
+    config:
+      alias: vw_inventtable
+
+  - name: ledger
+    config:
+      alias: vw_ledger
+
+  - name: ledgerchartofaccounts
+    config:
+      alias: vw_ledgerchartofaccounts
+
+  - name: mainaccount
+    config:
+      alias: vw_mainaccount
+
+  - name: srsanalysisenums
+    config:
+      alias: vw_srsanalysisenums
+
+  - name: taxtrans
+    config:
+      alias: vw_taxtrans
+
+  - name: vendsettlement
+    config:
+      alias: vw_vendsettlement
+
+  - name: vendtable
+    config:
+      alias: vw_vendtable
+
+  - name: vendtrans
+    config:
+      alias: vw_vendtrans

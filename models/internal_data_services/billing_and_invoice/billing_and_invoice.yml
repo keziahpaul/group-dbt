@@ -1,0 +1,61 @@
+version: 2
+
+models:
+  - name: api_exchange
+    columns:
+      - name: subscriber_name
+        description: Subscriber name of the subscriber that is making the API calls. This is the business or organisation name associated with the subscriber.
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+
+      - name: integrator_name
+        description: Derived integrator/client name for the API activity. Based on channel and available source data, it is derived from legal entity name, client name or PMS.
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+
+      - name: subscriber_reference
+        description: Subscriber reference from the workspace. 
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+          
+
+      
+
+  - name: api_push_notification
+    columns:
+      - name: subscriber_name
+        description: Subscriber name of the subscriber that is making API calls or receiving webhook push notifications. This is the business name displayed for the subscriber.
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+
+
+      - name: subscriber_reference
+        description: Participant/subscriber reference captured against the workspace or lodgement participant.
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+
+  - name: paid_api_details
+    columns:
+      - name: subscriber_name
+        description: Name of the subscriber that is making API calls or receiving webhook push notifications. Where the subscriber is also the integrator, SUBSCRIBER_NAME and INTEGRATOR_NAME may be the same.
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+
+      - name: integrator_name
+        description: Name of the integrator/client associated with the API usage. Where the subscriber is the integrator, INTEGRATOR_NAME may be the same as SUBSCRIBER_NAME.
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+
+      - name: subscriber_reference
+        description: Subscriber reference from the workspace. 
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+      

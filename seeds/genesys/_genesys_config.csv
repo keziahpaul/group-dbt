@@ -1,0 +1,44 @@
+target,is_paged,max_pages,id_path,verb,endpoint_uri,arguments,endpoint_title,endpoint_doc_url
+"WRAP_UP_CODE",YES,,"entities[].id","GET","/api/v2/routing/wrapupcodes",,"Routing / Get wrap-up codes paginated","https://developer.genesys.cloud/routing/routing/#get-api-v2-routing-wrapupcodes"
+"USER",YES,,"entities[].id","GET","/api/v2/users","{""state"": ""any"", ""sortOrder"": ""ascending""}","Users / Get users paginated","https://developer.genesys.cloud/useragentman/users/#get-api-v2-users"
+"QUEUE",YES,,"entities[].id","GET","/api/v2/routing/queues","{""sortOrder"": ""asc""}","Routing / Get queues paginated","https://developer.genesys.cloud/routing/routing/#get-api-v2-routing-queues"
+"CONVERSATION",YES,,"conversations[].conversationId","POST","/api/v2/analytics/conversations/details/jobs","{""order"": ""asc"", ""orderBy"": ""conversationStart""}","Analytics / Get conversation details asynchronously","https://developer.genesys.cloud/analyticsdatamanagement/analytics/analytics-apis#post-api-v2-analytics-conversations-details-jobs"
+"GLOBAL_QUEUE_AGGREGATE",NO,,"[""results[].group.mediaType"", ""results[].data[].interval""]","POST","/api/v2/analytics/conversations/aggregates/query","{
+        ""granularity"":""P1D"",
+        ""timeZone"":""Australia/Melbourne"",
+        ""metrics"":[
+            ""nBlindTransferred"", ""nBotInteractions"", ""nCobrowseSessions"", ""nConnected"",
+            ""nConsult"", ""nConsultTransferred"", ""nConversations"", ""nError"", ""nOffered"",
+            ""nOutbound"", ""nOutboundAbandoned"", ""nOutboundAttempted"", ""nOutboundConnected"",
+            ""nOverSla"", ""nStateTransitionError"", ""nTransferred"", ""oAudioMessageCount"",
+            ""oExternalAudioMessageCount"", ""oExternalMediaCount"", ""oMediaCount"",
+            ""oMessageCount"", ""oMessageSegmentCount"", ""oMessageTurn"", ""oServiceLevel"",
+            ""oServiceTarget"", ""tAbandon"", ""tAcd"", ""tActiveCallbackComplete"", ""tAcw"",
+            ""tAgentResponseTime"", ""tAlert"", ""tAnswered"", ""tAverageAgentResponseTime"",
+            ""tAverageCustomerResponseTime"", ""tBarging"", ""tCoachingComplete"", ""tConnected"",
+            ""tContacting"", ""tDialing"", ""tFirstConnect"", ""tFirstDial"", ""tFirstEngagement"",
+            ""tFirstResponse"", ""tFlowOut"", ""tHandle"", ""tHeldComplete"", ""tIvr"",
+            ""tMonitoringComplete"", ""tNotResponding"", ""tParkComplete"", ""tShortAbandon"",
+            ""tSnippetRecord"", ""tTalkComplete"", ""tUserResponseTime"", ""tVoicemail"", ""tWait""
+        ]
+    }","Analytics / Get conversation aggregates","https://developer.genesys.cloud/analyticsdatamanagement/analytics/analytics-apis#post-api-v2-analytics-conversations-aggregates-query"
+"QUEUE_AGGREGATE",NO,,"[""results[].group.queueId"", ""results[].group.mediaType"", ""results[].data[].interval""]","POST","/api/v2/analytics/conversations/aggregates/query","{
+        ""granularity"":""P1D"",
+        ""groupBy"":[""queueId""],
+        ""timeZone"":""Australia/Melbourne"",
+        ""metrics"":[
+            ""nBlindTransferred"", ""nBotInteractions"", ""nCobrowseSessions"", ""nConnected"",
+            ""nConsult"", ""nConsultTransferred"", ""nConversations"", ""nError"", ""nOffered"",
+            ""nOutbound"", ""nOutboundAbandoned"", ""nOutboundAttempted"", ""nOutboundConnected"",
+            ""nOverSla"", ""nStateTransitionError"", ""nTransferred"", ""oAudioMessageCount"",
+            ""oExternalAudioMessageCount"", ""oExternalMediaCount"", ""oMediaCount"",
+            ""oMessageCount"", ""oMessageSegmentCount"", ""oMessageTurn"", ""oServiceLevel"",
+            ""oServiceTarget"", ""tAbandon"", ""tAcd"", ""tActiveCallbackComplete"", ""tAcw"",
+            ""tAgentResponseTime"", ""tAlert"", ""tAnswered"", ""tAverageAgentResponseTime"",
+            ""tAverageCustomerResponseTime"", ""tBarging"", ""tCoachingComplete"", ""tConnected"",
+            ""tContacting"", ""tDialing"", ""tFirstConnect"", ""tFirstDial"", ""tFirstEngagement"",
+            ""tFirstResponse"", ""tFlowOut"", ""tHandle"", ""tHeldComplete"", ""tIvr"",
+            ""tMonitoringComplete"", ""tNotResponding"", ""tParkComplete"", ""tShortAbandon"",
+            ""tSnippetRecord"", ""tTalkComplete"", ""tUserResponseTime"", ""tVoicemail"", ""tWait""
+        ]
+    }","Analytics / Get conversation aggregates","https://developer.genesys.cloud/analyticsdatamanagement/analytics/analytics-apis#post-api-v2-analytics-conversations-aggregates-query"

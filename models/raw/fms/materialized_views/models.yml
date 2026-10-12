@@ -1,0 +1,56 @@
+version: 2
+
+models:
+  - name: vw_companyinfo
+    description: Company information model
+    
+
+  - name: vw_cooexportcontroljurisdictioninuse
+    description: Export control jurisdiction model
+    
+
+  - name: vw_custgroup
+    description: Customer group model
+    
+
+  - name: vw_custinvoicejour
+    description: Customer invoice journal model
+    
+      
+      
+
+  - name: vw_custinvoicetrans
+    description: Customer invoice transactions model
+    
+      
+      
+
+  - name: vw_custtable
+    description: Customer table model
+    
+      
+      
+
+  - name: vw_dimensionattribute
+    description: Dimension attribute model
+    
+      
+      
+
+  - name: vw_dimensionattributevalue
+    description: Dimension attribute value model
+    
+      
+      
+
+  - name: vw_dimensionattributevaluecombination
+    description: Dimension attribute value combination model
+    
+      
+      
+
+  - name: vw_dimensionattributedircategory
+    description: Dimension attribute value combination model
+    
+      
+      

@@ -1,0 +1,4 @@
+table_name,incremental_timestamp_column,path_prefix,path_date_format,file_datetime_format,need_file_ext,file_ext,output_path_format,unload_single_file
+tg_weekly_report,,FMS_TG_weekly_report,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/FMS_TG_weekly_report_%(au_file_date)s%(ext)s,true
+Sot_weekly_report,,FMS_SoT_weekly_report,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/FMS_SoT_weekly_report_%(au_file_date)s%(ext)s,true
+sot_daily_report,,FMS_SoT_daily_report,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/FMS_SOT_daily_report_%(au_file_date)s%(ext)s,true

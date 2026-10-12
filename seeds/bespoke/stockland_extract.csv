@@ -1,0 +1,3 @@
+table_name,incremental_timestamp_column,path_prefix,path_date_format,file_datetime_format,need_file_ext,file_ext,output_path_format,unload_single_file
+PEXAProjectsData_Stockland,,stockland_project_data,%Y-%m-%d,%Y%m%d_%H%M00,true,.csv,/%(au_path_date)s/PEXAProjectsData_Stockland_%(au_file_date)s%(ext)s,true
+PEXAProjectsData_Stockland_GST_Witholding,,stockland_project_data_gst,%Y-%m-%d,%Y%m%d_%H%M00,true,.csv,/%(au_path_date)s/PEXAProjectsData_Stockland_GST_Witholding_%(au_file_date)s%(ext)s,true

@@ -1,0 +1,93 @@
+version: 2
+
+models:
+  - name: e_case_lookup
+    columns:
+      - name: id
+        description: Salesforce Case Type Record Id
+        data_tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+
+  - name: e_task_lookup
+    columns:
+      - name: id
+        description: Salesforce Task Type Record Id
+        data_tests:
+          - unique:
+              config:
+                severity: warn
+          - not_null:
+              config:
+                severity: warn
+
+  - name: case_activity
+    columns:
+      - name: case_id
+        description: Case Id
+      - name: account_id
+        description: Account Id
+      - name: case_number
+        description: Case Number
+      - name: subject
+        description: Case Subject
+      - name: parent_case_id
+        description: Parent Id
+      - name: owner_id
+        description: Owner Id
+      - name: case_record_type
+        description: Type
+      - name: case_origin
+        description: Origin
+      - name: created_date
+        description: Date and time when this record was created.
+      - name: sub_category
+        description: Sub Category
+      - name: sub_sub_category
+        description: Sub Sub Category
+      - name: first_call_resolution
+        description: First Call Resolution
+      - name: case_type_id
+        description: Record Type Id
+      - name: case_type_name
+        description: Case Type Name
+      - name: closed_date
+        description: Closed Date
+      - name: description
+        description: Description
+      - name: case_reason
+        description: Reason
+      - name: case_status
+        description: Status
+      - name: task_id
+        description: Id
+      - name: task_type_id
+        description: Record Type Id
+      - name: task_type_name
+        description: Task Type Name
+      - name: task_subject
+        description: Subject
+      - name: task_activity_date
+        description: Activity Date
+      - name: call_object_id
+        description: Call Object
+      - name: call_duration_in_seconds
+        description: Called Duration In Seconds
+      - name: call_type
+        description: Call Type
+      - name: completed_date_time
+        description: Completed Date Time
+      - name: task_description
+        description: Description
+      - name: is_closed
+        description: Is Closed
+      - name: is_high_priority
+        description: Is High Priority
+      - name: task_status
+        description: Status
+      - name: task_subtype
+        description: Task Subtype

@@ -1,0 +1,935 @@
+version: 2
+
+sources:
+  - name: selfservice_source
+    database: "{{env_var('DBT_SSA_DB')}}"
+    schema: "{{env_var('DBT_SSA_SCHEMA')}}"
+    tables:
+      - name: WORKSPACE_SUMMARY_REPORT_FI
+
+models:
+  - name: Bankwest_to_CBA
+    description: "<div><p>Provides listing of all in-flight Refinance workspaces with\
+      \ Bankwest on title and CBA as Incoming. Used to manage risk in-line with fee-charging\
+      \ for CBA.</p><p>More information here:\_\_<a href=\"https://pexa.atlassian.net/wiki/spaces/EDP/pages/1469220494/CBA+Inflight+Refis+-+DNA1017\"\
+      \ id=\"isPasted\">CBA Inflight Refis - DNA1017 - Enterprise Data Platform -\
+      \ Confluence</a></p></div>"
+    columns:
+      - name: current_settlement_date
+        description: Current settlement date as of reporting date
+        config:
+          meta:
+            alation_oid: oid=104659;otype=attribute
+            alation_title: Current Settlement Date
+
+      - name: im_reference
+        description: Reference value for incoming mortgagee in workspace
+        config:
+          meta:
+            alation_oid: oid=104678;otype=attribute
+            alation_title: Incoming Mortgagee Reference
+
+      - name: incoming_mortgagee
+        description: <p id="isPasted">The bank the Purchaser is borrowing money from.</p>
+        config:
+          meta:
+            alation_oid: oid=104637;otype=attribute
+            alation_title: Incoming Mortgagee
+
+      - name: mortgagee_on_title
+        description: <p id="isPasted">The bank the Vendor borrowed money from.</p>
+        config:
+          meta:
+            alation_oid: oid=104654;otype=attribute
+            alation_title: Mortgagee On Title
+
+      - name: mot_reference
+        description: Reference value for mortgagee on title in workspace
+        config:
+          meta:
+            alation_oid: oid=104642;otype=attribute
+            alation_title: Mortgagee On Title Reference
+
+      - name: reporting_date
+        description: Date on which the report was run
+        config:
+          meta:
+            alation_oid: oid=104660;otype=attribute
+            alation_title: Reporting Date
+
+      - name: transaction_type
+        description: Type of transaction being performed in given workspace eg. SALE,
+          REFINANCE
+        config:
+          meta:
+            alation_oid: oid=104664;otype=attribute
+            alation_title: Transaction Type
+
+      - name: workspace
+        description: Unique PEXA workspace number reference assigned to workspace
+          upon creation in Exchange
+        config:
+          meta:
+            alation_oid: oid=104647;otype=attribute
+            alation_title: Workspace
+
+      - name: workspace_created_date
+        description: Date of workspace creation
+        config:
+          meta:
+            alation_oid: oid=104653;otype=attribute
+            alation_title: Workspace Created Date
+
+      - name: workspace_status
+        description: Current status of the workspace eg. PREPARED, SETTLED as of reporting
+          date
+        config:
+          meta:
+            alation_oid: oid=104645;otype=attribute
+            alation_title: Workspace Status
+    config:
+      meta:
+        orig_description: CBA Inflight Refis
+        alation_oid: oid=4036;otype=table
+        alation_title: Bankwest to CBA
+
+  - name: Bankwest_to_CBB
+    description: "<div id=\"isPasted\"><p>Provides listing of all in-flight Refinance\
+      \ workspaces with Bankwest on title and CBA Business (CBB) as Incoming. Report\
+      \ is used to manage risk in-line with fee-charging for CBA.</p><p>More information\
+      \ here: \_<a href=\"https://pexa.atlassian.net/wiki/spaces/EDP/pages/1469220494/CBA+Inflight+Refis+-+DNA1017\"\
+      >CBA Inflight Refis - DNA1017 - Enterprise Data Platform - Confluence</a></p></div>"
+    columns:
+      - name: current_settlement_date
+        description: Current settlement date as of reporting date
+        config:
+          meta:
+            alation_oid: oid=104620;otype=attribute
+            alation_title: Current Settlement Date
+
+      - name: im_reference
+        description: Reference value for incoming mortgagee in workspace
+        config:
+          meta:
+            alation_oid: oid=104661;otype=attribute
+            alation_title: Incoming Mortgagee Reference
+
+      - name: incoming_mortgagee
+        description: <p id="isPasted">The bank the Purchaser is borrowing money from.</p>
+        config:
+          meta:
+            alation_oid: oid=104657;otype=attribute
+            alation_title: Incoming Mortgagee
+
+      - name: mortgagee_on_title
+        description: <p id="isPasted">The bank the Vendor borrowed money from.</p>
+        config:
+          meta:
+            alation_oid: oid=104658;otype=attribute
+            alation_title: Mortgagee On Title
+
+      - name: mot_reference
+        description: Reference value for mortgagee on title in workspace
+        config:
+          meta:
+            alation_oid: oid=104674;otype=attribute
+            alation_title: Mortgagee On Title Reference
+
+      - name: reporting_date
+        description: Date on which the report was run
+        config:
+          meta:
+            alation_oid: oid=104671;otype=attribute
+            alation_title: Reporting Date
+
+      - name: transaction_type
+        description: Type of transaction being performed in given workspace eg. SALE,
+          REFINANCE
+        config:
+          meta:
+            alation_oid: oid=104629;otype=attribute
+            alation_title: Transaction Type
+
+      - name: workspace
+        description: Unique PEXA workspace number reference assigned to workspace
+          upon creation in Exchange
+        config:
+          meta:
+            alation_oid: oid=104675;otype=attribute
+            alation_title: Workspace
+
+      - name: workspace_created_date
+        description: Date of workspace creation
+        config:
+          meta:
+            alation_oid: oid=104648;otype=attribute
+            alation_title: Workspace Created Date
+
+      - name: workspace_status
+        description: Current status of the workspace eg. PREPARED, SETTLED as of reporting
+          date
+        config:
+          meta:
+            alation_oid: oid=104672;otype=attribute
+            alation_title: Workspace Status
+    config:
+      meta:
+        orig_description: CBA Inflight Refis
+        alation_oid: oid=4033;otype=table
+        alation_title: Bankwest to CBB
+
+  - name: CM0346581
+    description: "<div><p>Report was designed to replace two monthly reports with\
+      \ user details: Email, last login, last password change, and the groups they\
+      \ are a part of. There was a report for the retail business (563) and commercial\
+      \ (18742). CBA have requested a change to this report with minor field/column\
+      \ name changes, combining both retail and commercial and changing to a daily\
+      \ delivery. The delivery method is a S3 drop.</p><p>Additional details here:\
+      \ \_<a href=\"https://pexa.atlassian.net/wiki/spaces/EDP/pages/1858175418/CBA+User+Sailpoint+-+DNA240201\"\
+      \ id=\"isPasted\">CBA User Sailpoint - DNA240201 - Enterprise Data Platform\
+      \ - Confluence</a></p></div>"
+    columns:
+      - name: account enabled
+        description: Shows true or false if user account status is active in Exchange
+        config:
+          meta:
+            alation_oid: oid=104622;otype=attribute
+            alation_title: Account Enabled
+
+      - name: account identifier
+        description: User account username in email address format
+        config:
+          meta:
+            alation_oid: oid=104646;otype=attribute
+            alation_title: Account Identifier
+
+      - name: account type
+        description: User account type - combination of subscriber ID and subscriber
+          name
+        config:
+          meta:
+            alation_oid: oid=104640;otype=attribute
+            alation_title: Account Type
+
+      - name: created date
+        description: Date of user account creation
+        config:
+          meta:
+            alation_oid: oid=104677;otype=attribute
+            alation_title: Created Date
+
+      - name: email
+        description: Email address or street address associated with user
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+          meta:
+            alation_oid: oid=104625;otype=attribute
+            alation_title: Email
+
+      - name: employeeid
+        description: Empty string for CBA to populate with Employee ID
+        config:
+          meta:
+            alation_oid: oid=104639;otype=attribute
+            alation_title: Employee Id
+
+      - name: entitlement description
+        description: Application role associated with user eg. Subscriber User, PEXA
+          System Administrator
+        config:
+          meta:
+            alation_oid: oid=104634;otype=attribute
+            alation_title: Entitlement Description
+
+      - name: given name
+        description: First name of user
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=104643;otype=attribute
+            alation_title: Given Name
+
+      - name: group
+        description: User group identifier combining 'Retail' or 'Commercial' (determined
+          by subscriber id) with a single group membership (from application roles,
+          workgroups, permissions and planner status).
+        config:
+          meta:
+            alation_oid: oid=104663;otype=attribute
+            alation_title: Group
+
+      - name: last logon date
+        description: Date of most recent user logon as of reporting date
+        config:
+          meta:
+            alation_oid: oid=104655;otype=attribute
+            alation_title: Last Logon Date
+
+      - name: last password change
+        description: Date of most recent password change as of reporting date
+        config:
+          meta:
+            alation_oid: oid=104632;otype=attribute
+            alation_title: Last Password Change
+
+      - name: networkid
+        description: Empty string for CBA to populate with network ID of user
+        config:
+          meta:
+            alation_oid: oid=104630;otype=attribute
+            alation_title: Network Id
+
+      - name: surname
+        description: Surname of user
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=104644;otype=attribute
+            alation_title: Surname
+    config:
+      meta:
+        orig_description: CBA User Sailpoint
+        alation_oid: oid=4032;otype=table
+        alation_title: CBA User Sailpoint
+
+  - name: PEXARetailAppProduction_Prod
+    description: Report contains a list of all users, last login date, password change
+      and workgroup permissions. Provided for retail customer.
+    columns:
+      - name: account description
+        description: Empty string for CBA to populate with Account Description of
+          user
+        config:
+          meta:
+            alation_oid: oid=106131;otype=attribute
+            alation_title: Account Description
+
+      - name: account disabled
+        description: Shows true or false if user account status is not 'ACTIVE' in
+          Exchange
+        config:
+          meta:
+            alation_oid: oid=106156;otype=attribute
+            alation_title: Account Disabled
+
+      - name: account name
+        description: User account username in email address format
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+          meta:
+            alation_oid: oid=106136;otype=attribute
+            alation_title: Account Name
+
+      - name: created date
+        description: Date of user account creation
+        config:
+          meta:
+            alation_oid: oid=106150;otype=attribute
+            alation_title: Created Date
+
+      - name: email
+        description: User account username in email address format
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+          meta:
+            alation_oid: oid=106134;otype=attribute
+            alation_title: Email
+
+      - name: employeeid
+        description: Empty string for CBA to populate with employee ID of user
+        config:
+          meta:
+            alation_oid: oid=106160;otype=attribute
+            alation_title: Employee Id
+
+      - name: endpoint
+        description: Assigned 'PEXACommercialloansAppProduction' or 'PEXARetailAppProduction'
+          as endpoint based on subscriber ID
+        config:
+          meta:
+            alation_oid: oid=106133;otype=attribute
+            alation_title: Endpoint
+
+      - name: given name
+        description: First name of user
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=106161;otype=attribute
+            alation_title: Given Name
+
+      - name: lanid
+        description: Empty string for CBA to populate with LAN ID of user
+        config:
+          meta:
+            alation_oid: oid=106137;otype=attribute
+            alation_title: LAN ID
+
+      - name: last logon date
+        description: Date of most recent user logon as of reporting date
+        config:
+          meta:
+            alation_oid: oid=106152;otype=attribute
+            alation_title: Last Logon Date
+
+      - name: last password changed
+        description: Date of most recent password change as of reporting date
+        config:
+          meta:
+            alation_oid: oid=106145;otype=attribute
+            alation_title: Last Password Changed
+
+      - name: relationship based entitlement
+        description: Group membership of user based on permissions, workgroups and
+          application roles.
+        config:
+          meta:
+            alation_oid: oid=106146;otype=attribute
+            alation_title: Relationship Based Entitlement
+
+      - name: sub type
+        description: Empty string for CBA to populate with sub type of user
+        config:
+          meta:
+            alation_oid: oid=106158;otype=attribute
+            alation_title: Sub Type
+
+      - name: super type
+        description: Identifier 'imsNonHuman' = CBA Bot used by PEXA, 'imsHuman' =
+          Not a CBA Bot
+        config:
+          meta:
+            alation_oid: oid=106132;otype=attribute
+            alation_title: Super Type
+
+      - name: surname
+        description: Surname of user
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=106138;otype=attribute
+            alation_title: Surname
+
+      - name: value-based entitlement
+        description: Empty string for CBA to populate with value based entitlement
+          of user
+        config:
+          meta:
+            alation_oid: oid=106143;otype=attribute
+            alation_title: Value Based Entitlement
+    config:
+      meta:
+        orig_description: CBA User Report (Drift)
+        alation_oid: oid=4120;otype=table
+        alation_title: PEXA Retail Production
+
+  - name: PEXACommercialloansAppProduction_Prod
+    description: Report contains a list of all users, last login date, password change
+      and workgroup permissions. Provided for commercial customers.
+    columns:
+      - name: account description
+        description: Empty string for CBA to populate with Account Description of
+          user
+        config:
+          meta:
+            alation_oid: oid=116301;otype=attribute
+            alation_title: Account Description
+
+      - name: account disabled
+        description: Shows true or false if user account status is not 'ACTIVE' in
+          Exchange
+        config:
+          meta:
+            alation_oid: oid=116308;otype=attribute
+            alation_title: Account Disabled
+
+      - name: account name
+        description: User account username in email address format
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+          meta:
+            alation_oid: oid=116297;otype=attribute
+            alation_title: Account Name
+
+      - name: created date
+        description: Date of user account creation
+        config:
+          meta:
+            alation_oid: oid=116299;otype=attribute
+            alation_title: Created Date
+
+      - name: email
+        description: User account username in email address format
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+          meta:
+            alation_oid: oid=116298;otype=attribute
+            alation_title: Email
+
+      - name: employeeid
+        description: Empty string for CBA to populate with employee ID of user
+        config:
+          meta:
+            alation_oid: oid=116307;otype=attribute
+            alation_title: Employee Id
+
+      - name: endpoint
+        description: Assigned 'PEXACommercialloansAppProduction' or 'PEXARetailAppProduction'
+          as endpoint based on subscriber ID
+        config:
+          meta:
+            alation_oid: oid=116302;otype=attribute
+            alation_title: Endpoint
+
+      - name: given name
+        description: First name of user
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=116295;otype=attribute
+            alation_title: Given Name
+
+      - name: lanid
+        description: Empty string for CBA to populate with LAN ID of user
+        config:
+          meta:
+            alation_oid: oid=116300;otype=attribute
+            alation_title: LAN ID
+
+      - name: last logon date
+        description: Date of most recent user logon as of reporting date
+        config:
+          meta:
+            alation_oid: oid=116304;otype=attribute
+            alation_title: Last Logon Date
+
+      - name: last password changed
+        description: Date of most recent password change as of reporting date
+        config:
+          meta:
+            alation_oid: oid=116296;otype=attribute
+            alation_title: Last Password Changed
+
+      - name: relationship based entitlement
+        description: Group membership of user based on permissions, workgroups and
+          application roles.
+        config:
+          meta:
+            alation_oid: oid=116293;otype=attribute
+            alation_title: Relationship Based Entitlement
+
+      - name: sub type
+        description: Empty string for CBA to populate with sub type of user
+        config:
+          meta:
+            alation_oid: oid=116303;otype=attribute
+            alation_title: Sub Type
+
+      - name: super type
+        description: Identifier 'imsNonHuman' = CBA Bot used by PEXA, 'imsHuman' =
+          Not a CBA Bot
+        config:
+          meta:
+            alation_oid: oid=116294;otype=attribute
+            alation_title: Super Type
+
+      - name: surname
+        description: Surname of user
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=116305;otype=attribute
+            alation_title: Surname
+
+      - name: value-based entitlement
+        description: Empty string for CBA to populate with value based entitlement
+          of user
+        config:
+          meta:
+            alation_oid: oid=116306;otype=attribute
+            alation_title: Value Based Entitlement
+    config:
+      meta:
+        orig_description: CBA User Report (Drift)
+        alation_oid: oid=4609;otype=table
+        alation_title: PEXA Commercial Loans Production
+
+  - name: PEXAUserReportProduction
+    description: '<div><p>CBA User Signing Limit is a report containing a list of
+      users and their signing limit per workspace role.</p><p>More information available
+      here: <a href="https://pexa.atlassian.net/wiki/spaces/EDP/pages/1494417683/CBA+User+Signing+Limit+-+DNA1009"
+      id="isPasted">CBA User Signing Limit - DNA1009 - Enterprise Data Platform -
+      Confluence</a></p></div>'
+    columns:
+      - name: created on
+        description: Date of user account creation
+        config:
+          meta:
+            alation_oid: oid=105102;otype=attribute
+            alation_title: Created On
+
+      - name: destination signing limit
+        description: Maximum dollar amount a user can sign for destination line items
+          in a settlement schedule
+        config:
+          meta:
+            alation_oid: oid=105089;otype=attribute
+            alation_title: Destination Signing Limit
+
+      - name: email
+        description: Email address associated with user account
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+          meta:
+            alation_oid: oid=105093;otype=attribute
+            alation_title: Email
+
+      - name: first name
+        description: First name of user
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=105058;otype=attribute
+            alation_title: First Name
+
+      - name: job title
+        description: User job title
+        config:
+          meta:
+            alation_oid: oid=105084;otype=attribute
+            alation_title: Job Title
+
+      - name: last active
+        description: Date of most recent user logon as of reporting date
+        config:
+          meta:
+            alation_oid: oid=105096;otype=attribute
+            alation_title: Last Active
+
+      - name: last name
+        description: Surname of user
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=105115;otype=attribute
+            alation_title: Last Name
+
+      - name: middle name
+        description: Middle name of user
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=105104;otype=attribute
+            alation_title: Middle Name
+
+      - name: permission(s)
+        description: Concatenated string of permissions a user has, separated by commas
+        config:
+          meta:
+            alation_oid: oid=105064;otype=attribute
+            alation_title: Permission(s)
+
+      - name: signing role
+        description: Certifier's designation or job title
+        config:
+          meta:
+            alation_oid: oid=105116;otype=attribute
+            alation_title: Signing Role
+
+      - name: source signing limit
+        description: Maximum dollar amount a user can sign for source line items in
+          a settlement schedule
+        config:
+          meta:
+            alation_oid: oid=105063;otype=attribute
+            alation_title: Source Signing Limit
+
+      - name: status
+        description: User status as of reporting date eg. DELETED, ACTIVE
+        config:
+          meta:
+            alation_oid: oid=105094;otype=attribute
+            alation_title: Status
+
+      - name: subscriber id
+        description: Unique identifier number for PEXA subscriber associated with
+          user
+        config:
+          meta:
+            alation_oid: oid=105101;otype=attribute
+            alation_title: Subscriber Id
+
+      - name: subscriber user type
+        description: Application role associated with user eg. Subscriber User, Subscriber
+          Administrator, Subscriber Manager
+        config:
+          meta:
+            alation_oid: oid=105109;otype=attribute
+            alation_title: Subscriber User Type
+
+      - name: workgroup(s)
+        description: Concatenated string of workgroups a user is a part of, separated
+          by commas
+        config:
+          meta:
+            alation_oid: oid=105055;otype=attribute
+            alation_title: Workgroup(s)
+    config:
+      meta:
+        orig_description: CBA User Signing Limit
+        alation_oid: oid=4039;otype=table
+        alation_title: PEXA User Report Production
+
+
+
+  - name: Workspace_summary_reporting_CBA
+    description: This report provides a detailed workspace-level dataset to Commonwealth Bank of Australia (CBA) for workspaces scheduled to settle in the previous business day.
+    config:
+      materialized: table
+    columns:
+      - name: reporting_date
+        description: 
+          Date and time when the report was generated. The report covers workspaces
+          scheduled to settle on the previous business day, and all event timestamps
+          reflect activity recorded before this reporting timestamp.
+
+      - name: workspace_id
+        description: 
+          Unique PEXA identifier for the workspace.
+
+      - name: scheduled_settlement_date
+        description:
+          Date and time the workspace was scheduled to settle as at approximately
+          9:20 am on the previous business day, before the first settlement time slot.
+          This value determines which workspaces are included in the report.
+
+      - name: current_settlement_date
+        description: 
+          Current scheduled settlement date and time for the workspace as at the
+          report generation time.
+
+      - name: settlement_status
+        description: 
+          Current PEXA settlement status of the workspace as at the report generation
+          time.
+
+      - name: subscriber_id
+        description: 
+          Unique PEXA identifier for the subscriber participating in the workspace.
+
+      - name: subscriber_name
+        description: 
+          Registered name of the subscriber participating in the workspace.
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+
+      - name: workspace_role
+        description: 
+          Role in which the subscriber participates in the workspace, such as
+          MORTGAGEE_ON_TITLE (outgoing financial institution), INCOMING_MORTGAGEE
+          (incoming financial institution), PROPRIETOR_ON_TITLE or
+          INCOMING_PROPRIETOR.
+
+      - name: subscriber_reference
+        description: 
+          Free-text reference assigned to the workspace by the subscriber for its own
+          identification and tracking.
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+
+      - name: business_unit
+        description: 
+          Business-unit reference associated with the reported subscriber at the
+          individual report-row level.
+
+      - name: transaction_type
+        description: 
+          Type of property settlement transaction represented by the workspace, for
+          example TRANSFER.
+
+      - name: link_type
+        description: 
+          Indicates whether the settlement is linked to another settlement; for
+          example, NOT_LINKED means the workspace is not part of a linked-settlement
+          chain.
+
+      - name: jurisdiction
+        description: 
+          Australian state or territory jurisdiction of the land title associated
+          with the workspace, such as NSW, VIC or QLD.
+
+      - name: ess_workspace
+        description: 
+          Boolean indicator showing whether the workspace uses the new Financial
+          Settlement Summary experience.
+
+      - name: first_transfer_doc_created
+        description: 
+          First date and time a Transfer document was created in the workspace.
+
+      - name: first_stamp_duty_verified
+        description: 
+          First date and time stamp duty was successfully verified with a compliance
+          indicator of Yes.
+
+      - name: stamp_duty_value_change_last_date
+        description: 
+          Most recent date and time before the report was generated when a new
+          stamp-duty amount was recorded, regardless of the compliance-indicator
+          outcome.
+
+      - name: first_fi_accept_sett_date
+        description: 
+          First date and time a Financial Institution workspace role accepted the
+          proposed settlement date and time.
+
+      - name: balanced
+        description: 
+          Difference between total source funds and total disbursement funds in the
+          Financial Settlement Schedule. A value of zero indicates that the schedule
+          is balanced.
+
+      - name: first_all_accepted_sett_dt
+        description: 
+          First date and time when all participants then present in the workspace had
+          accepted the settlement date. If this predates the Financial Institution's
+          acceptance, the relevant FI role may not yet have joined the workspace.
+
+      - name: workspace_created_date
+        description: 
+          Date and time when the PEXA workspace was created.
+
+      - name: fi_auth_shortfall_update
+        description: 
+          Most recent date and time before reporting when the Financial Institution
+          indicated it held client authority or responsibility for the purchaser
+          shortfall by selecting the FRS shortfall indicator.
+
+      - name: first_tfrs_entered
+        description: 
+          First date and time the Total Funds Required to Settle amount was entered
+          for the workspace.
+
+      - name: last_tfrs_update
+        description: 
+          Most recent date and time before reporting when the Total Funds Required to
+          Settle amount was changed.
+
+      - name: first_ready_for_shortfall
+        description: 
+          First date and time the subscriber marked its financial line-item entries
+          as Ready for Shortfall, indicating that the incoming Financial Institution
+          could calculate or provide the purchaser shortfall.
+
+      - name: ready_for_shortfall_update
+        description: 
+          Most recent date and time before reporting when the subscriber marked its
+          financial line-item entries as Ready for Shortfall.
+
+      - name: fss_last_signed_date
+        description: 
+          Most recent date and time before reporting when the subscriber signed the
+          Financial Settlement Schedule (FSS). If the subscriber acts in multiple
+          roles, the same latest signing time is recorded against each role.
+
+      - name: fi_user_fss_last_sign
+        description: 
+          Email address or username of the most recent subscriber user to sign the
+          Financial Settlement Schedule. If the subscriber acts in multiple roles,
+          the same user is recorded against each role.
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+
+      - name: da_sent_flag
+        description: 
+          Yes/No indicator showing whether a Discharge Authority was sent for the
+          workspace.
+
+      - name: da_received_flag
+        description: 
+          Yes/No indicator showing whether the Mortgagee on Title received the
+          Discharge Authority. Receipt indicates whether the outgoing Financial
+          Institution can progress its settlement activities.
+
+      - name: loan_docs_sent_flag
+        description: 
+          Yes/No indicator showing whether loan documents were sent for the workspace.
+
+      - name: loan_docs_received_flag
+        description: 
+          Yes/No indicator showing whether the Incoming Mortgagee received the loan
+          documents. Receipt indicates whether the incoming Financial Institution can
+          progress its settlement activities.
+
+      - name: discharge_created
+        description: 
+          Most recent date and time before reporting when a Discharge of Mortgage
+          document was created in the workspace.
+
+      - name: discharge_signed
+        description: 
+          Most recent date and time before reporting when a Discharge of Mortgage
+          document was signed in the workspace.
+
+      - name: loan_payout_last_updated
+        description: 
+          Most recent date and time before reporting when a Loan Payout destination
+          financial line item was created or edited.
+
+      - name: loan_proceeds_last_updated
+        description: 
+          Most recent date and time before reporting when a Loan Proceeds source
+          financial line item was created or edited.
+
+      - name: pur_equity_last_updated
+        description: 
+          Most recent date and time before reporting when a Purchaser's Equity source
+          financial line item was created or edited.
+
+      - name: sign_on_time_metric
+        description: 
+          Member settlement-readiness metric based on all required document and FSS
+          signing':' MET means all documents and the FSS were signed or authorised
+          before the first agreed settlement date; NOT MET means at least one was not
+          completed by that time; NOT APPLICABLE covers ineligible workspaces or
+          roles, including non-transfer workspaces, dual FI roles, unsupported roles,
+          or workspaces that did not settle.
+
+      - name: roll_count
+        description: 
+          Total number of times settlement was rolled across all scheduled settlement
+          dates for the workspace. Excludes a failure recorded when settlement is
+          rolled from the final time slot of the day.
+
+      - name: rescheduled_count
+        description: 
+          Total number of times a user rescheduled the settlement to a different date
+          or time.
+
+      - name: current_status_outcome
+        description: 
+          Settlement outcome as at the reporting timestamp. Values':' Settled On Time -
+          settled at the first scheduled date and time; Settled On Day - settled on
+          the scheduled date after one or more same-day rolls; Settled Post Day -
+          settled at least one day after the first scheduled date; Not Settled -
+          Future Date - failed to settle and was rescheduled to a future date; Not
+          Settled - No Date - failed to settle and had no new date when the report
+          ran.

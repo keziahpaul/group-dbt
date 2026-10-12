@@ -1,0 +1,18 @@
+unit_tests:
+  - name: test_extract_financial_year_macro
+    description: "Unit test for extract_financial_year macro - validates financial year extraction logic"
+    model: extract_financial_year_test_model
+    given: []
+    expect:
+      rows:
+        - {test_date: '2024-01-15', financial_year: '2023-2024'}
+        - {test_date: '2024-02-29', financial_year: '2023-2024'}
+        - {test_date: '2024-06-30', financial_year: '2023-2024'}
+        - {test_date: '2024-07-01', financial_year: '2024-2025'}
+        - {test_date: '2024-07-15', financial_year: '2024-2025'}
+        - {test_date: '2024-12-31', financial_year: '2024-2025'}
+        - {test_date: '2023-06-30', financial_year: '2022-2023'}
+        - {test_date: '2023-07-01', financial_year: '2023-2024'}
+        - {test_date: '2020-02-29', financial_year: '2019-2020'}
+    config:
+      tags: ['unit-test', 'macro-test']

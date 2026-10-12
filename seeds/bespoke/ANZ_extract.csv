@@ -1,0 +1,4 @@
+table_name,incremental_timestamp_column,path_prefix,path_date_format,file_datetime_format,need_file_ext,file_ext,output_path_format,unload_single_file
+ANZ_Proceeds_no_MORT,,ANZ_Proceeds_no_MORT,%Y-%m-%d,%Y%m%d,true,.csv,/ANZ_Proceeds_no_MORT_%(au_file_date)s%(ext)s,true
+ANZ_FSS_signatures,,ANZ_FSS_signatures,%Y-%m-%d,%Y%m%d,true,.csv,/ANZ_FSS_signatures_%(au_file_date)s%(ext)s,true
+ANZ_Sign_Not_On_Time,,ANZ_Sign_Not_On_Time,%Y-%m-%d,%Y%m%d,true,.csv,/ANZ_Sign_Not_On_Time_Extract_%(au_file_date)s%(ext)s,true

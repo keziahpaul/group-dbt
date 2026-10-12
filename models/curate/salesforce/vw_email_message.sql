@@ -1,0 +1,47 @@
+WITH
+source AS (
+    SELECT * FROM {{ ref('email_message') }}
+)
+SELECT
+    id,
+    system_modstamp,
+    is_deleted,
+    activity_id,
+    bcc_address,
+    cc_address,
+    client_thread_identifier,
+    created_by_id,
+    created_date,
+    first_opened_date,
+    from_address,
+    from_name,
+    has_attachment,
+    headers,
+    html_body,
+    incoming,
+    is_bounced,
+    is_client_managed,
+    is_externally_visible,
+    is_opened,
+    is_tracked,
+    last_modified_by_id,
+    last_modified_date,
+    last_opened_date,
+    message_date,
+    message_identifier,
+    name,
+    parent_id,
+    related_to_id,
+    reply_to_email_message_id,
+    status,
+    subject,
+    text_body,
+    thread_identifier,
+    to_address,
+    validated_from_address,
+    effective_from,
+    effective_to,
+    inserted_at,
+    updated_at
+FROM source
+WHERE effective_to::date = '{{var('active_date')}}'::date

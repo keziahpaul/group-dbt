@@ -1,0 +1,97 @@
+
+{{
+    config(
+        materialized='incremental',
+        unique_key='Settlement_Schedule_ID',
+        merge_exclude_columns = ['inserted_at']
+    )
+}}
+With
+{%if is_incremental()%}
+target_max_timestamp as 
+(
+    select max(src_delta_extract_ts) as last_load_max_timestamp from {{this}}
+),
+{%endif%}
+
+cte as (		
+    select	
+    distinct -- taking disting & excluding lodgement_date & transaction type to get unique settlement schedule Id	
+    --date(l.date1) as "Lodgement Date",		
+    w.workspace_id::float as workspace_id,		
+    w.number1 as workspace_number,		
+    s.status as workspace_status,		
+    w.jurisdiction as jurisdiction,		
+    s.date1 as settlement_date,		
+    --l.transaction_type as "Transaction Type",		
+    s.type1 as settlement_type,		
+    sub.subscriber_id::float as subscriber_id,		
+    sub.name as subscriber_name,		
+    sub.status as subscriber_status,		
+    a.state as subscriber_state,		
+    wr.name as workspace_role,		
+    ss.settlement_schedule_id as settlement_schedule_id,		
+    sc.name as ss_category,		
+    ss.amount::numeric/100 as ss_amount,		
+    sc.type1 as ss_type,		
+    p.pexa_projects_id::float as pexa_projects_id,		
+    p.pexa_projects_name as pexa_projects_name,		
+    case when ss.third_party_account_id is not null then ss.third_party_account_id else ss.account_id 		
+    		end as account_id,
+    case when ss.third_party_account_id is not null then 'third_party_account' else 'account_id' 		
+    		end as account_id_type,
+    greatest_ignore_nulls(w.inserted_at,s.inserted_at,ss.inserted_at,sc.inserted_at,p.inserted_at,sub.inserted_at,wr.inserted_at,a.inserted_at) as src_delta_extract_ts
+
+    from {{ source('exchange_share', 'vw_workspaces') }}  w 		
+    inner join {{ source('exchange_share', 'vw_settlements') }}  s on w.workspace_id = s.workspace_id 		
+    --left join {{ source('exchange_share', 'vw_lodgements') }}  l on w.workspace_id = l.workspace_id 		
+    inner join {{ source('exchange_share', 'vw_settlement_schedules') }}  ss on ss.settlement_id = s.settlement_id		
+    inner join {{ source('exchange_share', 'vw_settlement_categories') }}  sc on sc.SETTLEMENT_CATEGORY_ID = ss.SETTLEMENT_CATEGORY_ID		
+    inner join {{ source('exchange_share', 'vw_participants') }}  p on p.participant_id = ss.participant_id		
+    inner join {{ source('exchange_share', 'vw_subscribers') }}  sub on sub.subscriber_id = p.subscriber_id		
+    inner join {{ source('exchange_share', 'vw_workspace_roles') }}  wr on wr.workspace_role_id = p.workspace_role_id		
+    left join {{ source('exchange_share', 'vw_addresses') }}  a on a.address_id = sub.address_id
+    {% if is_incremental()%}
+        where ( w.inserted_at >  (select last_load_max_timestamp from target_max_timestamp)
+            or s.inserted_at >  (select last_load_max_timestamp from target_max_timestamp)
+            or ss.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+            or sc.inserted_at >  (select last_load_max_timestamp from target_max_timestamp)
+            or p.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+            or sub.inserted_at >(select last_load_max_timestamp from target_max_timestamp)
+            or wr.inserted_at > (select last_load_max_timestamp from target_max_timestamp)
+            or a.inserted_at >  (select last_load_max_timestamp from target_max_timestamp)
+        )
+    {%endif%}		
+        )		
+select  c.workspace_id,		
+    c.workspace_number,		
+    c.workspace_status,		
+    c.jurisdiction,		
+    c.settlement_date,				
+    c.settlement_type,		
+    c.subscriber_id,		
+    c.subscriber_name,		
+    c.subscriber_status,		
+    c.subscriber_state,		
+    c.workspace_role,		
+    c.settlement_schedule_id,		
+    c.ss_category,		
+    c.ss_amount,		
+    c.ss_type,		
+    c.pexa_projects_id,		
+    c.pexa_projects_name,		
+    c.account_id,
+    c.account_id_type,		
+    ac.type1 as account_type, 		
+    ac.bsb as bsb, 		
+    ac.financialaccount_id as financial_account_id,
+    CONVERT_TIMEZONE('Australia/Sydney',c.src_delta_extract_ts) as src_delta_extract_ts,
+    {{ var('inserted_at') }} as inserted_at,
+    {{ var('updated_at') }} as updated_at		
+from 		
+cte c 		
+left join {{ source('exchange_share', 'vw_accounts') }}  ac on c.Account_ID = ac.account_id		
+{% if is_incremental()%}
+    where (  ac.inserted_at >  (select last_load_max_timestamp from target_max_timestamp)
+    )
+{%endif%}	

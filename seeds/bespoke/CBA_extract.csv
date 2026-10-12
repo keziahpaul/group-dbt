@@ -1,0 +1,8 @@
+table_name,incremental_timestamp_column,path_prefix,path_date_format,file_datetime_format,need_file_ext,file_ext,output_path_format,unload_single_file
+Bankwest_to_CBA,,Bankwest_to_CBA,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/Bankwest_to_CBA_%(au_file_date)s%(ext)s,true
+Bankwest_to_CBB,,Bankwest_to_CBB,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/Bankwest_to_CBB_%(au_file_date)s%(ext)s,true
+PEXAUserReportProduction,,PEXAUserReportProduction,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/%(au_path_date)s_PEXAUserReportProduction%(ext)s,true
+CM0346581,,CM0346581,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/CM0346581%(ext)s,true
+PEXACommercialloansAppProduction_Prod,,PEXACommercialloansAppProduction_Prod,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/%(au_file_date)s_PEXACommercialloansAppProduction_Prod%(ext)s,true
+PEXARetailAppProduction_Prod,,PEXARetailAppProduction_Prod,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/%(au_file_date)s_PEXARetailAppProduction_Prod%(ext)s,true
+Workspace_summary_reporting_CBA,,workspace_summary_reporting_cba,%Y-%m-%d,%Y%m%d,true,.csv,/%(au_path_date)s/Workspace_summary_reporting_CBA_%(au_file_date)s%(ext)s,true

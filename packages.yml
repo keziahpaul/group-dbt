@@ -1,0 +1,24 @@
+packages:
+  - package: brooklyn-data/dbt_artifacts
+    version: 2.9.3
+
+  - package: Snowflake-Labs/dbt_constraints
+    version: [">=1.0.0", "<1.1.0"]
+    
+  - package: metaplane/dbt_expectations
+    version: [">=0.10.0", "<0.11.0"]
+
+  - package: dbt-labs/dbt_external_tables
+    version: [">=0.10.0", "<0.11.0"]
+  
+  - package: dbt-labs/codegen
+    version: 0.12.1
+  
+  - package: dbt-labs/audit_helper
+    version: 0.12.0
+  
+  - private: PEXA-AU/pexa-one-data-au-dbt-common-lib
+    revision: "{{env_var('DBT_COMMON_REPO_BRANCH')}}"
+  
+  - package: fivetran/salesforce_formula_utils
+    version: [">=0.10.0", "<0.11.0"] 

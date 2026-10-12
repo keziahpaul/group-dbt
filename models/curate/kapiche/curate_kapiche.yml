@@ -1,0 +1,306 @@
+version: 2
+
+models:
+  - name: curate_customer_feedback
+    config:
+      alias: customer_feedback
+      meta:
+        alation_oid: oid=3687;otype=table
+        alation_title: Customer Feedback
+    columns:
+      - name: airbyte_raw_id
+        description: Airbyte Raw Id
+        config:
+          meta:
+            alation_oid: oid=97085;otype=attribute
+            alation_title: Airbyte Raw Id
+        data_tests:
+          - not_null
+
+      - name: airbyte_extracted_at
+        description: Airbyte Extracted At
+        config:
+          meta:
+            alation_oid: oid=97269;otype=attribute
+            alation_title: Airbyte Extracted At
+        data_tests:
+          - not_null
+
+      - name: airbyte_meta
+        description: Airbyte Meta
+        config:
+          meta:
+            alation_oid: oid=97076;otype=attribute
+            alation_title: Airbyte Meta
+
+      - name: airbyte_generate_id
+        description: Airbyte Generate Id
+        config:
+          meta:
+            alation_oid: oid=97171;otype=attribute
+            alation_title: Airbyte Generate Id
+
+      - name: account_managenment_segment
+        description: Segments customers by how they are account managed in PEXA
+        config:
+          meta:
+            alation_oid: oid=83581;otype=attribute
+            alation_title: Account Management Segment
+        data_tests:
+          - not_null
+
+      - name: account_owner
+        description: Full name of account owner.
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=83618;otype=attribute
+            alation_title: Account Owner
+        data_tests:
+          - not_null
+
+      - name: csat_comment
+        description: CSAT Comment column is based on Pexa Positives, PEXA Improvements
+          and Customer Support Verbatim columns capured in ALL Survey Responses table
+          in Salesforce. A row is created for each comment captured in any of these
+          3 columns.
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+          meta:
+            alation_oid: oid=83606;otype=attribute
+            alation_title: Csat Comment
+        data_tests:
+          - not_null
+
+      - name: creation_date
+        description: Values correspond to <a href="https://onedd-pexa.ap.alationcloud.com/attribute/69789/"
+          id="isPasted">CREATED_DATE | Column</a> in <a data-oid="3363" data-otype="table"
+          href="/table/3363/">prd_group_curate.salesforce.vw_all_survey_responses
+          (View All Survey Responses)</a> and renamed as Creation Date.
+        config:
+          meta:
+            alation_oid: oid=83570;otype=attribute
+            alation_title: Creation Date
+        data_tests:
+          - not_null
+
+      - name: customer_segment
+        description: PEXA customer segment level 1
+        config:
+          meta:
+            alation_oid: oid=83589;otype=attribute
+            alation_title: Customer Segment
+        data_tests:
+          - not_null
+
+      - name: customer_type
+        description: "<div><p>Potential values are: Practitioner, Majors, Financial\
+          \ Institutions, Developer and Government.\_</p><p>These values are derived\
+          \ from Channel and Account Management Segment columns in Salesforce as follows:</p><div\
+          \ id=\"isPasted\" style=\"height: auto; overflow: hidden;\"><strong>Practitioner:</strong></div><div\
+          \ style=\"height: auto; overflow: hidden;\">IF PS_Channel (from account\
+          \ table) = \u2018Practitioner\u2019 AND Account Management Segment(from\
+          \ account table) = \u2018Tier One\u2019 or \u2018Tier Two\u2019 or \u2018\
+          Tier Three\u2019 THEN set the \u2018CustomerType\u2019 field to \u2018Practitioner\u2019\
+          </div><div style=\"height: auto; overflow: hidden;\"><strong>Majors:</strong></div><div\
+          \ style=\"height: auto; overflow: hidden;\">IF PS_Channel (from account\
+          \ table) = \u2018Practitioner\u2019 AND Account Management Segment(from\
+          \ account table) = \u2018Major\u2019 THEN set the \u2018Customer Type\u2019\
+          \ field to \u2018Major\u2019</div><div style=\"height: auto; overflow: hidden;\"\
+          ><strong>Financial institutions:</strong></div><div style=\"height: auto;\
+          \ overflow: hidden;\">IF PS_Channel (from account table) = \u2018Financial\
+          \ Institution\u2019 THEN set the \u2018CustomerType\u2019 field to \u2018\
+          Financial Institution\u2019</div><div style=\"height: auto; overflow: hidden;\"\
+          ><strong>Developer':</strong></div><div style=\"height: auto; overflow:\
+          \ hidden;\">IF PS_Channel (from account table) = \u2018Practitioner\u2019\
+          \ AND Customer Segment Level 1(from account table) = 'Developer' THEN set\
+          \ the \u2018Customer Type\u2019 field to 'Developer'</div><div style=\"\
+          height: auto; overflow: hidden;\"><strong>Government:</strong></div><div\
+          \ style=\"height: auto; overflow: hidden;\">IF PS_Channel (from account\
+          \ table) = \u2018Practitioner\u2019 AND Customer Segment Level 1(from account\
+          \ table) = 'Government/ Council'THEN set the \u2018Customer Type\u2019 field\
+          \ to 'Government/ Council'</div><div style=\"height: auto; overflow: hidden;\"\
+          ><br style=\"\"></div></div>"
+        config:
+          meta:
+            alation_oid: oid=83592;otype=attribute
+            alation_title: Customer Type
+        data_tests:
+          - not_null
+
+      - name: subscriber_id
+        description: "<div><p><span id=\"isPasted\">Individual subscriber identifier.</span></p><p><span\
+          \ id=\"isPasted\"><a data-oid=\"420\" data-otype=\"glossary_term\" href=\"\
+          /document/420/\">ELN Subscriber ID</a>\_</span></p></div>"
+        config:
+          meta:
+            alation_oid: oid=83568;otype=attribute
+            alation_title: Subscriber Id
+        data_tests:
+          - not_null
+
+      - name: subscriber_name
+        description: "<div><p>Name of the organization.\_</p><p>Corresponds to Account\
+          \ Name in Salesforce which is in fact <a data-oid=\"713\" data-otype=\"\
+          glossary_term\" href=\"/document/713/\">Subscriber Full Name \_</a>.\_</p></div>"
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+          meta:
+            alation_oid: oid=83569;otype=attribute
+            alation_title: Subscriber Name
+        data_tests:
+          - not_null
+
+      - name: subscriber_state
+        description: <div><p>Abbreviation of the Australian state where the Subscriber
+          organization is operating.</p></div>
+        config:
+          meta:
+            alation_oid: oid=83572;otype=attribute
+            alation_title: Subscriber State
+        data_tests:
+          - not_null
+
+      - name: theme
+        description: <div><p>Name of the Saved Theme in Kapiche.</p><p> A theme is
+          simply a category  applied to customer feedback in order to easily monitor
+          and report on change over time.</p></div>
+        config:
+          meta:
+            alation_oid: oid=83611;otype=attribute
+            alation_title: Theme
+        data_tests:
+          - not_null
+
+      - name: document_id
+        description: '<div><p> Each document is identified a document_id integer key
+          that is assigned internally by Kapiche. </p><p>This field is added by Kapiche
+          and is not part of the original source data. Note that the name of this
+          field is given with two trailing underscores, for disambiguation: document_id__.</p></div>'
+        config:
+          meta:
+            alation_oid: oid=83603;otype=attribute
+            alation_title: Document Id
+        data_tests:
+          - not_null
+
+      - name: csat_rating
+        description: "<div><p><span id=\"isPasted\" style=\"\">Customer satisfaction\
+          \ score left by a customer.\_</span></p><p><span style=\"\">Values are taken\
+          \ from <a data-oid=\"70270\" data-otype=\"attribute\" href=\"/attribute/70270/\"\
+          >prd_group_curate.salesforce.vw_all_survey_responses.csat_c (Customer Satisfaction)</a>\
+          \ in table <a data-oid=\"3363\" data-otype=\"table\" href=\"/table/3363/\"\
+          >prd_group_curate.salesforce.vw_all_survey_responses (View All Survey Responses)</a>\
+          \ renamed CSAT Rating.</span></p></div>"
+        config:
+          meta:
+            alation_oid: oid=83609;otype=attribute
+            alation_title: Csat Rating
+
+      - name: effective_from
+        description: The timestamp indicating when a record becomes effective, the
+          value derives from Kapiche source data in AWS S3
+        config:
+          meta:
+            alation_oid: oid=83597;otype=attribute
+            alation_title: Effective From
+
+      - name: effective_to
+        description: The timestamp indicating when a record ceases to be effective,
+          the value is calculated based on the Kapiche source data in AWS S3.
+        config:
+          meta:
+            alation_oid: oid=83574;otype=attribute
+            alation_title: Effective To
+
+      - name: inserted_at
+        description: The timestamp indicating when a record was inserted into the
+          target table, generated by the system at the time of loading from AWS S3.
+        config:
+          meta:
+            alation_oid: oid=83566;otype=attribute
+            alation_title: Inserted At
+
+      - name: key_hash
+        description: A unique identifier generated by hashing the Primary Key columns
+          of a record, ensuring each record can be uniquely identified even if the
+          primary key consists of multiple columns.
+        config:
+          meta:
+            alation_oid: oid=83619;otype=attribute
+            alation_title: Key Hash
+
+      - name: row_hash
+        description: A hash value created from the columns involved in Slowly Changing
+          Dimensions (SCD) Type 2 transformations, used to detect changes in the data
+          by comparing the hash values of the current and previous versions of a record.
+        config:
+          meta:
+            alation_oid: oid=83614;otype=attribute
+            alation_title: Row Hash
+
+      - name: sentiment_csat_comment
+        description: This field is the sentiment analysis of the Csat Comment (customer
+          verbatim).
+        config:
+          meta:
+            alation_oid: oid=83617;otype=attribute
+            alation_title: Sentiment CSAT Comment
+
+      - name: src_delta_extract_ts
+        description: Specifies the column in the target table used to track the latest
+          changes or updates, represented as a timestamp. It is crucial for incremental
+          loading strategies to identify new or updated records since the last load
+          based on the timestamp.
+        config:
+          meta:
+            alation_oid: oid=83579;otype=attribute
+            alation_title: Source Delta Extract Timestamp
+
+      - name: src_file_last_modified_date
+        description: Timestamp showing when the source file was last modified.
+        config:
+          meta:
+            alation_oid: oid=83591;otype=attribute
+            alation_title: Source File Last Modified Date
+
+      - name: updated_at
+        description: The timestamp indicating when a record was last updated in the
+          target table, generated by the system at the time of loading from AWS S3.
+        config:
+          meta:
+            alation_oid: oid=83573;otype=attribute
+            alation_title: Updated At
+    description: "<div><p>Curated Customer Feedback table created based on transformations\
+      \ applied on the Raw Customer Feedback Table: <a data-oid=\"3686\" data-otype=\"\
+      table\" href=\"/table/3686/\">prd_group_raw.kapiche.customer_feedback (Customer\
+      \ Feedback)</a>\_</p><p>The transformation applied is renaming columns in the\
+      \ raw table. The code can be viewed in the Lineage tab above.</p><p>Ex:\_</p><table\
+      \ border=\"0\" cellpadding=\"0\" cellspacing=\"0\" id=\"isPasted\" width=\"\
+      267\"><tbody><tr><td height=\"19\" style=\"width: 100%;\">document_id__ has\
+      \ been renamed to DOCUMENT_ID</td></tr></tbody></table></div>"
+    data_tests:
+      - column_count_check:
+          arguments:
+            source: ref('customer_feedback')
+          config:
+            severity: warn
+
+      - unique:
+          arguments:
+            column_name: document_id
+
+      - check_unique_active:
+          arguments:
+            pk_field_list: document_id
+          config:
+            severity: error
+
+      - check_unique_pk_effective_from:
+          arguments:
+            pk_field_list: document_id
+          config:
+            severity: warn

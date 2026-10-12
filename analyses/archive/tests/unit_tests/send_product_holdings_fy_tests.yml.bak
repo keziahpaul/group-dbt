@@ -1,0 +1,402 @@
+unit_tests:
+  # Test 1: Records from current FY should have actual values
+  - name: test_current_fy_settlement_volumes_actual_values
+    description: "Test that settlement volumes from current FY return actual count values"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: false
+    given:
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 1001, Master_Registration_ID: 'REG001', Day_of_Registration_Date_AEST: '2025-05-01', Registration_Account_Manager: 'John Doe', Registration_Created_Source: 'transactional-api', Registration_ID: 'REGID001', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows:
+          - {id: 'SETT001-2', settlement_id: 1001, settlement_date: '2025-08-01 00:00:00.000000000', subscriber_id: 1001, workspace_role_id: 2, buyer_settlement_date: '2025-08-01 00:00:00.000000000', seller_settlement_date: null, financial_year: '2025-2026', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+          - {id: 'SETT002-2', settlement_id: 1002, settlement_date: '2025-09-01 00:00:00.000000000', subscriber_id: 1001, workspace_role_id: 2, buyer_settlement_date: '2025-09-01 00:00:00.000000000', seller_settlement_date: null, financial_year: '2025-2026', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+          - {id: 'SETT003-4', settlement_id: 1003, settlement_date: '2025-09-01 00:00:00.000000000', subscriber_id: 1001, workspace_role_id: 4, buyer_settlement_date: null, seller_settlement_date: '2025-09-01 00:00:00.000000000', financial_year: '2025-2026', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+      - input: ref('send_transaction_details')
+        rows:
+          - {subscriber_id: 1001, conversion_id: 'CONV001', master_registration_id: 'REG001', registration_id: 'REGID001', completed_date_settlement_date: '2025-08-01', settled_revenue: 1000, settled_turnover: 2000, pexa_commission: 100, financial_year: '2025-2026', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+    expect:
+      rows:
+        - {subscriber_id: 1001, total_volume_buyer_cfy__c: 2, total_volume_seller_cfy__c: 1, total_revenue_c: 1000, settled_turnover_c: 2000, pexa_commission_c: 100}
+
+
+  # Test 2: Records from previous FY should have zero values  
+  - name: test_previous_fy_settlement_volumes_zero_values
+    description: "Test that settlement volumes from previous FY return zero values"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: false
+    given:
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 1002, Master_Registration_ID: 'REG002', Day_of_Registration_Date_AEST: '2024-05-01', Registration_Account_Manager: 'Jane Smith', Registration_Created_Source: 'Referral', Registration_ID: 'REGID002', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows:
+          - {id: 'SETT004-2', settlement_id: 1004, settlement_date: '2025-05-01 00:00:00.000000000', subscriber_id: 1002, workspace_role_id: 2, buyer_settlement_date: '2025-05-01 00:00:00.000000000', seller_settlement_date: null, financial_year: '2024-2025', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+          - {id: 'SETT005-4', settlement_id: 1005, settlement_date: '2025-06-01 00:00:00.000000000', subscriber_id: 1002, workspace_role_id: 4, buyer_settlement_date: null, seller_settlement_date: '2025-06-01 00:00:00.000000000', financial_year: '2024-2025', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+      - input: ref('send_transaction_details')
+        rows:
+          - {subscriber_id: 1002, conversion_id: 'CONV002', master_registration_id: 'REG002', registration_id: 'REGID002', completed_date_settlement_date: '2025-05-01', settled_revenue: 5000, settled_turnover: 8000, pexa_commission: 500, financial_year: '2024-2025', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+    expect:
+      rows:
+        - {subscriber_id: 1002, total_volume_buyer_cfy__c: 0, total_volume_seller_cfy__c: 0, total_revenue_c: 0, settled_turnover_c: 0, pexa_commission_c: 0}
+
+  # Test 3: Mixed FY data should only count current FY
+  - name: test_mixed_fy_data_only_current_fy_counted
+    description: "Test that when subscriber has data from multiple FYs, only current FY is counted"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: false
+    given:
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 1003, Master_Registration_ID: 'REG003', Day_of_Registration_Date_AEST: '2024-12-01', Registration_Account_Manager: 'Bob Wilson', Registration_Created_Source: 'transactional-api', Registration_ID: 'REGID003', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows:
+          # Previous FY data - should be ignored
+          - {id: 'SETT006-2', settlement_id: 1006, settlement_date: '2025-05-01 00:00:00.000000000', subscriber_id: 1003, workspace_role_id: 2, buyer_settlement_date: '2025-05-01 00:00:00.000000000', seller_settlement_date: null, financial_year: '2024-2025', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+          - {id: 'SETT007-4', settlement_id: 1007, settlement_date: '2025-06-01 00:00:00.000000000', subscriber_id: 1003, workspace_role_id: 4, buyer_settlement_date: null, seller_settlement_date: '2025-06-01 00:00:00.000000000', financial_year: '2024-2025', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+          # Current FY data - should be counted
+          - {id: 'SETT008-2', settlement_id: 1008, settlement_date: '2025-08-01 00:00:00.000000000', subscriber_id: 1003, workspace_role_id: 2, buyer_settlement_date: '2025-08-01 00:00:00.000000000', seller_settlement_date: null, financial_year: '2025-2026', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+          - {id: 'SETT009-4', settlement_id: 1009, settlement_date: '2025-09-01 00:00:00.000000000', subscriber_id: 1003, workspace_role_id: 4, buyer_settlement_date: null, seller_settlement_date: '2025-09-01 00:00:00.000000000', financial_year: '2025-2026', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+      - input: ref('send_transaction_details')
+        rows:
+          # Previous FY transactions - should be zeroed out
+          - {subscriber_id: 1003, conversion_id: 'CONV003', master_registration_id: 'REG003', registration_id: 'REGID003', completed_date_settlement_date: '2025-05-01', settled_revenue: 3000, settled_turnover: 4000, pexa_commission: 300, financial_year: '2024-2025', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+          # Current FY transactions - should be counted  
+          - {subscriber_id: 1003, conversion_id: 'CONV004', master_registration_id: 'REG003', registration_id: 'REGID003', completed_date_settlement_date: '2025-08-01', settled_revenue: 1500, settled_turnover: 2500, pexa_commission: 150, financial_year: '2025-2026', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+          - {subscriber_id: 1003, conversion_id: 'CONV005', master_registration_id: 'REG003', registration_id: 'REGID003', completed_date_settlement_date: '2025-09-01', settled_revenue: 1000, settled_turnover: 1500, pexa_commission: 100, financial_year: '2025-2026', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+    expect:
+      rows:
+        # Only current FY (2025-2026) data should be counted
+        - {subscriber_id: 1003, total_volume_buyer_cfy__c: 1, total_volume_seller_cfy__c: 1, total_revenue_c: 2500, settled_turnover_c: 4000, pexa_commission_c: 250}
+
+  # Test 4: Edge case - Subscriber with no current FY data
+  - name: test_no_current_fy_data_returns_zeros
+    description: "Test that subscriber with only previous FY data gets zeros for all CFY fields"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: false
+    given:
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 1004, Master_Registration_ID: 'REG004', Day_of_Registration_Date_AEST: '2024-01-01', Registration_Account_Manager: 'Alice Brown', Registration_Created_Source: 'Referral', Registration_ID: 'REGID004', registrations_pexa_opt_in_flag: 'N', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows:
+          - {id: 'SETT010-2', settlement_id: 1010, settlement_date: '2024-08-01 00:00:00.000000000', subscriber_id: 1004, workspace_role_id: 2, buyer_settlement_date: '2024-08-01 00:00:00.000000000', seller_settlement_date: null, financial_year: '2024-2025', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+          - {id: 'SETT011-4', settlement_id: 1011, settlement_date: '2025-01-01 00:00:00.000000000', subscriber_id: 1004, workspace_role_id: 4, buyer_settlement_date: null, seller_settlement_date: '2025-01-01 00:00:00.000000000', financial_year: '2024-2025', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+      - input: ref('send_transaction_details')
+        rows:
+          - {subscriber_id: 1004, conversion_id: 'CONV006', master_registration_id: 'REG004', registration_id: 'REGID004', completed_date_settlement_date: '2024-08-01', settled_revenue: 10000, settled_turnover: 15000, pexa_commission: 1000, financial_year: '2024-2025', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+          - {subscriber_id: 1004, conversion_id: 'CONV007', master_registration_id: 'REG004', registration_id: 'REGID004', completed_date_settlement_date: '2025-01-01', settled_revenue: 8000, settled_turnover: 12000, pexa_commission: 800, financial_year: '2024-2025', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+    expect:
+      rows:
+        # All CFY fields should be zero since no current FY (2025-2026) data exists
+        - {subscriber_id: 1004, total_volume_buyer_cfy__c: 0, total_volume_seller_cfy__c: 0, total_revenue_c: 0, settled_turnover_c: 0, pexa_commission_c: 0}
+
+  # Test 5: Current FY only data - should have actual values
+  - name: test_current_fy_only_data_actual_values  
+    description: "Test that subscriber with only current FY data gets actual values"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: false
+    given:
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 1005, Master_Registration_ID: 'REG005', Day_of_Registration_Date_AEST: '2025-08-01', Registration_Account_Manager: 'Charlie Davis', Registration_Created_Source: 'transactional-api', Registration_ID: 'REGID005', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows:
+          - {id: 'SETT012-2', settlement_id: 1012, settlement_date: '2025-10-01 00:00:00.000000000', subscriber_id: 1005, workspace_role_id: 2, buyer_settlement_date: '2025-10-01 00:00:00.000000000', seller_settlement_date: null, financial_year: '2025-2026', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+          - {id: 'SETT013-4', settlement_id: 1013, settlement_date: '2025-10-01 00:00:00.000000000', subscriber_id: 1005, workspace_role_id: 4, buyer_settlement_date: null, seller_settlement_date: '2025-10-01 00:00:00.000000000', financial_year: '2025-2026', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+      - input: ref('send_transaction_details')
+        rows:
+          - {subscriber_id: 1005, conversion_id: 'CONV008', master_registration_id: 'REG005', registration_id: 'REGID005', completed_date_settlement_date: '2025-10-01', settled_revenue: 750, settled_turnover: 1250, pexa_commission: 75, financial_year: '2025-2026', src_delta_extract_ts: '2025-07-01 10:00:00', updated_at: '2025-07-01 10:00:00'}
+    expect:
+      rows:
+        # Should have actual values since all data is from current FY
+        - {subscriber_id: 1005, total_volume_buyer_cfy__c: 1, total_volume_seller_cfy__c: 1, total_revenue_c: 750, settled_turnover_c: 1250, pexa_commission_c: 75}
+
+
+  # Test 6: Incremental Logic - Recent transaction updates should be included
+  - name: test_incremental_recent_transaction_updates
+    description: "Test incremental WHERE clause includes records with recent transaction updates"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: true
+      vars:
+        local_current_date: CONVERT_TIMEZONE('Australia/Sydney', '2025-08-20')::DATE
+        updated_at: CONVERT_TIMEZONE('Australia/Sydney','2025-08-20 10:00:00' )
+    given:
+      - input: this
+        rows:
+          - {subscriber_id: 999, total_volume_buyer_cfy__c: 1, total_volume_seller_cfy__c: 0, total_revenue_c: 100, settled_turnover_c: 200, pexa_commission_c: 10, src_delta_extract_ts: 2025-08-19 08:00:00.000 +1000, updated_at: 2025-08-19 08:00:00.000 +1000}  # Existing state
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 999, Master_Registration_ID: 'REG_RECENT_TXN', Day_of_Registration_Date_AEST: '2025-07-01', Registration_Account_Manager: 'Recent Txn Tester', Registration_Created_Source: 'transactional-api', Registration_ID: 'REGID_RECENT_TXN', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: 2025-08-19 10:00:00.000 +1000, inserted_at: 2025-08-19 07:00:00.000 +1000}
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows:
+          - {id: 'SETT_RECENT_TXN-2', settlement_id: 999, settlement_date: '2025-08-19 00:00:00.000000000', subscriber_id: 999, workspace_role_id: 2, buyer_settlement_date: '2025-08-19 00:00:00.000000000', seller_settlement_date: null, financial_year: '2025-2026', src_delta_extract_ts: 2025-08-19 09:00:00.000 +1000, updated_at: 2025-08-19 09:00:00.000 +1000}  # Old, should not trigger
+      - input: ref('send_transaction_details')
+        rows:
+          - {subscriber_id: 999, conversion_id: 'CONV_RECENT_TXN', master_registration_id: 'REG_RECENT_TXN', registration_id: 'REGID_RECENT_TXN', completed_date_settlement_date: '2025-08-19', settled_revenue: 500, settled_turnover: 800, pexa_commission: 50, financial_year: '2025-2026', src_delta_extract_ts: 2025-08-20 09:00:00.000 +1000, updated_at: 2025-08-20 09:00:00.000 +1000}  # Recent update - should trigger incremental
+    expect:
+      rows:
+        # Should be included due to recent transaction update (09:00:00)
+        - {subscriber_id: 999, total_volume_buyer_cfy__c: 1, total_volume_seller_cfy__c: 0, total_revenue_c: 500, settled_turnover_c: 800, pexa_commission_c: 50, src_delta_extract_ts: 2025-08-20 09:00:00.000 +1000}
+
+  # Test 7: Incremental Logic - Recent volume updates should be included
+  - name: test_incremental_recent_volume_updates
+    description: "Test incremental WHERE clause includes records with recent volume updates"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: true
+      vars:
+        local_current_date: CONVERT_TIMEZONE('Australia/Sydney', '2025-08-25')::DATE
+        updated_at: CONVERT_TIMEZONE('Australia/Sydney','2025-08-25 15:00:00' )
+    given:
+      - input: this
+        rows:
+          - {subscriber_id: 998, total_volume_buyer_cfy__c: 0, total_volume_seller_cfy__c: 1, total_revenue_c: 300, settled_turnover_c: 500, pexa_commission_c: 30, src_delta_extract_ts: 2025-08-24 12:00:00.000 +1000, updated_at: 2025-08-24 12:00:00.000 +1000}  # Existing state
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 998, Master_Registration_ID: 'REG_RECENT_VOL', Day_of_Registration_Date_AEST: '2025-07-15', Registration_Account_Manager: 'Recent Vol Tester', Registration_Created_Source: 'Referral', Registration_ID: 'REGID_RECENT_VOL', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: 2025-08-24 14:00:00.000 +1000, inserted_at: 2025-08-24 08:00:00.000 +1000}
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows:
+          - {id: 'SETT_RECENT_VOL-4', settlement_id: 998, settlement_date: '2025-08-24 00:00:00.000000000', subscriber_id: 998, workspace_role_id: 4, buyer_settlement_date: null, seller_settlement_date: '2025-08-24 00:00:00.000000000', financial_year: '2025-2026', src_delta_extract_ts: 2025-08-25 14:30:00.000 +1000, updated_at: 2025-08-25 14:30:00.000 +1000}  # Recent update - should trigger incremental
+      - input: ref('send_transaction_details')
+        rows:
+          - {subscriber_id: 998, conversion_id: 'CONV_RECENT_VOL', master_registration_id: 'REG_RECENT_VOL', registration_id: 'REGID_RECENT_VOL', completed_date_settlement_date: '2025-08-24', settled_revenue: 200, settled_turnover: 400, pexa_commission: 20, financial_year: '2025-2026', src_delta_extract_ts: 2025-08-24 13:00:00.000 +1000, updated_at: 2025-08-24 13:00:00.000 +1000}  # Old, should not trigger
+    expect:
+      rows:
+        # Should be included due to recent volume update (14:30:00)
+        - {subscriber_id: 998, src_delta_extract_ts: 2025-08-25 14:30:00.000 +1000}
+
+  # Test 8: Incremental Logic - New registrations should be included
+  - name: test_incremental_new_registrations
+    description: "Test incremental WHERE clause includes new registrations without activity"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: true
+      vars:
+        local_current_date: CONVERT_TIMEZONE('Australia/Sydney', '2025-09-01')::DATE
+        updated_at: CONVERT_TIMEZONE('Australia/Sydney','2025-09-01 16:00:00' )
+    given:
+      - input: this
+        rows: 
+          - {subscriber_id: 998, total_volume_buyer_cfy__c: 0, total_volume_seller_cfy__c: 1, total_revenue_c: 300, settled_turnover_c: 500, pexa_commission_c: 30, src_delta_extract_ts: 2025-08-24 12:00:00.000 +1000, updated_at: 2025-08-24 12:00:00.000 +1000}  
+    # No existing records for this new subscriber
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 997, Master_Registration_ID: 'REG_NEW_SUB', Day_of_Registration_Date_AEST: '2025-08-31', Registration_Account_Manager: 'New Sub Tester', Registration_Created_Source: 'transactional-api', Registration_ID: 'REGID_NEW_SUB', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: 2025-09-01 15:30:00.000 +1000, inserted_at: 2025-09-01 07:30:00.000 +1000, updated_at: 2025-09-01 08:30:00.000 +1000}  # Recent registration - should trigger
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows: []  # No volume activity yet
+      - input: ref('send_transaction_details')
+        rows: []  # No transaction activity yet
+    expect:
+      rows:
+        # Should be included due to recent registration (15:30:00)
+        - {subscriber_id: 997, src_delta_extract_ts: 2025-09-01 08:30:00.000 +1000}
+
+  # Test 9: Incremental Logic - Old records should be excluded
+  - name: test_incremental_old_records_excluded
+    description: "Test incremental WHERE clause excludes old records with no recent updates"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: true
+      vars:
+        local_current_date: CONVERT_TIMEZONE('Australia/Sydney', '2025-09-05')::DATE
+        updated_at: CONVERT_TIMEZONE('Australia/Sydney','2025-09-05 12:00:00' )
+    given:
+      - input: this
+        rows:
+          - {subscriber_id: 996, total_volume_buyer_cfy__c: 2, total_volume_seller_cfy__c: 1, total_revenue_c: 1000, settled_turnover_c: 1500, pexa_commission_c: 100, src_delta_extract_ts: 2025-09-04 10:00:00.000 +1000, updated_at: 2025-09-04 10:00:00.000 +1000}  # Existing state
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 996, Master_Registration_ID: 'REG_OLD_SUB', Day_of_Registration_Date_AEST: '2025-06-01', Registration_Account_Manager: 'Old Sub Tester', Registration_Created_Source: 'Referral', Registration_ID: 'REGID_OLD_SUB', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: 2025-09-03 08:00:00.000 +1000, inserted_at: 2025-06-01 07:00:00.000 +1000}  # Old, before cutoff
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows:
+          - {id: 'SETT_OLD_SUB-2', settlement_id: 996, settlement_date: '2025-08-01 00:00:00.000000000', subscriber_id: 996, workspace_role_id: 2, buyer_settlement_date: '2025-08-01 00:00:00.000000000', seller_settlement_date: null, financial_year: '2025-2026', src_delta_extract_ts: 2025-09-03 09:00:00.000 +1000, updated_at: 2025-09-03 09:00:00.000 +1000}  # Old, before cutoff
+      - input: ref('send_transaction_details')
+        rows:
+          - {subscriber_id: 996, conversion_id: 'CONV_OLD_SUB', master_registration_id: 'REG_OLD_SUB', registration_id: 'REGID_OLD_SUB', completed_date_settlement_date: '2025-08-01', settled_revenue: 800, settled_turnover: 1200, pexa_commission: 80, financial_year: '2025-2026', src_delta_extract_ts: 2025-09-03 10:00:00.000 +1000, updated_at: 2025-09-03 10:00:00.000 +1000}  # Old, before cutoff
+    expect:
+      rows: []  # Should return no rows as all updates are before cutoff timestamp
+
+  # Test 10: Test LEFT JOIN behavior when subscriber has both transaction and volume data
+  - name: test_join_subscriber_with_transactions_and_volumes
+    description: "Test LEFT JOIN behavior when subscriber has both transaction and volume data"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: false
+      vars:
+        local_current_date: CONVERT_TIMEZONE('Australia/Sydney', '2025-08-15')::DATE
+        updated_at: CONVERT_TIMEZONE('Australia/Sydney','2025-08-15 12:00:00' )
+    given:
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 101, Master_Registration_ID: 'REG_FULL_DATA', Day_of_Registration_Date_AEST: '2025-07-10', Registration_Account_Manager: 'Full Data Tester', Registration_Created_Source: 'transactional-api', Registration_ID: 'REGID_FULL_DATA', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: 2025-08-15 10:00:00.000 +1000, inserted_at: 2025-07-10 09:00:00.000 +1000}
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows:
+          - {id: 'SETT_FULL_B-2', settlement_id: 1001, settlement_date: '2025-08-10 00:00:00.000000000', subscriber_id: 101, workspace_role_id: 2, buyer_settlement_date: '2025-08-10 00:00:00.000000000', seller_settlement_date: null, financial_year: '2025-2026', src_delta_extract_ts: 2025-08-15 09:00:00.000 +1000, updated_at: 2025-08-15 09:00:00.000 +1000}
+          - {id: 'SETT_FULL_S-4', settlement_id: 1002, settlement_date: '2025-08-12 00:00:00.000000000', subscriber_id: 101, workspace_role_id: 4, buyer_settlement_date: null, seller_settlement_date: '2025-08-12 00:00:00.000000000', financial_year: '2025-2026', src_delta_extract_ts: 2025-08-15 09:30:00.000 +1000, updated_at: 2025-08-15 09:30:00.000 +1000}
+      - input: ref('send_transaction_details')
+        rows:
+          - {subscriber_id: 101, conversion_id: 'CONV_FULL_1', master_registration_id: 'REG_FULL_DATA', registration_id: 'REGID_FULL_DATA', completed_date_settlement_date: '2025-08-10', settled_revenue: 1000, settled_turnover: 1500, pexa_commission: 100, financial_year: '2025-2026', src_delta_extract_ts: 2025-08-15 11:00:00.000 +1000, updated_at: 2025-08-15 11:00:00.000 +1000}
+          - {subscriber_id: 101, conversion_id: 'CONV_FULL_2', master_registration_id: 'REG_FULL_DATA', registration_id: 'REGID_FULL_DATA', completed_date_settlement_date: '2025-08-12', settled_revenue: 800, settled_turnover: 1200, pexa_commission: 80, financial_year: '2025-2026', src_delta_extract_ts: 2025-08-15 11:30:00.000 +1000, updated_at: 2025-08-15 11:30:00.000 +1000}
+    expect:
+      rows:
+        # Should aggregate both volume and transaction data properly
+        - {subscriber_id: 101, total_volume_buyer_cfy__c: 1, total_volume_seller_cfy__c: 1, total_revenue_c: 1800, settled_turnover_c: 2700, pexa_commission_c: 180, src_delta_extract_ts: 2025-08-15 11:30:00.000 +1000}
+
+  # Test 11: Test LEFT JOIN behavior when subscriber has volume data but no transactions
+  - name: test_join_subscriber_with_volumes_only
+    description: "Test LEFT JOIN behavior when subscriber has volume data but no transactions"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: false
+      vars:
+        local_current_date: CONVERT_TIMEZONE('Australia/Sydney', '2025-08-20')::DATE
+        updated_at: CONVERT_TIMEZONE('Australia/Sydney','2025-08-20 14:00:00' )
+    given:
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 102, Master_Registration_ID: 'REG_VOL_ONLY', Day_of_Registration_Date_AEST: '2025-07-05', Registration_Account_Manager: 'Volume Only Tester', Registration_Created_Source: 'Referral', Registration_ID: 'REGID_VOL_ONLY', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: 2025-08-20 12:00:00.000 +1000, inserted_at: 2025-07-05 08:00:00.000 +1000}
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows:
+          - {id: 'SETT_VOL_B-2', settlement_id: 1003, settlement_date: '2025-08-15 00:00:00.000000000', subscriber_id: 102, workspace_role_id: 2, buyer_settlement_date: '2025-08-15 00:00:00.000000000', seller_settlement_date: null, financial_year: '2025-2026', src_delta_extract_ts: 2025-08-20 13:00:00.000 +1000, updated_at: 2025-08-20 13:00:00.000 +1000}
+          - {id: 'SETT_VOL_B2-2', settlement_id: 1004, settlement_date: '2025-08-18 00:00:00.000000000', subscriber_id: 102, workspace_role_id: 2, buyer_settlement_date: '2025-08-18 00:00:00.000000000', seller_settlement_date: null, financial_year: '2025-2026', src_delta_extract_ts: 2025-08-20 13:30:00.000 +1000, updated_at: 2025-08-20 13:30:00.000 +1000}
+      - input: ref('send_transaction_details')
+        rows: []  # No transaction data
+    expect:
+      rows:
+        # Should show volume data with NULL/0 transaction values
+        - {subscriber_id: 102, total_volume_buyer_cfy__c: 2, total_volume_seller_cfy__c: 0, total_revenue_c: 0, settled_turnover_c: 0, pexa_commission_c: 0, src_delta_extract_ts: 2025-08-20 13:30:00.000 +1000}
+
+  # Test 12: Test LEFT JOIN behavior when subscriber has transaction data but no volumes
+  - name: test_join_subscriber_with_transactions_only
+    description: "Test LEFT JOIN behavior when subscriber has transaction data but no volumes"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: false
+      vars:
+        local_current_date: CONVERT_TIMEZONE('Australia/Sydney', '2025-08-25')::DATE
+        updated_at: CONVERT_TIMEZONE('Australia/Sydney','2025-08-25 16:00:00' )
+    given:
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 103, Master_Registration_ID: 'REG_TXN_ONLY', Day_of_Registration_Date_AEST: '2025-07-20', Registration_Account_Manager: 'Transaction Only Tester', Registration_Created_Source: 'transactional-api', Registration_ID: 'REGID_TXN_ONLY', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: 2025-08-25 14:00:00.000 +1000, inserted_at: 2025-07-20 10:00:00.000 +1000}
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows: []  # No volume data
+      - input: ref('send_transaction_details')
+        rows:
+          - {subscriber_id: 103, conversion_id: 'CONV_TXN_1', master_registration_id: 'REG_TXN_ONLY', registration_id: 'REGID_TXN_ONLY', completed_date_settlement_date: '2025-08-20', settled_revenue: 2000, settled_turnover: 3000, pexa_commission: 200, financial_year: '2025-2026', src_delta_extract_ts: 2025-08-25 15:00:00.000 +1000, updated_at: 2025-08-25 15:00:00.000 +1000}
+          - {subscriber_id: 103, conversion_id: 'CONV_TXN_2', master_registration_id: 'REG_TXN_ONLY', registration_id: 'REGID_TXN_ONLY', completed_date_settlement_date: '2025-08-22', settled_revenue: 1500, settled_turnover: 2200, pexa_commission: 150, financial_year: '2025-2026', src_delta_extract_ts: 2025-08-25 15:30:00.000 +1000, updated_at: 2025-08-25 15:30:00.000 +1000}
+    expect:
+      rows:
+        # Should show transaction data with 0 volume values
+        - {subscriber_id: 103, total_volume_buyer_cfy__c: 0, total_volume_seller_cfy__c: 0, total_revenue_c: 3500, settled_turnover_c: 5200, pexa_commission_c: 350, src_delta_extract_ts: 2025-08-25 15:30:00.000 +1000}
+
+  # Test 13: Test LEFT JOIN behavior for newly registered subscriber with no activity
+  - name: test_join_new_subscriber_no_activity
+    description: "Test LEFT JOIN behavior for newly registered subscriber with no activity"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: false
+      vars:
+        local_current_date: CONVERT_TIMEZONE('Australia/Sydney', '2025-08-30')::DATE
+        updated_at: CONVERT_TIMEZONE('Australia/Sydney','2025-08-30 10:00:00' )
+    given:
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 104, Master_Registration_ID: 'REG_NEW_EMPTY', Day_of_Registration_Date_AEST: '2025-08-29', Registration_Account_Manager: 'New Empty Tester', Registration_Created_Source: 'Referral', Registration_ID: 'REGID_NEW_EMPTY', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: 2025-08-30 09:00:00.000 +1000, inserted_at: 2025-08-29 15:00:00.000 +1000, updated_at: 2025-08-29 15:00:00.000 +1000}
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows: []  # No volume data
+      - input: ref('send_transaction_details')
+        rows: []  # No transaction data
+    expect:
+      rows:
+        # Should show subscriber with all metrics as 0
+        - {subscriber_id: 104, total_volume_buyer_cfy__c: 0, total_volume_seller_cfy__c: 0, total_revenue_c: 0, settled_turnover_c: 0, pexa_commission_c: 0, src_delta_extract_ts: 2025-08-29 15:00:00.000 +1000}
+
+  # Test 14: Test LEFT JOIN behavior with multiple subscribers having different data combinations
+  - name: test_join_multiple_subscribers_mixed_data
+    description: "Test LEFT JOIN behavior with multiple subscribers having different data combinations"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: false
+      vars:
+        local_current_date: CONVERT_TIMEZONE('Australia/Sydney', '2025-09-05')::DATE
+        updated_at: CONVERT_TIMEZONE('Australia/Sydney','2025-09-05 18:00:00' )
+    given:
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 105, Master_Registration_ID: 'REG_MIXED_1', Day_of_Registration_Date_AEST: '2025-07-01', Registration_Account_Manager: 'Mixed Data Tester 1', Registration_Created_Source: 'transactional-api', Registration_ID: 'REGID_MIXED_1', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: 2025-09-05 16:00:00.000 +1000, inserted_at: 2025-07-01 12:00:00.000 +1000}
+          - {subscriber_id: 106, Master_Registration_ID: 'REG_MIXED_2', Day_of_Registration_Date_AEST: '2025-08-01', Registration_Account_Manager: 'Mixed Data Tester 2', Registration_Created_Source: 'Referral', Registration_ID: 'REGID_MIXED_2', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: 2025-09-05 16:30:00.000 +1000, inserted_at: 2025-08-01 14:00:00.000 +1000}
+          - {subscriber_id: 107, Master_Registration_ID: 'REG_MIXED_3', Day_of_Registration_Date_AEST: '2025-08-15', Registration_Account_Manager: 'Mixed Data Tester 3', Registration_Created_Source: 'transactional-api', Registration_ID: 'REGID_MIXED_3', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: 2025-09-05 17:00:00.000 +1000, inserted_at: 2025-08-15 11:00:00.000 +1000}
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows:
+          # Subscriber 105: volumes only
+          - {id: 'SETT_MIX1_S-4', settlement_id: 1005, settlement_date: '2025-09-01 00:00:00.000000000', subscriber_id: 105, workspace_role_id: 4, buyer_settlement_date: null, seller_settlement_date: '2025-09-01 00:00:00.000000000', financial_year: '2025-2026', src_delta_extract_ts: 2025-09-05 15:00:00.000 +1000, updated_at: 2025-09-05 15:00:00.000 +1000}
+          # Subscriber 106: both volumes and transactions (covered below)
+          - {id: 'SETT_MIX2_B-2', settlement_id: 1006, settlement_date: '2025-09-02 00:00:00.000000000', subscriber_id: 106, workspace_role_id: 2, buyer_settlement_date: '2025-09-02 00:00:00.000000000', seller_settlement_date: null, financial_year: '2025-2026', src_delta_extract_ts: 2025-09-05 15:30:00.000 +1000, updated_at: 2025-09-05 15:30:00.000 +1000}
+          # Subscriber 107: no volumes
+      - input: ref('send_transaction_details')
+        rows:
+          # Subscriber 105: no transactions
+          # Subscriber 106: transactions only (also has volumes above)
+          - {subscriber_id: 106, conversion_id: 'CONV_MIX2', master_registration_id: 'REG_MIXED_2', registration_id: 'REGID_MIXED_2', completed_date_settlement_date: '2025-09-02', settled_revenue: 1200, settled_turnover: 1800, pexa_commission: 120, financial_year: '2025-2026', src_delta_extract_ts: 2025-09-05 16:45:00.000 +1000, updated_at: 2025-09-05 16:45:00.000 +1000}
+          # Subscriber 107: transactions only
+          - {subscriber_id: 107, conversion_id: 'CONV_MIX3', master_registration_id: 'REG_MIXED_3', registration_id: 'REGID_MIXED_3', completed_date_settlement_date: '2025-09-03', settled_revenue: 900, settled_turnover: 1400, pexa_commission: 90, financial_year: '2025-2026', src_delta_extract_ts: 2025-09-05 17:15:00.000 +1000, updated_at: 2025-09-05 17:15:00.000 +1000}
+    expect:
+      rows:
+        # Subscriber 105: volumes only (0 transactions)
+        - {subscriber_id: 105, total_volume_buyer_cfy__c: 0, total_volume_seller_cfy__c: 1, total_revenue_c: 0, settled_turnover_c: 0, pexa_commission_c: 0, src_delta_extract_ts: 2025-09-05 15:00:00.000 +1000}
+        # Subscriber 106: both volumes and transactions
+        - {subscriber_id: 106, total_volume_buyer_cfy__c: 1, total_volume_seller_cfy__c: 0, total_revenue_c: 1200, settled_turnover_c: 1800, pexa_commission_c: 120, src_delta_extract_ts: 2025-09-05 16:45:00.000 +1000}
+        # Subscriber 107: transactions only (0 volumes)
+        - {subscriber_id: 107, total_volume_buyer_cfy__c: 0, total_volume_seller_cfy__c: 0, total_revenue_c: 900, settled_turnover_c: 1400, pexa_commission_c: 90, src_delta_extract_ts: 2025-09-05 17:15:00.000 +1000}
+
+  # Test 15: Test LEFT JOIN behavior with NULL values in join conditions and aggregations
+  - name: test_join_null_handling_in_joins
+    description: "Test LEFT JOIN behavior with NULL values in join conditions and aggregations"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: false
+      vars:
+        local_current_date: CONVERT_TIMEZONE('Australia/Sydney', '2025-09-10')::DATE
+        updated_at: CONVERT_TIMEZONE('Australia/Sydney','2025-09-10 12:00:00' )
+    given:
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 108, Master_Registration_ID: 'REG_NULL_TEST', Day_of_Registration_Date_AEST: '2025-08-01', Registration_Account_Manager: 'NULL Tester', Registration_Created_Source: 'transactional-api', Registration_ID: 'REGID_NULL_TEST', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: 2025-09-10 10:00:00.000 +1000, inserted_at: 2025-08-01 09:00:00.000 +1000}
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows:
+          # Test with NULL settlement dates
+          - {id: 'SETT_NULL_B-2', settlement_id: 1008, settlement_date: '2025-09-05 00:00:00.000000000', subscriber_id: 108, workspace_role_id: 2, buyer_settlement_date: '2025-09-05 00:00:00.000000000', seller_settlement_date: null, financial_year: '2025-2026', src_delta_extract_ts: 2025-09-10 11:00:00.000 +1000, updated_at: 2025-09-10 11:00:00.000 +1000}
+          - {id: 'SETT_NULL_S-4', settlement_id: 1009, settlement_date: '2025-09-06 00:00:00.000000000', subscriber_id: 108, workspace_role_id: 4, buyer_settlement_date: null, seller_settlement_date: '2025-09-06 00:00:00.000000000', financial_year: '2025-2026', src_delta_extract_ts: 2025-09-10 11:15:00.000 +1000, updated_at: 2025-09-10 11:15:00.000 +1000}
+      - input: ref('send_transaction_details')
+        rows:
+          # Test with some NULL financial data (should be handled by COALESCE)
+          - {subscriber_id: 108, conversion_id: 'CONV_NULL_1', master_registration_id: 'REG_NULL_TEST', registration_id: 'REGID_NULL_TEST', completed_date_settlement_date: '2025-09-05', settled_revenue: null, settled_turnover: 1000, pexa_commission: 50, financial_year: '2025-2026', src_delta_extract_ts: 2025-09-10 11:30:00.000 +1000, updated_at: 2025-09-10 11:30:00.000 +1000}
+          - {subscriber_id: 108, conversion_id: 'CONV_NULL_2', master_registration_id: 'REG_NULL_TEST', registration_id: 'REGID_NULL_TEST', completed_date_settlement_date: '2025-09-06', settled_revenue: 800, settled_turnover: null, pexa_commission: null, financial_year: '2025-2026', src_delta_extract_ts: 2025-09-10 11:45:00.000 +1000, updated_at: 2025-09-10 11:45:00.000 +1000}
+    expect:
+      rows:
+        # Should handle NULLs gracefully with COALESCE/SUM behavior
+        - {subscriber_id: 108, total_volume_buyer_cfy__c: 1, total_volume_seller_cfy__c: 1, total_revenue_c: 800, settled_turnover_c: 1000, pexa_commission_c: 50, src_delta_extract_ts: 2025-09-10 11:45:00.000 +1000}

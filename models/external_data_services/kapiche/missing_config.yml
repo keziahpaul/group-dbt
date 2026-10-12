@@ -1,0 +1,212 @@
+version: 2
+
+models:
+  - name: vw_customer_feedback_master
+    description: This view is built from the customer feedback master table to unload
+      the data to Kapiche s3. It consists of only the necessary columns required in
+      Kapiche. All the transformations are handled in the customer feedback master
+      table. This view filters out the nulls in the Customer type field.
+    columns:
+      - name: account management segment
+        description: Segments customers by how they are account managed in PEXA
+        config:
+          meta:
+            alation_oid: oid=83590;otype=attribute
+            alation_title: Account Management Segment
+
+      - name: account owner
+        description: Full name of account owner.
+        config:
+          meta:
+            alation_oid: oid=83620;otype=attribute
+            alation_title: Account Owner
+
+      - name: creationdate
+        description: Values correspond to <a href="https://onedd-pexa.ap.alationcloud.com/attribute/69789/"
+          id="isPasted">CREATED_DATE | Column</a> in <a data-oid="3363" data-otype="table"
+          href="/table/3363/">prd_group_curate.salesforce.vw_all_survey_responses
+          (View All Survey Responses)</a> and renamed as Creation Date.
+        config:
+          meta:
+            alation_oid: oid=83622;otype=attribute
+            alation_title: Creation Date
+
+      - name: csat comment
+        description: CSAT Comment column is based on Pexa Positives, PEXA Improvements
+          and Customer Support Verbatim columns capured in ALL Survey Responses table
+          in Salesforce. A row is created for each comment captured in any of these
+          3 columns.
+        config:
+          meta:
+            alation_oid: oid=83575;otype=attribute
+            alation_title: CSAT Comment
+
+      - name: csat rating
+        description: "<div><p><span id=\"isPasted\" style=\"\">Customer satisfaction\
+          \ score left by a customer.\_</span></p><p><span style=\"\">Values are taken\
+          \ from <a data-oid=\"70270\" data-otype=\"attribute\" href=\"/attribute/70270/\"\
+          >prd_group_curate.salesforce.vw_all_survey_responses.csat_c (Customer Satisfaction)</a>\
+          \ in table <a data-oid=\"3363\" data-otype=\"table\" href=\"/table/3363/\"\
+          >prd_group_curate.salesforce.vw_all_survey_responses (View All Survey Responses)</a>\
+          \ renamed CSAT Rating.</span></p></div>"
+        config:
+          meta:
+            alation_oid: oid=83601;otype=attribute
+            alation_title: CSAT Rating
+
+      - name: customer segment
+        description: PEXA customer segment level 1
+        config:
+          meta:
+            alation_oid: oid=83565;otype=attribute
+            alation_title: Customer Segment
+
+      - name: customer type
+        description: "<div><p>Potential values are: Practitioner, Majors, Financial\
+          \ Institutions, Developer and Government.\_</p><p>These values are derived\
+          \ from Channel and Account Management Segment columns in Salesforce as follows:</p><div\
+          \ id=\"isPasted\" style=\"height: auto; overflow: hidden;\"><strong>Practitioner:</strong></div><div\
+          \ style=\"height: auto; overflow: hidden;\">IF PS_Channel (from account\
+          \ table) = \u2018Practitioner\u2019 AND Account Management Segment(from\
+          \ account table) = \u2018Tier One\u2019 or \u2018Tier Two\u2019 or \u2018\
+          Tier Three\u2019 THEN set the \u2018CustomerType\u2019 field to \u2018Practitioner\u2019\
+          </div><div style=\"height: auto; overflow: hidden;\"><strong>Majors:</strong></div><div\
+          \ style=\"height: auto; overflow: hidden;\">IF PS_Channel (from account\
+          \ table) = \u2018Practitioner\u2019 AND Account Management Segment(from\
+          \ account table) = \u2018Major\u2019 THEN set the \u2018Customer Type\u2019\
+          \ field to \u2018Major\u2019</div><div style=\"height: auto; overflow: hidden;\"\
+          ><strong>Financial institutions:</strong></div><div style=\"height: auto;\
+          \ overflow: hidden;\">IF PS_Channel (from account table) = \u2018Financial\
+          \ Institution\u2019 THEN set the \u2018CustomerType\u2019 field to \u2018\
+          Financial Institution\u2019</div><div style=\"height: auto; overflow: hidden;\"\
+          ><strong>Developer':</strong></div><div style=\"height: auto; overflow:\
+          \ hidden;\">IF PS_Channel (from account table) = \u2018Practitioner\u2019\
+          \ AND Customer Segment Level 1(from account table) = 'Developer' THEN set\
+          \ the \u2018Customer Type\u2019 field to 'Developer'</div><div style=\"\
+          height: auto; overflow: hidden;\"><strong>Government:</strong></div><div\
+          \ style=\"height: auto; overflow: hidden;\">IF PS_Channel (from account\
+          \ table) = \u2018Practitioner\u2019 AND Customer Segment Level 1(from account\
+          \ table) = 'Government/ Council'THEN set the \u2018Customer Type\u2019 field\
+          \ to 'Government/ Council'</div><div style=\"height: auto; overflow: hidden;\"\
+          ><br style=\"\"></div></div>"
+        config:
+          meta:
+            alation_oid: oid=83612;otype=attribute
+            alation_title: Customer Type
+
+      - name: src_delta_extract_ts
+        description: Specifies the column in the target table used to track the latest
+          changes or updates, represented as a timestamp. It is crucial for incremental
+          loading strategies to identify new or updated records since the last load
+          based on the timestamp.
+        config:
+          meta:
+            alation_oid: oid=83578;otype=attribute
+            alation_title: Source Delta Extract Timestamp
+
+      - name: subscriber id
+        description: "<div><p><span id=\"isPasted\">Individual subscriber identifier.</span></p><p><span\
+          \ id=\"isPasted\"><a data-oid=\"420\" data-otype=\"glossary_term\" href=\"\
+          /document/420/\">ELN Subscriber ID</a>\_</span></p></div>"
+        config:
+          meta:
+            alation_oid: oid=83563;otype=attribute
+            alation_title: Subscriber Id
+
+      - name: subscriber name
+        description: "<div><p>Name of the organization.\_</p><p>Corresponds to Account\
+          \ Name in Salesforce which is in fact <a data-oid=\"713\" data-otype=\"\
+          glossary_term\" href=\"/document/713/\">Subscriber Full Name \_</a>.\_</p></div>"
+        config:
+          meta:
+            alation_oid: oid=83608;otype=attribute
+            alation_title: Subscriber Name
+
+      - name: subscriber state
+        description: <div><p>Abbreviation of the Australian state where the Subscriber
+          organization is operating.</p></div>
+        config:
+          meta:
+            alation_oid: oid=83582;otype=attribute
+            alation_title: Subscriber State
+    config:
+      meta:
+        alation_oid: oid=3689;otype=table
+        alation_title: View Customer Feedback Master
+
+  - name: vw_error_customer_feedback_master
+    description: Error table build based on Customer feedback where Customer Type
+      = Null as the feedback can't be attributed to a Practitioner, Majors, Government,
+      Financial Insitution or Developer.
+    columns:
+      - name: csat comment
+        description: CSAT Comment column is based on Pexa Positives, PEXA Improvements
+          and Customer Support Verbatim columns capured in ALL Survey Responses table
+          in Salesforce. A row is created for each comment captured in any of these
+          3 columns.
+        config:
+          meta:
+            alation_oid: oid=85492;otype=attribute
+            alation_title: CSAT Comment
+
+      - name: customer type
+        description: "<div><p>Potential values are: Practitioner, Majors, Financial\
+          \ Institutions, Developer and Government.\_</p><p>These values are derived\
+          \ from Channel and Account Management Segment columns in Salesforce as follows:</p><div\
+          \ id=\"isPasted\" style=\"height: auto; overflow: hidden;\"><strong>Practitioner:</strong></div><div\
+          \ style=\"height: auto; overflow: hidden;\">IF PS_Channel (from account\
+          \ table) = \u2018Practitioner\u2019 AND Account Management Segment(from\
+          \ account table) = \u2018Tier One\u2019 or \u2018Tier Two\u2019 or \u2018\
+          Tier Three\u2019 THEN set the \u2018CustomerType\u2019 field to \u2018Practitioner\u2019\
+          </div><div style=\"height: auto; overflow: hidden;\"><strong>Majors:</strong></div><div\
+          \ style=\"height: auto; overflow: hidden;\">IF PS_Channel (from account\
+          \ table) = \u2018Practitioner\u2019 AND Account Management Segment(from\
+          \ account table) = \u2018Major\u2019 THEN set the \u2018Customer Type\u2019\
+          \ field to \u2018Major\u2019</div><div style=\"height: auto; overflow: hidden;\"\
+          ><strong>Financial institutions:</strong></div><div style=\"height: auto;\
+          \ overflow: hidden;\">IF PS_Channel (from account table) = \u2018Financial\
+          \ Institution\u2019 THEN set the \u2018CustomerType\u2019 field to \u2018\
+          Financial Institution\u2019</div><div style=\"height: auto; overflow: hidden;\"\
+          ><strong>Developer':</strong></div><div style=\"height: auto; overflow:\
+          \ hidden;\">IF PS_Channel (from account table) = \u2018Practitioner\u2019\
+          \ AND Customer Segment Level 1(from account table) = 'Developer' THEN set\
+          \ the \u2018Customer Type\u2019 field to 'Developer'</div><div style=\"\
+          height: auto; overflow: hidden;\"><strong>Government:</strong></div><div\
+          \ style=\"height: auto; overflow: hidden;\">IF PS_Channel (from account\
+          \ table) = \u2018Practitioner\u2019 AND Customer Segment Level 1(from account\
+          \ table) = 'Government/ Council'THEN set the \u2018Customer Type\u2019 field\
+          \ to 'Government/ Council'</div><div style=\"height: auto; overflow: hidden;\"\
+          ><br style=\"\"></div></div>"
+        config:
+          meta:
+            alation_oid: oid=85489;otype=attribute
+            alation_title: Customer Type
+
+      - name: inserted_at
+        description: The timestamp indicating when a record was inserted into the
+          target table, generated by the system at the time of loading from AWS S3.
+        config:
+          meta:
+            alation_oid: oid=85493;otype=attribute
+            alation_title: Inserted At
+
+      - name: related_account_c
+        description: Salesforce Account ID used to map the customer feedback to the
+          account identifier.
+        config:
+          meta:
+            alation_oid: oid=85491;otype=attribute
+            alation_title: Related Account
+
+      - name: subscriber id
+        description: "<div><p><span id=\"isPasted\">Individual subscriber identifier.</span></p><p><span\
+          \ id=\"isPasted\"><a data-oid=\"420\" data-otype=\"glossary_term\" href=\"\
+          /document/420/\">ELN Subscriber ID</a>\_</span></p></div>"
+        config:
+          meta:
+            alation_oid: oid=85490;otype=attribute
+            alation_title: Subscriber Id
+    config:
+      meta:
+        alation_oid: oid=3704;otype=table
+        alation_title: View Error Customer Feedback Master

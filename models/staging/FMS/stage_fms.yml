@@ -1,0 +1,514 @@
+version: 2
+
+models:
+  - name: stg_companyinfo
+    columns:
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: legal_representative_name_mx
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: r_full_name
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_cooexportcontroljurisdictioninuse
+    columns:
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_custgroup
+    columns:
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_custinvoicejour
+    columns:
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: invoice_postal_address
+        config:
+          tags:
+            - secure_field=PI_FULL_ADDRESS
+
+      - name: delivery_name
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+
+      - name: prop_dev_property_developer_name
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+
+      - name: invoicing_name
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+
+      - name: mcr_email
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: prop_dev_email_recipient
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+
+      - name: delivery_postal_address
+        config:
+          tags:
+            - secure_field=PI_FULL_ADDRESS
+
+  - name: stg_custinvoicetrans
+    columns:
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: supplier_email
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: delivery_postal_address
+        config:
+          tags:
+            - secure_field=PI_FULL_ADDRESS
+
+  - name: stg_custtable
+    columns:
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: birth_date_it
+        config:
+          tags:
+            - secure_field=PI_DOB
+
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: credit_card_address_verification_void
+        config:
+          tags:
+            - secure_field=PI_SENSITIVE_FINANCIAL
+
+      - name: credit_card_address_verification
+        config:
+          tags:
+            - secure_field=PI_SENSITIVE_FINANCIAL
+
+      - name: bank_account
+        config:
+          tags:
+            - secure_field=PI_SENSITIVE_FINANCIAL
+
+  - name: stg_dimensionattribute
+    columns:
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_dimensionattributedircategory
+    columns:
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_dimensionattributevalue
+    columns:
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_dimensionattributevaluecombination
+    columns:
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: system_generated_attribute_bank_account_value
+        config:
+          tags:
+            - secure_field=PI_SENSITIVE_FINANCIAL
+
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: system_generated_attribute_bank_account
+        config:
+          tags:
+            - secure_field=PI_SENSITIVE_FINANCIAL
+
+  - name: stg_dimensionfinancialtag
+    columns:
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_dimensionfocusbalance
+    columns:
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_dimensionfocusledgerdimensionreference
+    columns:
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_dimensionhierarchy
+    columns:
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_dirpartytable
+    columns:
+      - name: name_alias
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: name
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: primary_contact_phone
+        config:
+          tags:
+            - secure_field=PI_CONTACT_NUMBER
+
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_ecoresproduct
+    columns:
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_ecoresproducttranslation
+    columns:
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_fiscalcalendarperiod
+    columns:
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_generaljournalaccountentry
+    columns:
+      - name: reason_ref
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_generaljournalentry
+    columns:
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_inventitemgroup
+    columns:
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_inventitemgroupitem
+    columns:
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_inventtable
+    columns:
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_ledger
+    columns:
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_ledgerchartofaccounts
+    columns:
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_mainaccount
+    columns:
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_srsanalysisenums
+    columns:
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_taxtrans
+    columns:
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_vendsettlement
+    columns:
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_vendtable
+    columns:
+      - name: birth_date
+        config:
+          tags:
+            - secure_field=PI_DOB
+
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: bank_account
+        config:
+          tags:
+            - secure_field=PI_SENSITIVE_FINANCIAL
+
+      - name: is_taxation_over_payroll_br
+        config:
+          tags:
+            - secure_field=PI_SENSITIVE_FINANCIAL
+
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+  - name: stg_vendtrans
+    columns:
+      - name: created_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+
+      - name: promissory_note_seq_num
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+
+      - name: company_bank_account_id
+        config:
+          tags:
+            - secure_field=PI_SENSITIVE_FINANCIAL
+
+      - name: promissory_note_status
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+
+      - name: third_party_bank_account_id
+        config:
+          tags:
+            - secure_field=PI_SENSITIVE_FINANCIAL
+
+      - name: modified_by
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME

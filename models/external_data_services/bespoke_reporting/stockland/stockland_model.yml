@@ -1,0 +1,16 @@
+version: 2
+
+models:
+  - name: stockland_project_data
+    config:
+      materialized: table
+    description: Identify the workspaces that will be settled today
+    columns:
+      - name: SubscriberReference
+        config:
+          tags:
+            - secure_field=PI_FREE_TEXT_FIELD
+
+  
+
+  

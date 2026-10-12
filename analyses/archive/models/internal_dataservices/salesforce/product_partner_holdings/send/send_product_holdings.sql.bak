@@ -1,0 +1,173 @@
+{{
+    config(
+        materialized='incremental',
+        unique_key='subscriber_id',
+        merge_exclude_columns = ['inserted_at'],
+        on_schema_change='append_new_columns'
+    )
+}}
+with
+{% if is_incremental() %}
+target_max_timestamp as 
+(
+    select coalesce(max(src_delta_extract_ts),CAST('1900-01-01 00:00:00.000 +1000' AS TIMESTAMPTZ)) as last_load_max_timestamp,
+     {{ extract_financial_year('max(src_delta_extract_ts)') }} as last_processed_fy
+    from {{ this }}
+),
+{% endif %}
+
+current_fy_ref as (
+    select {{ extract_financial_year(var('local_current_date')) }} as current_financial_year
+),
+
+{% if is_incremental() %}
+fy_transition_check as 
+(
+    select 
+        t.last_processed_fy,
+        c.current_financial_year as current_fy,
+        (t.last_processed_fy != c.current_financial_year) and (last_processed_fy is not null)  as is_fy_transition
+    from target_max_timestamp t
+    cross join current_fy_ref c
+),
+{% endif %}
+
+send_sub_match as (
+    select
+        subscriber_id,
+        master_registration_id,
+        min(day_of_registration_date_aest) as date_of_registration,
+        min(registration_account_manager) as registration_am,
+        min(registration_account_manager_email) as registration_am_email_c,
+        boolor_agg(decode(registration_created_source, 'transactional-api', TRUE, 'Referral', FALSE)) as opted_in_for_integration,
+        max(updated_at) as src_delta_extract_ts
+    from {{ ref('send_subscriber_match') }}
+    group by subscriber_id, master_registration_id
+),
+
+settlement_volumes as (
+    select
+        subscriber_id,
+        -- Use CASE to count only current FY records, 0 for previous FY
+        count(case
+            when financial_year = (select current_financial_year from current_fy_ref)
+                then buyer_settlement_date
+        end) as total_volume_buyer_cfy,
+        count(case
+            when financial_year = (select current_financial_year from current_fy_ref)
+                then seller_settlement_date
+        end) as total_volume_seller_cfy,
+        --Force reprocessing on FY transition, otherwise use max(updated_at)
+        {% if is_incremental() %}
+    case 
+        when (select is_fy_transition from fy_transition_check) = true
+        then {{ var('updated_at') }}  -- Force reprocessing if FY changed
+        else max(updated_at)
+    end as src_delta_extract_ts
+    {%else%}
+            max(updated_at) as src_delta_extract_ts
+        {% endif %}
+    from {{ ref('buyer_seller_volume_per_workspace') }}
+    -- No WHERE clause - fetch all records to handle FY transition
+    group by subscriber_id
+),
+
+
+send_transactions_cfy as (
+    select
+        subscriber_id,
+        master_registration_id,
+        -- Use CASE to sum only current FY values, 0 for previous FY
+        sum(case
+            when financial_year = (select current_financial_year from current_fy_ref)
+                then settled_revenue
+            else 0
+        end) as settled_revenue_cfy,
+        sum(case
+            when financial_year = (select current_financial_year from current_fy_ref)
+                then settled_turnover
+            else 0
+        end) as settled_turnover_cfy,
+        sum(case
+            when financial_year = (select current_financial_year from current_fy_ref)
+                then pexa_commission
+            else 0
+        end) as pexa_commission_cfy,
+        -- Smart timestamp: Force reprocessing on FY transition, otherwise use max(updated_at)
+        {% if is_incremental() %}
+        case 
+            when (select is_fy_transition from fy_transition_check) = true
+            then {{ var('updated_at') }}  -- Force reprocessing if FY changed
+            else max(updated_at)
+        end as src_delta_extract_ts
+        {%else%}
+            max(updated_at) as src_delta_extract_ts
+        {% endif %}
+    from {{ ref('send_transaction_details') }}
+    group by subscriber_id, master_registration_id
+),
+
+send_all_time as (
+    select
+        subscriber_id,
+        master_registration_id,
+        count(completed_date_settlement_date) as product_utilisation,
+        max(completed_date_settlement_date) as last_transaction_date,
+        min(completed_date_settlement_date) as first_transaction_date,
+        max(updated_at) as src_delta_extract_ts
+    from {{ ref('send_transaction_details') }}
+    group by subscriber_id, master_registration_id
+),
+
+send_holdings as (
+    select
+        tat.subscriber_id,
+        tat.product_utilisation,
+        tat.last_transaction_date,
+        tat.first_transaction_date,
+        tat.master_registration_id as send_master_registration_id,
+        case when tat.master_registration_id is not NULL then 'Y' else 'N' end as product_status,
+        coalesce(tfy.settled_revenue_cfy, 0) as total_revenue_cfy,
+        coalesce(tfy.settled_turnover_cfy, 0) as settled_turnover_cfy,
+        coalesce(tfy.pexa_commission_cfy, 0) as pexa_commission,
+        greatest_ignore_nulls(tat.src_delta_extract_ts, tfy.src_delta_extract_ts) as src_delta_extract_ts
+    from send_all_time as tat  -- Primary: All subscribers with historical data
+    left join send_transactions_cfy as tfy  -- Supplementary: Add CFY metrics if available
+        on tat.subscriber_id = tfy.subscriber_id
+            and tat.master_registration_id = tfy.master_registration_id
+)
+
+
+
+select
+    m.subscriber_id,
+    s.first_transaction_date as first_transaction_date__c,
+    s.last_transaction_date as last_transaction_date__c,
+    s.product_status as ps_status_c,
+    s.product_utilisation as product_utilisation_c,
+    m.master_registration_id as product_master_registration_id_c,
+    m.date_of_registration as date_registered_c,
+    m.registration_am as registration_am_c,
+    m.registration_am_email_c,
+    m.opted_in_for_integration as send_integration_opt_in_c,
+    coalesce(s.total_revenue_cfy, 0) as total_revenue_c,
+    coalesce(s.settled_turnover_cfy, 0) as settled_turnover_c,
+    coalesce(v.total_volume_buyer_cfy, 0) as total_volume_buyer_cfy__c,
+    coalesce(v.total_volume_seller_cfy, 0) as total_volume_seller_cfy__c,
+    coalesce(s.pexa_commission, 0) as pexa_commission_c,
+    convert_timezone('Australia/Sydney', greatest_ignore_nulls(s.src_delta_extract_ts, v.src_delta_extract_ts, m.src_delta_extract_ts)) as src_delta_extract_ts,
+    {{ var('inserted_at') }} as inserted_at,
+    {{ var('updated_at') }} as updated_at
+from send_sub_match as m
+left join send_holdings as s
+    on m.subscriber_id = s.subscriber_id
+        and m.master_registration_id = s.send_master_registration_id
+left join settlement_volumes as v
+    on m.subscriber_id = v.subscriber_id
+{% if is_incremental() %}
+where greatest_ignore_nulls(s.src_delta_extract_ts, v.src_delta_extract_ts,m.src_delta_extract_ts) > (select last_load_max_timestamp from target_max_timestamp)
+    -- or (greatest_ignore_nulls(s.src_delta_extract_ts, v.src_delta_extract_ts) is null 
+    --    and m.src_delta_extract_ts > (select last_load_max_timestamp from target_max_timestamp))
+    or (select is_fy_transition from fy_transition_check) = true  -- Force full refresh on FY transition
+
+{% endif %}

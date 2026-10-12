@@ -1,0 +1,47 @@
+with source as (
+    select *
+    from {{ ref('stg_generaljournalentry') }}
+)
+
+select
+    id,
+    sink_created_on,
+    sink_modified_on,
+    journal_category,
+    posting_layer,
+    sys_data_state_code,
+    accounting_date,
+    acknowledgement_date,
+    document_date,
+    document_number,
+    fiscal_calendar_period,
+    fiscal_calendar_year,
+    journal_number,
+    ledger,
+    sub_ledger_journal_entry,
+    transfer_id,
+    sub_ledger_voucher,
+    sub_ledger_voucher_data_area_id,
+    ledger_entry_journal,
+    ledger_posting_journal,
+    ledger_posting_journal_data_area_id,
+    budget_source_ledger_entry_posted,
+    modified_date_time,
+    modified_by,
+    modified_transaction_id,
+    created_date_time,
+    created_by,
+    created_transaction_id,
+    data_area_id,
+    recversion,
+    partition,
+    sysrowversion,
+    rec_id,
+    table_id,
+    version_number,
+    created_on,
+    modified_on,
+    is_delete,
+    inserted_at,
+    inserted_at as effective_to
+from source

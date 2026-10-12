@@ -1,0 +1,520 @@
+version: 2
+
+models:
+  - name: stg_pbi_pexa_client_activity
+    description: The table provides detailed information relevant to PEXA for individuals
+      or business register at Send platform to perform a trade.
+    columns:
+      - name: Affiliate_Branch
+        description: The affiliate employee's branch of the registration.
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+          meta:
+            alation_oid: oid=58689;otype=attribute
+            alation_title: Affiliate Branch
+
+      - name: Business_Name
+        description: The name of the business.
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+          meta:
+            alation_oid: oid=59633;otype=attribute
+            alation_title: Business Name
+
+      - name: Affiliate_Employee
+        description: The affiliate employee of the registration.
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=59430;otype=attribute
+            alation_title: Affiliate Employee
+
+      - name: Full_Name
+        description: The full name of the registration.
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=59753;otype=attribute
+            alation_title: Full Name
+
+      - name: Registration_Account_Manager
+        description: The account manager of the Registration.
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=60198;otype=attribute
+            alation_title: Registration Account Manager
+
+      - name: Registration_Account_Manager_Email
+        description: The email address of the account manager.
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+
+      - name: abn_acn
+        description: The unique identifier number of the business in Australia.
+        config:
+          meta:
+            alation_oid: oid=59432;otype=attribute
+            alation_title: Australian Business Number Australian Company Number
+
+      - name: day_of_lead_created_date_aest
+        description: The date of the lead is created in Newton.
+        config:
+          meta:
+            alation_oid: oid=58735;otype=attribute
+            alation_title: Day of Lead Created Date AEST
+
+      - name: day_of_registration_date_aest
+        description: The date of the registration is created in Newton.
+        config:
+          meta:
+            alation_oid: oid=59740;otype=attribute
+            alation_title: Day of Registration Date AEST
+
+      - name: domain_email_address
+        description: The customer's email domain address.
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+          meta:
+            alation_oid: oid=58836;otype=attribute
+            alation_title: Domain Email Address
+
+      - name: etl_insert_date_aest
+        description: Audit field, record insert date in AEST.
+        config:
+          meta:
+            alation_oid: oid=58715;otype=attribute
+            alation_title: ETL Insert Date AEST
+
+      - name: etl_insert_date_utc
+        description: Audit field, record insert date in UTC.
+        config:
+          meta:
+            alation_oid: oid=60204;otype=attribute
+            alation_title: ETL Insert Date UTC
+
+      - name: inserted_at
+        description: Timestamp when data was inserted into stage layer.
+        config:
+          meta:
+            alation_oid: oid=59008;otype=attribute
+            alation_title: Inserted At
+
+      - name: master_registration_id
+        description: "This field shows the Original Registration ID that was cloned\
+          \ to create a new registration for \u201CAPI\u201D."
+        config:
+          meta:
+            alation_oid: oid=59839;otype=attribute
+            alation_title: Master Registration Id
+
+      - name: max_trade_settled_for_accounting_date
+        description: Latest Date of the last trade settled for accounting
+        config:
+          meta:
+            alation_oid: oid=59593;otype=attribute
+            alation_title: Max Trade Settled For Accounting Date
+
+      - name: min_trade_settled_for_accounting_date
+        description: Earliest Date of the last trade settled for accounting
+        config:
+          meta:
+            alation_oid: oid=59863;otype=attribute
+            alation_title: Minus Trade Settled For Accounting Date
+
+      - name: purpose
+        description: The purpose of the registration.
+        config:
+          meta:
+            alation_oid: oid=58893;otype=attribute
+            alation_title: Purpose
+
+      - name: registration_created_source
+        description: "This field is used to determine if the registration was created\
+          \ by \u201CAPI\u201D or by \u201CReferral\u201D."
+        config:
+          meta:
+            alation_oid: oid=60199;otype=attribute
+            alation_title: Registration Created Source
+
+      - name: registration_id
+        description: The unique identifier of the registration record.
+        config:
+          meta:
+            alation_oid: oid=58976;otype=attribute
+            alation_title: Registration Id
+
+      - name: registrations_pexa_opt_in_date_aest
+        description: Incentive program start date Australian Eastern Standard Time
+        config:
+          meta:
+            alation_oid: oid=58665;otype=attribute
+            alation_title: Registrations Pexa Opt In Date AEST
+
+      - name: registrations_pexa_opt_in_flag
+        description: Flag to indicate the registration is part of incentive program.
+        config:
+          meta:
+            alation_oid: oid=59799;otype=attribute
+            alation_title: Registrations Pexa Opt In Flag
+
+      - name: state
+        description: "The customer\u2019s State they are living in."
+        config:
+          meta:
+            alation_oid: oid=59223;otype=attribute
+            alation_title: State
+    config:
+      meta:
+        orig_description: staging table for sendfx pexa client activity
+        alation_oid: oid=2963;otype=table
+        alation_title: Staging PEXA Client Activity
+    data_tests:
+      - dbt_expectations.expect_table_row_count_to_equal_other_table:
+          arguments:
+            compare_model: source('sendfx_raw', 'vw_ext_pbi_pexa_client_activity')
+            factor: 1
+            row_condition: "inserted_at >= (select max(inserted_at) from {{ ref('stg_pbi_pexa_client_activity')}})"
+            compare_row_condition: 1=1
+
+  - name: stg_pbi_pexa_pexaalltimetransactionslist
+    description: The table provides detailed information relevant to PEXA for transaction
+      performed in Send platform from a registered individual or business.
+    columns:
+      - name: Affiliate_Branch
+        description: The affiliate employee's branch of the registration.
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+          meta:
+            alation_oid: oid=58640;otype=attribute
+            alation_title: Affiliate Branch
+
+      - name: Business_Name
+        description: The name of the business.
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+          meta:
+            alation_oid: oid=59687;otype=attribute
+            alation_title: Business Name
+
+      - name: Affiliate_Employee
+        description: The affiliate employee of the registration.
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=58930;otype=attribute
+            alation_title: Affiliate Employee
+
+      - name: Full_Name
+        description: The full name of the registration.
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=60133;otype=attribute
+            alation_title: Full Name
+
+      - name: Registration_Account_Manager
+        description: The account manager of the Registration.
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=59104;otype=attribute
+            alation_title: Registration Account Manager
+
+      - name: abn_acn
+        description: The unique identifier number of the business in Australia.
+        config:
+          meta:
+            alation_oid: oid=58646;otype=attribute
+            alation_title: Australian Business Number Australian Company Number
+
+      - name: beneficiary_bank_account_country
+        description: The country of the Beneficiary Bank Account.
+        config:
+          tags:
+            - secure_field=PI_SENSITIVE_FINANCIAL
+          meta:
+            alation_oid: oid=59722;otype=attribute
+            alation_title: Beneficiary Bank Account Country
+
+      - name: buy_currency
+        description: The currency the customer wants to buy.
+        config:
+          meta:
+            alation_oid: oid=60147;otype=attribute
+            alation_title: Buy Currency
+
+      - name: completed_date_settlement_date
+        description: The date when the trade has been completed.
+        config:
+          meta:
+            alation_oid: oid=59454;otype=attribute
+            alation_title: Completed Date Settlement Date
+
+      - name: conversion_id
+        description: The unique identifier of the trade.
+        config:
+          meta:
+            alation_oid: oid=59613;otype=attribute
+            alation_title: Conversion Id
+
+      - name: day_of_lead_created_date_aest
+        description: The date of the lead is created in Newton.
+        config:
+          meta:
+            alation_oid: oid=58935;otype=attribute
+            alation_title: Day of Lead Created Date AEST
+
+      - name: day_of_registration_date_aest
+        description: The date of the registration is created in Newton.
+        config:
+          meta:
+            alation_oid: oid=59561;otype=attribute
+            alation_title: Day of Registration Date AEST
+
+      - name: domain_email_address
+        description: The customer's email domain address.
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+          meta:
+            alation_oid: oid=60138;otype=attribute
+            alation_title: Domain Email Address
+
+      - name: etl_insert_date_aest
+        description: Audit field, record insert date in AEST.
+        config:
+          meta:
+            alation_oid: oid=59861;otype=attribute
+            alation_title: ETL Insert Date AEST
+
+      - name: etl_insert_date_utc
+        description: Audit field, record insert date in UTC.
+        config:
+          meta:
+            alation_oid: oid=59748;otype=attribute
+            alation_title: ETL Insert Date UTC
+
+      - name: inserted_at
+        description: Timestamp when data was inserted into stage layer.
+        config:
+          meta:
+            alation_oid: oid=59101;otype=attribute
+            alation_title: Inserted At
+
+      - name: master_registration_id
+        description: "This field shows the Original Registration ID that was cloned\
+          \ to create a new registration for \u201CAPI\u201D."
+        config:
+          meta:
+            alation_oid: oid=59018;otype=attribute
+            alation_title: Master Registration Id
+
+      - name: pexa_commission
+        description: PEXA commission is calculated based on the agreement.
+        config:
+          meta:
+            alation_oid: oid=58822;otype=attribute
+            alation_title: Pexa Commission
+
+      - name: purpose
+        description: The purpose of the registration.
+        config:
+          meta:
+            alation_oid: oid=59480;otype=attribute
+            alation_title: Purpose
+
+      - name: registration_created_source
+        description: "This field is used to determine if the registration was created\
+          \ by \u201CAPI\u201D or by \u201CReferral\u201D."
+        config:
+          meta:
+            alation_oid: oid=59415;otype=attribute
+            alation_title: Registration Created Source
+
+      - name: registration_id
+        description: 'The unique identifier of the registration
+
+          record.'
+        config:
+          meta:
+            alation_oid: oid=59551;otype=attribute
+            alation_title: Registration Id
+
+      - name: sell_currency
+        description: The currency the customer is selling for the trade.
+        config:
+          meta:
+            alation_oid: oid=58808;otype=attribute
+            alation_title: Sell Currency
+
+      - name: settled_revenue
+        description: The Actual AUD revenue is made from the trade.
+        config:
+          meta:
+            alation_oid: oid=59474;otype=attribute
+            alation_title: Settled Revenue
+
+      - name: settled_turnover
+        description: The AUD amount that is made in the trade.
+        config:
+          meta:
+            alation_oid: oid=59641;otype=attribute
+            alation_title: Settled Turnover
+
+      - name: state
+        description: "The customer\u2019s State they are living in."
+        config:
+          meta:
+            alation_oid: oid=59431;otype=attribute
+            alation_title: State
+    config:
+      meta:
+        orig_description: staging table for sendfx pexa all time transaction list
+        alation_oid: oid=2959;otype=table
+        alation_title: Staging PEXA All Time Transactions
+    data_tests:
+      - dbt_expectations.expect_table_row_count_to_equal_other_table:
+          arguments:
+            compare_model: source('sendfx_raw', 'vw_ext_pbi_pexa_pexaalltimetransactionslist')
+            factor: 1
+            row_condition: "inserted_at >= (select max(inserted_at) from {{ ref('stg_pbi_pexa_pexaalltimetransactionslist')}})"
+            compare_row_condition: 1=1
+
+  - name: stg_pbi_pexa_client_incomplete_applications
+    description: The PEXA Client Incomplete Applications table contains information
+      about incomplete client registrations or applications with PEXA, including details
+      such as the business name, registration status, reasons for incompleteness,
+      and associated account manager.
+    columns:
+      - name: Business_Name
+        description: The name of the business.
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+          meta:
+            alation_oid: oid=95535;otype=attribute
+            alation_title: Business Name
+
+      - name: Full_Name
+        description: The full name of the registration.
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=95533;otype=attribute
+            alation_title: Full Name
+
+      - name: Registration_Account_Manager
+        description: The account manager of the Registration.
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=95544;otype=attribute
+            alation_title: Registration Account Manager
+
+      - name: Registration_Account_Manager_Email
+        description: The email address of the account manager
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+
+      - name: boomerang_reason_or_docs_required
+        description: Reason why the registration is in this status or if any document
+          is required.
+        config:
+          meta:
+            alation_oid: oid=95536;otype=attribute
+            alation_title: Boomerang Reason Or Docs Required
+
+      - name: day_of_lead_created_date_aest
+        description: The date of the lead is created in Newton.
+        config:
+          meta:
+            alation_oid: oid=95555;otype=attribute
+            alation_title: Day of Lead Created AEST
+
+      - name: domain_email_address
+        description: The customer's email domain address.
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+          meta:
+            alation_oid: oid=95534;otype=attribute
+            alation_title: Domain Email Address
+
+      - name: etl_insert_date_aest
+        description: Audit field, record insert date in AEST.
+        config:
+          meta:
+            alation_oid: oid=95539;otype=attribute
+            alation_title: ETL Insert Date AEST
+
+      - name: etl_insert_date_utc
+        description: Audit field, record insert date in UTC.
+        config:
+          meta:
+            alation_oid: oid=95548;otype=attribute
+            alation_title: ETL Insert Date UTC
+
+      - name: inserted_at
+        description: Timestamp when data was inserted into stage layer.
+        config:
+          meta:
+            alation_oid: oid=95558;otype=attribute
+            alation_title: Inserted At
+
+      - name: master_registration_id
+        description: "This field shows the Original Registration ID that was cloned\
+          \ to create a new registration for \u201CAPI\u201D."
+        config:
+          meta:
+            alation_oid: oid=95541;otype=attribute
+            alation_title: Master Registration Id
+
+      - name: metadata_filename
+        description: Column contains the fully qualified name (full path) of the file
+          containing the current row.
+        config:
+          meta:
+            alation_oid: oid=95542;otype=attribute
+            alation_title: Metadata Filename
+
+      - name: registration_id
+        description: The unique identifier of the registrationrecord.
+        config:
+          meta:
+            alation_oid: oid=95556;otype=attribute
+            alation_title: Registration Id
+
+      - name: registrations_status
+        description: Status of registration.
+        config:
+          meta:
+            alation_oid: oid=95557;otype=attribute
+            alation_title: Registrations Status
+    config:
+      meta:
+        orig_description: staging table for sendfx client incmplete applications
+        alation_oid: oid=3811;otype=table
+        alation_title: Staging PEXA Client  Incomplete Applications
+    data_tests:
+      - dbt_expectations.expect_table_row_count_to_equal_other_table:
+          arguments:
+            compare_model: source('sendfx_raw', 'vw_ext_pbi_pexa_client_incomplete_applications')
+            factor: 1
+            row_condition: "inserted_at >= (select max(inserted_at) from {{ ref('stg_pbi_pexa_client_incomplete_applications')}})"
+            compare_row_condition: 1=1

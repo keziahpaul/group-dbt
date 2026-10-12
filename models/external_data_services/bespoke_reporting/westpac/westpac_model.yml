@@ -1,0 +1,435 @@
+version: 2
+
+models:
+  - name: Westpac_Daily_report
+    description: "<div><p><span id=\"isPasted\">A list of completed/lodged Westpac\
+      \ settlements that occurred in the past 24hrs which includes their transaction/document\
+      \ type.</span></p><p><span id=\"isPasted\">Additional information can be found\
+      \ here:\_<a href=\"https://pexa.atlassian.net/wiki/spaces/EDP/pages/1497530787/Westpac+Daily+Lodgement+-+DNA1000\"\
+      \ id=\"isPasted\">Westpac Daily Lodgement - DNA1000 - Enterprise Data Platform\
+      \ - Confluence</a></span></p></div>"
+    columns:
+      - name: date
+        description: The lodgement date of the workspace
+        config:
+          meta:
+            alation_oid: oid=104666;otype=attribute
+            alation_title: Date
+
+      - name: document_id
+        description: The unique document identifier
+        config:
+          meta:
+            alation_oid: oid=104650;otype=attribute
+            alation_title: Document Id
+
+      - name: end_of_month
+        description: The last day of the month based on the lodgement date
+        config:
+          meta:
+            alation_oid: oid=104624;otype=attribute
+            alation_title: End Of Month
+
+      - name: end_of_week
+        description: The week ending Sunday based off the lodgement date
+        config:
+          meta:
+            alation_oid: oid=104621;otype=attribute
+            alation_title: End of Week
+
+      - name: jurisdiction
+        description: The jurisdiction of the workspace
+        config:
+          meta:
+            alation_oid: oid=104652;otype=attribute
+            alation_title: Jurisdiction
+
+      - name: role
+        description: The workspace role that created the document
+        config:
+          meta:
+            alation_oid: oid=104662;otype=attribute
+            alation_title: Role
+
+      - name: subscriber_name
+        description: The subscriber name that created the document
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+          meta:
+            alation_oid: oid=104631;otype=attribute
+            alation_title: Subscriber Name
+
+      - name: subscriber_reference
+        description: The participants reference for them to identify the transaction
+        config:
+          meta:
+            alation_oid: oid=104626;otype=attribute
+            alation_title: Subscriber Reference
+
+      - name: subscriber_type
+        description: The subscriber type
+        config:
+          meta:
+            alation_oid: oid=104635;otype=attribute
+            alation_title: Subscriber Type
+
+      - name: title_references
+        description: The list of all titles in the workspace
+        config:
+          meta:
+            alation_oid: oid=104623;otype=attribute
+            alation_title: Title References
+
+      - name: transaction_type
+        description: <div><p>The derived transaction type based off the lodgement
+          transaction type.</p><ol><li>If transaction type is 'DM' or 'WCDM' then
+          'Refinance'</li><li>If transaction type is 'NOMINATION' then 'Nomination'</li><li>If
+          transaction type contains a 'T' then 'Transfer'</li><li>If transaction type
+          is 'D' or 'CD' or 'WCD' then 'Standalone Discharge'</li><li>If transaction
+          type is 'M' or 'CM' or 'WCM' then 'Standalone Mortgage'</li><li>If transaction
+          type does not fall into any of the above then 'Other'</li></ol><p><br></p></div>
+        config:
+          meta:
+            alation_oid: oid=104665;otype=attribute
+            alation_title: Transaction Type
+
+      - name: workgroup
+        description: The list of workgroups the Subscribers has in the workspace
+        config:
+          meta:
+            alation_oid: oid=104641;otype=attribute
+            alation_title: Workgroup
+
+      - name: workspace_number
+        description: The unique workspace identifier
+        config:
+          meta:
+            alation_oid: oid=104676;otype=attribute
+            alation_title: Workspace Number
+    config:
+      meta:
+        orig_description: Westpac Daily Lodgement
+        alation_oid: oid=4030;otype=table
+        alation_title: Westpac Daily Report
+
+  - name: A00671_D_AE_WBC
+    description: '<div><p><span id="isPasted">Report contains a list of all Westpac
+      users, creation date, last login date and password change.</span></p><p><span>More
+      information here: <a href="https://pexa.atlassian.net/wiki/spaces/EDP/pages/1497465201/Westpac+Daily+Users+-+DNA1001"
+      id="isPasted">Westpac Daily Users - DNA1001 - Enterprise Data Platform - Confluence</a></span></p><p>No
+      sample available.</p></div>'
+    columns:
+      - name: '0'
+        description: Constant value of 1 used for file format requirements
+        config:
+          meta:
+            alation_oid: oid=104649;otype=attribute
+            alation_title: '0'
+
+      - name: created on
+        description: Date of user account creation
+        config:
+          meta:
+            alation_oid: oid=104668;otype=attribute
+            alation_title: Created On
+
+      - name: email
+        description: Email address associated with user account
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+          meta:
+            alation_oid: oid=104636;otype=attribute
+            alation_title: Email
+
+      - name: field name=" "
+        description: Empty string for file format requirements
+        config:
+          meta:
+            alation_oid: oid=118825;otype=attribute
+            alation_title: Field Name
+
+      - name: first name
+        description: First name of user
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=104669;otype=attribute
+            alation_title: First Name
+
+      - name: last active
+        description: Date of most recent user logon as of reporting date
+        config:
+          meta:
+            alation_oid: oid=104628;otype=attribute
+            alation_title: Last Active
+
+      - name: last name
+        description: Surname of user
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=104638;otype=attribute
+            alation_title: Last Name
+
+      - name: middle name
+        description: Middle name of user
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=104651;otype=attribute
+            alation_title: Middle Name
+
+      - name: permission(s)
+        description: Concatenated string of permissions a user has, separated by commas
+        config:
+          meta:
+            alation_oid: oid=104673;otype=attribute
+            alation_title: Permission(s)
+
+      - name: phone
+        description: Phone number of user
+        config:
+          tags:
+            - secure_field=PI_CONTACT_NUMBER
+          meta:
+            alation_oid: oid=104633;otype=attribute
+            alation_title: Phone
+
+      - name: salary id
+        description: User job title
+        config:
+          meta:
+            alation_oid: oid=104627;otype=attribute
+            alation_title: Salary Id
+
+      - name: status
+        description: User status as of reporting date eg. DELETED, ACTIVE
+        config:
+          meta:
+            alation_oid: oid=104670;otype=attribute
+            alation_title: Status
+
+      - name: subscriber user type
+        description: Application role associated with user eg. Subscriber User, Subscriber
+          Administrator, Subscriber Manager
+        config:
+          meta:
+            alation_oid: oid=104656;otype=attribute
+            alation_title: Subscriber User Type
+
+      - name: workgroup(s)
+        description: Concatenated string of workgroups a user is a part of, separated
+          by commas
+        config:
+          meta:
+            alation_oid: oid=104667;otype=attribute
+            alation_title: Workgroup(s)
+    config:
+      meta:
+        orig_description: Westpac Daily Users workgroup
+        alation_oid: oid=4034;otype=table
+        alation_title: Westpac User Daily Report
+
+  - name: A00671_D_AE_SGB
+    description: <div><p>Report contains a list of all StGeroge users, creation date,
+      last login date and password change.</p><p>No sample available.</p></div>
+    columns:
+      - name: '0'
+        description: Constant value of 1 used for file format requirements
+        config:
+          meta:
+            alation_oid: oid=106142;otype=attribute
+            alation_title: '0'
+
+      - name: created on
+        description: Date of user account creation
+        config:
+          meta:
+            alation_oid: oid=106155;otype=attribute
+            alation_title: Created On
+
+      - name: email
+        description: Email address associated with user account
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+          meta:
+            alation_oid: oid=106144;otype=attribute
+            alation_title: Email
+
+      - name: field name=" "
+        description: Empty string for file format requirements
+        config:
+          meta:
+            alation_oid: oid=118826;otype=attribute
+            alation_title: Field Name
+
+      - name: first name
+        description: First name of user
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=106147;otype=attribute
+            alation_title: First Name
+
+      - name: last active
+        description: Date of most recent user logon as of reporting date
+        config:
+          meta:
+            alation_oid: oid=106129;otype=attribute
+            alation_title: Last Active
+
+      - name: last name
+        description: Surname of user
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=106128;otype=attribute
+            alation_title: Last Name
+
+      - name: middle name
+        description: Middle name of user
+        config:
+          tags:
+            - secure_field=PI_NAME
+          meta:
+            alation_oid: oid=106140;otype=attribute
+            alation_title: Middle Name
+
+      - name: permission(s)
+        description: Concatenated string of permissions a user has, separated by commas
+        config:
+          meta:
+            alation_oid: oid=106153;otype=attribute
+            alation_title: Permission(s)
+
+      - name: phone
+        description: Phone number of user
+        config:
+          tags:
+            - secure_field=PI_CONTACT_NUMBER
+          meta:
+            alation_oid: oid=106139;otype=attribute
+            alation_title: Phone
+
+      - name: salary id
+        description: User job title
+        config:
+          meta:
+            alation_oid: oid=106151;otype=attribute
+            alation_title: Salary Id
+
+      - name: status
+        description: User status as of reporting date eg. DELETED, ACTIVE
+        config:
+          meta:
+            alation_oid: oid=106154;otype=attribute
+            alation_title: Status
+
+      - name: subscriber user type
+        description: Application role associated with user eg. Subscriber User, Subscriber
+          Administrator, Subscriber Manager
+        config:
+          meta:
+            alation_oid: oid=106149;otype=attribute
+            alation_title: Subscriber User Type
+
+      - name: workgroup(s)
+        description: Concatenated string of workgroups a user is a part of, separated
+          by commas
+        config:
+          meta:
+            alation_oid: oid=106159;otype=attribute
+            alation_title: Workgroup(s)
+    config:
+      meta:
+        orig_description: Westpac Daily Users StGeorge
+        alation_oid: oid=4118;otype=table
+        alation_title: Westpac User Daily Report StGeorge
+
+  - name: A00671_W_ED_WBC
+    description: '<div><p>Contains a list of all workgroups with descriptions.</p><p>More
+      information available here: <a href="https://pexa.atlassian.net/wiki/spaces/EDP/pages/1494122816/Westpac+Workgroups+Report+-+DNA1010"
+      id="isPasted">Westpac Workgroups Report - DNA1010 - Enterprise Data Platform
+      - Confluence</a></p></div>'
+    columns:
+      - name: '0'
+        description: Constant value of 1 used for file format requirements
+        config:
+          meta:
+            alation_oid: oid=104996;otype=attribute
+            alation_title: '0'
+
+      - name: description
+        description: Standardised description derived from Group Name column, categorising
+          the functionality of each workgroup or permission group.
+        config:
+          meta:
+            alation_oid: oid=104994;otype=attribute
+            alation_title: Description
+
+      - name: group name
+        description: Name of the group (workgroup or permission group) assigned to
+          the user.
+        config:
+          meta:
+            alation_oid: oid=104995;otype=attribute
+            alation_title: Group Name
+
+      - name: type
+        description: Indicator of whether the Group Name came from Workgroups or Permissions.
+        config:
+          meta:
+            alation_oid: oid=104997;otype=attribute
+            alation_title: Type
+    config:
+      meta:
+        orig_description: Westpac Workgroups Report workgroup
+        alation_oid: oid=4037;otype=table
+        alation_title: Westpac Workgroups Report
+
+  - name: A00671_W_ED_SGB
+    description: <p id="isPasted" style="">Contains a list of all StGeorge workgroups
+      with descriptions.</p>
+    columns:
+      - name: '0'
+        description: Constant value of 1 used for file format requirements
+        config:
+          meta:
+            alation_oid: oid=108907;otype=attribute
+            alation_title: '0'
+
+      - name: description
+        description: Standardised description derived from Group Name column, categorising
+          the functionality of each workgroup or permission group.
+        config:
+          meta:
+            alation_oid: oid=108902;otype=attribute
+            alation_title: Description
+
+      - name: group name
+        description: Name of the group (workgroup or permission group) assigned to
+          the user.
+        config:
+          meta:
+            alation_oid: oid=108900;otype=attribute
+            alation_title: Group Name
+
+      - name: type
+        description: Indicator of whether the Group Name came from Workgroups or Permissions.
+        config:
+          meta:
+            alation_oid: oid=108905;otype=attribute
+            alation_title: Type
+    config:
+      meta:
+        orig_description: Westpac Workgroups Report StGeorge
+        alation_oid: oid=4245;otype=table
+        alation_title: Westpac Workgroup Report StGeorge

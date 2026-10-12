@@ -1,0 +1,86 @@
+{{
+    config(
+        materialized='incremental',
+        unique_key='participant_id',
+        merge_exclude_columns = ['inserted_at']
+    )
+}}
+With
+{%if is_incremental()%}
+target_max_timestamp as 
+(
+    select max(src_delta_extract_ts) as last_load_max_timestamp from {{this}}
+),
+{%endif%}
+
+fss_line_item as 
+(
+    select 
+        distinct subscriber_id, 
+            workspace_id,
+            account_type ,
+            'Yes' as send_integrated  
+    from {{ ref('fss_line_item') }} s 
+    where account_type = 'SEND_FUNDING'
+),
+send_sub_match as (
+    select master_registration_id, subscriber_id,
+        boolor_agg(decode(registration_created_source,'transactional-api', TRUE,'Referral', FALSE)) as registrations_pexa_opt_in_flag
+    from {{ ref('send_subscriber_match') }}
+    group by master_registration_id, subscriber_id
+),
+final_output as 
+    (
+    select 
+        i.participant_id,
+        i.subscriber_id,
+        i.subscriber as account_name,
+        i.reference as subscriber_reference,
+        i.settlement_date::date as settlement_date,
+        i.workspace_number as full_workspace_number,
+        i.jurisdiction as state,
+        case when lower(i.workspace_role)= 'incoming_proprietor' then 'BUYER' else 'SELLER' end as user_role,
+        i.country,
+        i.ws_create_date::date as workspace_create_date,
+        i.consideration_amount as purchase_price,
+        case when lower(i.source) = 'international_parties' then 'Foreign Address Source' 
+            when lower(i.source) = 'stamp_duty' then 'NSW Stamp Duty Source' 
+            else 'Not Identified' end as source_field,
+        send_integrated,
+        case when i.imt_account_id is not null then 'Yes' else null end as toggle_on,
+        master_registration_id as send_registration_id,
+        registrations_pexa_opt_in_flag,
+        null as registrations_pexa_opt_in_date_aest,
+        i.src_delta_extract_ts
+    from {{ ref('international_parties') }} i
+    left join fss_line_item f
+    on i.subscriber_id=f.subscriber_id
+    and i.workspace=f.workspace_id
+    left join send_sub_match s
+    on i.subscriber_id = s.subscriber_id
+    {% if is_incremental()%}
+    where ( i.src_delta_extract_ts >  (select last_load_max_timestamp from target_max_timestamp)        )
+    {%endif%}
+    )
+
+select participant_id,
+        subscriber_id,
+        account_name,
+        subscriber_reference,
+        settlement_date,
+        full_workspace_number,
+        state,
+        user_role,
+        country,
+        workspace_create_date,
+        purchase_price,
+        source_field,
+        send_integrated,
+        toggle_on,
+        send_registration_id,
+        registrations_pexa_opt_in_flag,
+        registrations_pexa_opt_in_date_aest,
+        CONVERT_TIMEZONE('Australia/Sydney',src_delta_extract_ts) as src_delta_extract_ts,
+        {{ var('inserted_at') }} as inserted_at,
+        {{ var('updated_at') }} as updated_at
+from final_output

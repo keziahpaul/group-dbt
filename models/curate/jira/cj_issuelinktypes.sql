@@ -1,0 +1,35 @@
+{{
+  config(
+    materialized = 'incremental',
+    unique_key = 'id',
+    incremental_strategy = 'merge',
+    merge_exclude_columns = ['id', 'inserted_at']
+    )
+}}
+with source_records as (
+  select
+      id,
+      name,
+      inward,
+      outward,
+      self,
+      extracted as inserted_at,
+      extracted as updated_at,
+      HASH(name, inward, outward, self) as hash
+  from {{ref('vw_issuelinktypes')}}
+)
+select
+  s.id,
+  s.name,
+  s.inward,
+  s.outward,
+  s.self,
+  s.inserted_at,
+  s.updated_at,
+  s.hash
+from source_records s
+{%- if is_incremental() %}
+left join {{this}} o on s.id = o.id and s.hash = o.hash
+where o.id is null
+{%- endif %}
+order by s.id

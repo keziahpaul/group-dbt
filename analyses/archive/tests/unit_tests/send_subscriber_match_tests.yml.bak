@@ -1,0 +1,101 @@
+unit_tests:
+
+  # Test 1: New registration matches by lname, existing record with same subscriber_id exists
+  - name: test_new_registration_match_existing_subscriber_incremental
+    description: "When a new registration matches a subscriber by lname and a record with that subscriber_id already exists (incremental mode)."
+    model: send_subscriber_match_process
+    overrides:
+      macros:
+        is_incremental: true
+    given:
+      - input: this
+        rows:
+          - {registration_id: 'REG_EXIST', master_registration_id: 'MREG_EXIST', full_name: 'Existing User', subscriber_id: 100, match_method: 'abn', src_delta_extract_ts: '2025-08-19 10:00:00'}
+      - input: ref('pbi_pexa_client_activity')
+        rows:
+          - {registration_id: 'REG_NEW', master_registration_id: 'MREG_NEW', effective_to: '9999-12-31 00:00:00', inserted_at: '2025-08-20 10:00:00', full_name: 'New User'}
+      - input: source('exchange_share', 'vw_subscribers')
+        rows:
+          - {subscriber_id: 100, name: 'BizLName', abn: null, acn: null, reg_business_name: 'BizLName', trading_name: 'BizLName', legal_entity_name: 'BizLName', status: 'ACTIVE'}
+      - input: source('exchange_share', 'vw_users')
+        rows:
+          - {subscriber_id: 100, email_address1: 'exist@domain.com', first_name: 'Existing', middle_name: '', last_name: 'User', status: 'ACTIVE'}
+          - {subscriber_id: 100, email_address1: 'new@domain.com', first_name: 'New', middle_name: '', last_name: 'User', status: 'ACTIVE'}
+      - input: ref('account')
+        rows:
+          - {id: 'ACC1', ps_abn_c: null, ps_external_id_c: null, effective_to: '9999-12-31 00:00:00.000 -0800'}
+      - input: ref('opportunity')
+        rows:
+          - {id: 'OPP1', account_id: 'ACC1', product_name_c: 'Send', stage_name: 'Closed Won', effective_to: '9999-12-31 00:00:00.000 -0800'}
+      - input: ref('manual_send_subscriber_match')
+        rows:
+          - {match_status: 'Manual', registration_id: 'REG_MANUAL', manual_sub_id: 'SUB_MANUAL'}
+    expect:
+      rows:
+        - {registration_id: 'REG_NEW', subscriber_id: 100 , match_method: 'new registration for existing subscriber'}
+
+  # Test 2: When unmatched records finds a match
+  - name: test_unmatched_records_find_match
+    description: "When a new registration matches a subscriber by lname and a record with that subscriber_id already exists (incremental mode)."
+    model: send_subscriber_match_process
+    overrides:
+      macros:
+        is_incremental: true
+    given:
+      - input: this
+        rows:
+          - {registration_id: 'REG101', master_registration_id: 'MREG101', full_name: 'fREG101 lREG101', subscriber_id: 100, abn_acn: 12345678912, match_method: 'new registration for existing subscriber', src_delta_extract_ts: '2025-08-19 10:00:00', inserted_at: '2025-08-19 10:10:00'}
+          - {registration_id: 'REG100', master_registration_id: 'MREG100', full_name: 'fREG100 lREG100', subscriber_id: 100, match_method: 'fnl_name', src_delta_extract_ts: '2025-08-19 10:00:00', inserted_at: '2025-08-19 10:10:00'}
+      - input: ref('pbi_pexa_client_activity')
+        rows:
+          - {registration_id: 'REG101', master_registration_id: 'MREG101', effective_to: '9999-12-31 00:00:00', inserted_at: '2025-08-19 10:00:00', full_name: 'fREG101 lREG101',abn_acn: 12345678912}
+      - input: source('exchange_share', 'vw_subscribers')
+        rows:
+          - {subscriber_id: 100, name: 'BizLName', abn: null, acn: null, reg_business_name: 'BizLName', trading_name: 'BizLName', legal_entity_name: 'BizLName', status: 'ACTIVE'}
+      - input: source('exchange_share', 'vw_users')
+        rows:
+          - {subscriber_id: 100, email_address1: 'new@domain.com', first_name: 'fREG100', middle_name: '', last_name: 'lREG100', status: 'ACTIVE'}
+      - input: ref('account')
+        rows:
+          - {id: 'ACC1', ps_abn_c: 12345678912, ps_external_id_c: 101, effective_to: '9999-12-31 00:00:00.000 -0800'}
+      - input: ref('opportunity')
+        rows:
+          - {id: 'OPP1', account_id: 'ACC1', product_name_c: 'Send', stage_name: 'Closed Won', effective_to: '9999-12-31 00:00:00.000 -0800'}
+      - input: ref('manual_send_subscriber_match')
+        rows:
+          - {match_status: 'Manual', registration_id: 'REG_MANUAL', manual_sub_id: 'SUB_MANUAL'}
+    expect:
+      rows:
+        - {registration_id: 'REG101', subscriber_id: 101 , match_method: 'abn_sf'}
+
+  # Test 3: affiliate branch match
+  - name: test_affiliate_branch_finds_match
+    model: send_subscriber_match_process
+    overrides:
+      macros:
+        is_incremental: true
+    given:
+      - input: this
+        rows:
+          - {registration_id: 'REG100', master_registration_id: 'MREG100', full_name: 'fREG100 lREG100', subscriber_id: 101, match_method: 'fnl_name', src_delta_extract_ts: '2025-08-19 10:00:00', inserted_at: '2025-08-19 10:10:00'}
+      - input: ref('pbi_pexa_client_activity')
+        rows:
+          - {registration_id: 'REG101', master_registration_id: 'MREG101', affiliate_branch: 'brn1', effective_to: '9999-12-31 00:00:00', inserted_at: '2025-10-29 10:00:00', full_name: 'fREG101 lREG101_1',abn_acn: 123456789123}
+      - input: source('exchange_share', 'vw_subscribers')
+        rows:
+          - {subscriber_id: 100, name: 'brn1', abn: null, acn: null, reg_business_name: 'BizLName', trading_name: 'BizLName', legal_entity_name: 'BizLName', status: 'ACTIVE'}
+      - input: source('exchange_share', 'vw_users')
+        rows:
+          - {subscriber_id: 100, email_address1: 'new@domain.com', first_name: 'fREG100', middle_name: '', last_name: 'lREG100', status: 'ACTIVE'}
+      - input: ref('account')
+        rows:
+          - {id: 'ACC1', ps_abn_c: 12345678912, ps_external_id_c: 101, effective_to: '9999-12-31 00:00:00.000 -0800'}
+      - input: ref('opportunity')
+        rows:
+          - {id: 'OPP1', account_id: 'ACC1', product_name_c: 'Send', stage_name: 'Closed Won', effective_to: '9999-12-31 00:00:00.000 -0800'}
+      - input: ref('manual_send_subscriber_match')
+        rows:
+          - {match_status: 'Manual', registration_id: 'REG_MANUAL', manual_sub_id: 'SUB_MANUAL'}
+    expect:
+      rows:
+        - {registration_id: 'REG101', subscriber_id: 100 , match_method: 'name'}

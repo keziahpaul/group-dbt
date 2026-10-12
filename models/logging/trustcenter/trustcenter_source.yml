@@ -1,0 +1,304 @@
+sources:
+  - name: snowflake_trustcenter
+    database: snowflake
+    schema: trust_center
+    tables:
+      - name: findings
+        description: Original snowflake findings table
+        columns:
+          - name: scanner_package_id
+            description: Scanner Package Identifier
+
+          - name: scanner_package_name
+            description: Scanner Package Name
+
+          - name: scanner_package_description
+            description: Scanner Package Description
+
+          - name: scanner_package_short_description
+            description: Scanner Package Short Description
+
+          - name: scanner_id
+            description: Scanner Identifier
+
+          - name: scanner_name
+            description: Scanner Name
+
+          - name: scanner_description
+            description: Scanner Description
+
+          - name: scanner_short_description
+            description: Short Description of the identified violation
+
+          - name: event_id
+            description: Event ID of the identified violation
+
+          - name: scanner_type
+            description: Violation category. Threat or Vulnerability
+
+          - name: completion_status
+            description: Scanner run status
+
+          - name: suggested_action
+            description: Suggested action to resolve this violation
+
+          - name: impact
+            description: Impact to the account until the violation is resolved
+
+          - name: severity
+            description: Severity of the violation.
+
+          - name: total_at_risk_count
+            description: No. of entities detected with this violation
+
+          - name: at_risk_entities
+            description: Detailed list about entities detected with this violation
+
+          - name: start_timestamp
+            description: Timestamp when this scanner run started
+
+          - name: end_timestamp
+            description: Timestamp when this scanner run ended
+
+          - name: created_on
+            description: Timestamp when the violation was captured
+
+          - name: finding_identifier
+            description: Finding Identifier
+
+          - name: state
+            description: Current State of the violation
+            
+          - name: state_last_modified_on
+            description: Timestamp when the state was last modified
+
+  - name: nonprod_exchange_trustcenter_share
+    database: NONPRD_EXCHANGE_TRUSTCENTER_SHARE
+    schema: TRUSTCENTER
+    tables:
+      - name: findings
+        identifier: nonprod_exchange_findings
+        description: Shared Incremental Table for TrustCenter Findings in Exchange Account
+        columns:
+          - name: scanner_package_id
+            description: Scanner Package Identifier
+
+          - name: scanner_package_name
+            description: Scanner Package Name
+
+          - name: scanner_package_description
+            description: Scanner Package Description
+
+          - name: scanner_package_short_description
+            description: Scanner Package Short Description
+
+          - name: scanner_id
+            description: Scanner Identifier
+
+          - name: scanner_name
+            description: Scanner Name
+
+          - name: scanner_description
+            description: Scanner Description
+
+          - name: scanner_short_description
+            description: Short Description of the identified violation
+
+          - name: event_id
+            description: Event ID of the identified violation
+
+          - name: scanner_type
+            description: Violation category. Threat or Vulnerability
+
+          - name: completion_status
+            description: Scanner run status
+
+          - name: suggested_action
+            description: Suggested action to resolve this violation
+
+          - name: impact
+            description: Impact to the account until the violation is resolved
+
+          - name: severity
+            description: Severity of the violation.
+
+          - name: total_at_risk_count
+            description: No. of entities detected with this violation
+
+          - name: at_risk_entities
+            description: Detailed list about entities detected with this violation
+
+          - name: start_timestamp
+            description: Timestamp when this scanner run started
+
+          - name: end_timestamp
+            description: Timestamp when this scanner run ended
+
+          - name: created_on
+            description: Timestamp when the violation was captured
+
+          - name: finding_identifier
+            description: Finding Identifier
+
+          - name: state
+            description: Current State of the violation
+            
+          - name: state_last_modified_on
+            description: Timestamp when the state was last modified
+            
+          - name: inserted_at
+            description: Timestamp when the record was inserted into the snowflake table
+
+  - name: nonprod_group_trustcenter_share
+    database: NONPRD_GROUP_TRUSTCENTER_SHARE
+    schema: TRUSTCENTER
+    tables:
+      - name: findings
+        identifier: nonprod_exchange_findings
+        description: Shared Incremental Table for TrustCenter Findings in Exchange Account
+        columns:
+          - name: scanner_package_id
+            description: Scanner Package Identifier
+
+          - name: scanner_package_name
+            description: Scanner Package Name
+
+          - name: scanner_package_description
+            description: Scanner Package Description
+
+          - name: scanner_package_short_description
+            description: Scanner Package Short Description
+
+          - name: scanner_id
+            description: Scanner Identifier
+
+          - name: scanner_name
+            description: Scanner Name
+
+          - name: scanner_description
+            description: Scanner Description
+
+          - name: scanner_short_description
+            description: Short Description of the identified violation
+
+          - name: event_id
+            description: Event ID of the identified violation
+
+          - name: scanner_type
+            description: Violation category. Threat or Vulnerability
+
+          - name: completion_status
+            description: Scanner run status
+
+          - name: suggested_action
+            description: Suggested action to resolve this violation
+
+          - name: impact
+            description: Impact to the account until the violation is resolved
+
+          - name: severity
+            description: Severity of the violation.
+
+          - name: total_at_risk_count
+            description: No. of entities detected with this violation
+
+          - name: at_risk_entities
+            description: Detailed list about entities detected with this violation
+
+          - name: start_timestamp
+            description: Timestamp when this scanner run started
+
+          - name: end_timestamp
+            description: Timestamp when this scanner run ended
+
+          - name: created_on
+            description: Timestamp when the violation was captured
+
+          - name: finding_identifier
+            description: Finding Identifier
+
+          - name: state
+            description: Current State of the violation
+            
+          - name: state_last_modified_on
+            description: Timestamp when the state was last modified
+            
+          - name: inserted_at
+            description: Timestamp when the record was inserted into the snowflake table
+
+  - name: prod_exchange_trustcenter_share
+    database: PRD_EXCHANGE_TRUSTCENTER_SHARE
+    schema: TRUSTCENTER
+    tables:
+      - name: findings
+        identifier: nonprod_exchange_findings
+        description: Shared Incremental Table for TrustCenter Findings in Exchange Account
+        columns:
+          - name: scanner_package_id
+            description: Scanner Package Identifier
+
+          - name: scanner_package_name
+            description: Scanner Package Name
+
+          - name: scanner_package_description
+            description: Scanner Package Description
+
+          - name: scanner_package_short_description
+            description: Scanner Package Short Description
+
+          - name: scanner_id
+            description: Scanner Identifier
+
+          - name: scanner_name
+            description: Scanner Name
+
+          - name: scanner_description
+            description: Scanner Description
+
+          - name: scanner_short_description
+            description: Short Description of the identified violation
+
+          - name: event_id
+            description: Event ID of the identified violation
+
+          - name: scanner_type
+            description: Violation category. Threat or Vulnerability
+
+          - name: completion_status
+            description: Scanner run status
+
+          - name: suggested_action
+            description: Suggested action to resolve this violation
+
+          - name: impact
+            description: Impact to the account until the violation is resolved
+
+          - name: severity
+            description: Severity of the violation.
+
+          - name: total_at_risk_count
+            description: No. of entities detected with this violation
+
+          - name: at_risk_entities
+            description: Detailed list about entities detected with this violation
+
+          - name: start_timestamp
+            description: Timestamp when this scanner run started
+
+          - name: end_timestamp
+            description: Timestamp when this scanner run ended
+
+          - name: created_on
+            description: Timestamp when the violation was captured
+
+          - name: finding_identifier
+            description: Finding Identifier
+
+          - name: state
+            description: Current State of the violation
+            
+          - name: state_last_modified_on
+            description: Timestamp when the state was last modified
+            
+          - name: inserted_at
+            description: Timestamp when the record was inserted into the snowflake table

@@ -1,0 +1,37 @@
+{{ config(
+    materialized='scd_materialization',
+    incremental_strategy='scd2_transformation',
+    primary_key = ['Conversion_id', 'Registration_ID', 'Master_Registration_ID'],
+    scd2_ignore_columns = ['ETL_INSERT_DATE_UTC'],
+    source_delta_column = "inserted_at",
+    source_scd_effective_column = "ETL_INSERT_DATE_AEST",
+    target_delta_column = "src_delta_extract_ts",
+    handle_deletes=true
+)}}
+select
+    ABN_ACN,
+    Affiliate_Branch,
+    Affiliate_Employee,
+    BENEFICIARY_BANK_ACCOUNT_COUNTRY,
+    Business_Name,
+    Buy_currency,
+    Completed_date_settlement_date,
+    Conversion_id,
+    Day_of_Lead_Created_Date_AEST,
+    Day_of_Registration_Date_AEST,
+    Domain_Email_Address,
+    Full_Name,
+    Master_Registration_ID,
+    Pexa_commission,
+    Purpose,
+    Registration_Account_Manager,
+    Registration_Created_Source,
+    Registration_ID,
+    Sell_currency,
+    Settled_revenue,
+    Settled_turnover,
+    State,
+    ETL_INSERT_DATE_UTC,
+    ETL_INSERT_DATE_AEST,
+    inserted_at
+from {{ ref('stg_pbi_pexa_pexaalltimetransactionslist') }}

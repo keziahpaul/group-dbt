@@ -1,0 +1,22 @@
+version: 2
+
+seeds:
+  - name: experience_api_idenitity_map
+    description: Experience API Identify Mapping
+    config:
+      copy_grants: true
+    columns:
+      - name: SNO
+        description: SERIAL NUMBER
+        data_tests:
+          - unique
+          - not_null
+      - name: EXCHANGE_RESOURCE_API
+        description: List of exchange api calls made for experience API
+        data_tests:
+          - not_null
+      - name: TABLEAU_API
+        description: The mapping for the list of exchange api calls made for experience API
+        data_tests:
+          - not_null
+     

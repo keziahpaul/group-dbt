@@ -1,0 +1,194 @@
+unit_tests:
+  # Test 1:full refrsh normal day should return max(updated_at) from source data
+  - name: test_normal_day_timestamp_logic
+    description: "Test that on normal days (not July 1st), src_delta_extract_ts uses max(updated_at) from source"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: false
+      vars:
+        local_current_date: CONVERT_TIMEZONE('Australia/Sydney', '2025-07-15')::DATE  # Simulate normal day (not July 1st)
+        updated_at: CONVERT_TIMEZONE('Australia/Sydney','2025-07-15 02:00:00' )
+    given:
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 123, Master_Registration_ID: 'REG_NORMAL', Day_of_Registration_Date_AEST: '2025-05-01', Registration_Account_Manager: 'Normal Tester', Registration_Created_Source: 'transactional-api', Registration_ID: 'REGID_NORMAL', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: 2025-07-14 18:00:00.000 +1000, inserted_at: 2025-07-14 07:00:00.000 +1000}
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows:
+          - {id: 'SETT_NORMAL-2', settlement_id: 123, settlement_date: '2025-08-01 00:00:00.000000000', subscriber_id: 123, workspace_role_id: 2, buyer_settlement_date: '2025-08-01 00:00:00.000000000', seller_settlement_date: null, financial_year: '2025-2026', src_delta_extract_ts: 2025-07-15 02:30:00.000 +1000, updated_at: 2025-07-15 07:30:00.000 +1000}  # Most recent
+      - input: ref('send_transaction_details')
+        rows:
+          - {subscriber_id: 123, conversion_id: 'CONV_NORMAL', master_registration_id: 'REG_NORMAL', registration_id: 'REGID_NORMAL', completed_date_settlement_date: '2025-08-01 00:00:00.000000000', settled_revenue: 2000, settled_turnover: 3000, pexa_commission: 200, financial_year: '2025-2026', src_delta_extract_ts: 2025-07-15 01:45:00.000 +1000, updated_at: 2025-07-15 06:45:00.000 +1000}  # Less recent
+    expect:
+      rows:
+        # On normal days, should use the most recent timestamp from volume data (07:30:00)
+        - {subscriber_id: 123, src_delta_extract_ts: 2025-07-15 07:30:00.000 +1000}
+
+  # Test 2: Incremental mode - Normal day should use source max and apply incremental filter
+  - name: test_incremental_normal_day_source_timestamp
+    description: "Test incremental model on normal days uses source max(updated_at) and applies incremental WHERE"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: true
+      vars:
+        local_current_date: CONVERT_TIMEZONE('Australia/Sydney', '2025-09-10')::DATE
+        updated_at: CONVERT_TIMEZONE('Australia/Sydney','2025-09-10 02:00:00' )
+    given:
+      - input: this
+        rows:
+          - {subscriber_id: 888, total_volume_buyer_cfy__c: 0, total_volume_seller_cfy__c: 0, total_revenue_c: 0, settled_turnover_c: 0, pexa_commission_c: 0, src_delta_extract_ts: 2025-09-09 08:00:00.000 +1000, updated_at: 2025-09-09 08:00:00.000 +1000}  # Existing state
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 888, Master_Registration_ID: 'REG_INC_NORMAL', Day_of_Registration_Date_AEST: '2025-08-01', Registration_Account_Manager: 'Inc Normal Tester', Registration_Created_Source: 'transactional-api', Registration_ID: 'REGID_INC_NORMAL', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: 2025-09-09 20:00:00.000 +1000, inserted_at: 2025-09-09 07:00:00.000 +1000}
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows:
+          - {id: 'SETT_INC_NORMAL-2', settlement_id: 888, settlement_date: '2025-09-09 00:00:00.000000000', subscriber_id: 888, workspace_role_id: 2, buyer_settlement_date: '2025-09-09 00:00:00.000000000', seller_settlement_date: null, financial_year: '2025-2026', src_delta_extract_ts: 2025-09-10 06:15:00.000 +1000, updated_at: 2025-09-10 08:15:00.000 +1000}  # Most recent timestamp
+      - input: ref('send_transaction_details')
+        rows:
+          - {subscriber_id: 888, conversion_id: 'CONV_INC_NORMAL', master_registration_id: 'REG_INC_NORMAL', registration_id: 'REGID_INC_NORMAL', completed_date_settlement_date: '2025-09-09', settled_revenue: 400, settled_turnover: 700, pexa_commission: 40, financial_year: '2025-2026', src_delta_extract_ts: 2025-09-10 05:45:00.000 +1000, updated_at: 2025-09-10 07:45:00.000 +1000}
+    expect:
+      rows:
+        # Should use source max timestamp (08:15:00) for incremental filtering
+        - {subscriber_id: 888, src_delta_extract_ts: 2025-09-10 08:15:00.000 +1000}
+
+  # Test 3: FY transition ( table doesnt exist - full refresh) should return max(updated_at) timestamp  - This will load old data first, in the next run checks for FY transition
+  - name: test_fy_transition_no_table_full_refresh
+    description: "Test that on new fy, if table is dropped and recreated src_delta_extract_ts uses var('updated_at') for full refresh"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: false
+      vars:
+        local_current_date: CONVERT_TIMEZONE('Australia/Sydney', '2025-07-01')::DATE  # Simulate July 1st
+        updated_at: CONVERT_TIMEZONE('Australia/Sydney','2025-07-01 01:00:00' ) # Current timestamp
+    given:
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 2001, Master_Registration_ID: 'REG_JULY', Day_of_Registration_Date_AEST: '2025-05-01', Registration_Account_Manager: 'July Tester', Registration_Created_Source: 'transactional-api', Registration_ID: 'REGID_JULY', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: 2025-05-15 15:00:00.000 +1000, inserted_at: 2025-05-15 07:00:00.000 +1000}
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows:
+          - {id: 'SETT_JULY-2', settlement_id: 2001, settlement_date: '2025-08-01 00:00:00.000000000', subscriber_id: 2001, workspace_role_id: 2, buyer_settlement_date: '2025-08-01 00:00:00.000000000', seller_settlement_date: null, financial_year: '2025-2026', src_delta_extract_ts: 2025-05-15 15:30:00.000 +1000, updated_at: 2025-05-15 07:00:00.000 +1000}  # Old timestamp
+      - input: ref('send_transaction_details')
+        rows:
+          - {subscriber_id: 2001, conversion_id: 'CONV_JULY', master_registration_id: 'REG_JULY', registration_id: 'REGID_JULY', completed_date_settlement_date: '2024-08-01', settled_revenue: 1000, settled_turnover: 1500, pexa_commission: 100, financial_year: '2024-2025', src_delta_extract_ts: 2025-05-28 14:00:00.000 +1000, updated_at: 2025-05-15 07:00:00.000 +1000}  # Old timestamp
+    expect:
+      rows:
+        # July 1st should return max(updated_at) timestamp (forcing full refresh) - This will load old data first, in the next run checks for FY transition
+        - {subscriber_id: 2001, total_volume_buyer_cfy__c: 1,total_volume_seller_cfy__c: 0, total_revenue_c: 0, settled_turnover_c: 0, pexa_commission_c: 0, src_delta_extract_ts: 2025-05-15 07:00:00.000 +1000 }
+
+  # Test 4: Incremental - On FY transition ( table exist - full refresh) should return max(updated_at) timestamp 
+  - name: test_incremental_with_no_data_new_fy
+    description: "Test FY transition logic when send_product_holdings table exists but is empty. Table is fully loaded with current FY filter but with max(updated_at) as src_delta_extract_ts"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: true
+      vars:
+        local_current_date: CONVERT_TIMEZONE('Australia/Sydney', '2025-07-02')::DATE  # Simulate new FY
+        updated_at: CONVERT_TIMEZONE('Australia/Sydney','2025-07-02 01:00:00' ) # Current timestamp
+    given:
+      - input: this
+        rows: []
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 2001, Master_Registration_ID: 'REG_JULY', Day_of_Registration_Date_AEST: '2025-05-01', Registration_Account_Manager: 'July Tester', Registration_Created_Source: 'transactional-api', Registration_ID: 'REGID_JULY', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: 2025-05-15 15:00:00.000 +1000, inserted_at: 2025-05-15 07:00:00.000 +1000}
+          - {subscriber_id: 2002, Master_Registration_ID: 'REG_JULY', Day_of_Registration_Date_AEST: '2024-06-01', Registration_Account_Manager: 'July Tester', Registration_Created_Source: 'transactional-api', Registration_ID: 'REGID_JULY', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: 2024-06-16 15:00:00.000 +1000, inserted_at: 2024-06-16 07:00:00.000 +1000}
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows:
+          - {id: 'SETT_JULY-2', settlement_id: 2001, settlement_date: '2025-08-01 00:00:00.000000000', subscriber_id: 2001, workspace_role_id: 2, buyer_settlement_date: '2025-08-01 00:00:00.000000000', seller_settlement_date: null, financial_year: '2025-2026' , src_delta_extract_ts: 2025-05-15 15:30:00.000 +1000, updated_at: 2025-05-15 07:00:00.000 +1000}  # Old timestamp
+      - input: ref('send_transaction_details')
+        rows:
+          - {subscriber_id: 2001, conversion_id: 'CONV_JULY', master_registration_id: 'REG_JULY', registration_id: 'REGID_JULY', completed_date_settlement_date: '2025-08-01', settled_revenue: 1000, settled_turnover: 1500, pexa_commission: 100, financial_year: '2025-2026', src_delta_extract_ts: 2025-05-28 14:00:00.000 +1000, updated_at: 2025-05-15 07:00:00.000 +1000}  # Old timestamp
+          - {subscriber_id: 2002, conversion_id: 'CONV_JULY', master_registration_id: 'REG_JULY', registration_id: 'REGID_JULY', completed_date_settlement_date: '2024-08-01', settled_revenue: 1000, settled_turnover: 1500, pexa_commission: 100, financial_year: '2024-2025', src_delta_extract_ts: 2024-06-16 15:00:00.000 +1000, updated_at: 2024-06-16 07:00:00.000 +1000}  # Old timestamp
+
+    expect:
+      rows:
+        # even though new FY all records should get max(updated_at) timestamp with current FY data (forcing full refresh)
+        - {subscriber_id: 2001, total_revenue_c: 1000, src_delta_extract_ts: 2025-05-15 07:00:00.000 +1000 }
+        - {subscriber_id: 2002, total_revenue_c: 0, src_delta_extract_ts: 2024-06-16 07:00:00.000 +1000}
+
+  # Test 5: Incremental -  on FY transition src_delta_extract_ts uses var('updated_at') i.e., current timestamp for full refresh
+  - name: test_incremental_fy_transition_timestamp_override
+    description: "Test that on FY transition, src_delta_extract_ts uses var('updated_at') for full refresh"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: true
+      vars:
+        local_current_date: CONVERT_TIMEZONE('Australia/Sydney', '2025-07-01')::DATE  # Simulate July 1st
+        updated_at: CONVERT_TIMEZONE('Australia/Sydney','2025-07-01 01:00:00' ) # Current timestamp
+    given:
+      - input: this
+        rows:
+          - {subscriber_id: 2001, total_volume_buyer_cfy__c: 0, total_volume_seller_cfy__c: 0, total_revenue_c: 0, settled_turnover_c: 0, pexa_commission_c: 0, src_delta_extract_ts: 2025-06-30 18:00:00.000 +1000, updated_at: 2025-06-30 18:00:00.000 +1000}  # Existing state
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 2001, Master_Registration_ID: 'REG_JULY', Day_of_Registration_Date_AEST: '2025-05-01', Registration_Account_Manager: 'July Tester', Registration_Created_Source: 'transactional-api', Registration_ID: 'REGID_JULY', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: 2025-05-15 15:00:00.000 +1000, inserted_at: 2025-05-15 07:00:00.000 +1000}
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows:
+          - {id: 'SETT_JULY-2', settlement_id: 2001, settlement_date: '2025-08-01 00:00:00.000000000', subscriber_id: 2001, workspace_role_id: 2, buyer_settlement_date: '2025-08-01 00:00:00.000000000', seller_settlement_date: null, financial_year: '2025-2026', src_delta_extract_ts: 2025-05-15 15:30:00.000 +1000, updated_at: 2025-05-15 07:00:00.000 +1000}  # Old timestamp
+      - input: ref('send_transaction_details')
+        rows:
+          - {subscriber_id: 2001, conversion_id: 'CONV_JULY', master_registration_id: 'REG_JULY', registration_id: 'REGID_JULY', completed_date_settlement_date: '2025-08-01', settled_revenue: 1000, settled_turnover: 1500, pexa_commission: 100, financial_year: '2025-2026', src_delta_extract_ts: 2025-05-28 14:00:00.000 +1000, updated_at: 2025-05-15 07:00:00.000 +1000}  # Old timestamp
+    expect:
+      rows:
+        # On July 1st, all records should get updated_at timestamp (forcing full refresh)
+        - {subscriber_id: 2001, src_delta_extract_ts: 2025-07-01 18:00:00.000 +1000 }
+
+ # Test 6: Incremental - on fy transition old FY values are replaced with new FY values
+  - name: test_newfy_overrides_values_with_cfy
+    description: "Test that on fy transition old FY values are old FY values are replaced with new FY values"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: true
+      vars:
+        local_current_date: CONVERT_TIMEZONE('Australia/Sydney', '2025-07-02')::DATE
+        updated_at: CONVERT_TIMEZONE('Australia/Sydney','2025-07-02 01:00:00' )
+    given:
+      - input: this
+        rows:
+          - {subscriber_id: 456, total_volume_buyer_cfy__c: 1, total_volume_seller_cfy__c: 1, total_revenue_c: 100, settled_turnover_c: 200, pexa_commission_c: 10, src_delta_extract_ts: 2025-06-30 18:00:00.000 +1000, updated_at: 2025-06-30 18:00:00.000 +1000}  # Existing state
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 456, Master_Registration_ID: 'REG_OVERRIDE', Day_of_Registration_Date_AEST: '2025-06-01', Registration_Account_Manager: 'Override Tester', Registration_Created_Source: 'Referral', Registration_ID: 'REGID_OVERRIDE', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: 2025-07-01 21:00:00.000 +1000, inserted_at: 2025-07-01 08:00:00.000 +1000}
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows:
+          - {id: 'SETT_OVERRIDE-2', settlement_id: 456, settlement_date: '2025-08-01 00:00:00.000000000', subscriber_id: 456, workspace_role_id: 2, buyer_settlement_date: null, seller_settlement_date: '2025-08-01 00:00:00.000000000', financial_year: '2025-2026', src_delta_extract_ts: 2025-07-01 21:30:00.000 +1000, updated_at: 2025-07-01 08:30:00.000 +1000}  # Recent but should be overridden
+          - {id: 'SETT_OVERRIDE-4', settlement_id: 789, settlement_date: '2025-08-01 00:00:00.000000000', subscriber_id: 456, workspace_role_id: 4, buyer_settlement_date: null, seller_settlement_date: '2025-08-01 00:00:00.000000000', financial_year: '2025-2026', src_delta_extract_ts: 2025-07-01 21:30:00.000 +1000, updated_at: 2025-07-01 08:30:00.000 +1000}
+      - input: ref('send_transaction_details')
+        rows:
+          - {subscriber_id: 456, conversion_id: 'CONV_OVERRIDE', master_registration_id: 'REG_OVERRIDE', registration_id: 'REGID_OVERRIDE', completed_date_settlement_date: '2025-08-01 00:00:00.000000000', settled_revenue: 1500, settled_turnover: 2000, pexa_commission: 150, financial_year: '2025-2026', src_delta_extract_ts: 2025-07-01 21:45:00.000 +1000, updated_at: 2025-07-01 08:45:00.000 +1000}  # Recent but should be overridden
+    expect:
+      rows:
+        # new Fy should override should override all values use var('updated_at')
+        - {subscriber_id: 456, total_volume_buyer_cfy__c: 0, total_volume_seller_cfy__c: 2, total_revenue_c: 1500, settled_turnover_c: 2000, pexa_commission_c: 150, src_delta_extract_ts: 2025-07-02 18:00:00.000 +1000}
+
+ # Test 7: Incremental - On fy transition old FY values are not populated , even if there are no new transactions or volumes
+  - name: test_newfy_overrides_oldfy_with_zeroes
+    description: "Test that on fy trnasition old FY values are not populated"
+    model: send_product_holdings
+    overrides:
+      macros:
+        is_incremental: true
+      vars:
+        local_current_date: CONVERT_TIMEZONE('Australia/Sydney', '2025-07-02')::DATE
+        updated_at: CONVERT_TIMEZONE('Australia/Sydney','2025-07-02 01:00:00' )
+    given:
+      - input: this
+        rows:
+          - {subscriber_id: 456, total_volume_buyer_cfy__c: 1, total_volume_seller_cfy__c: 1, total_revenue_c: 100, settled_turnover_c: 200, pexa_commission_c: 10, src_delta_extract_ts: 2025-06-30 18:00:00.000 +1000, updated_at: 2025-06-30 18:00:00.000 +1000}  # Existing state
+      - input: ref('send_subscriber_match')
+        rows:
+          - {subscriber_id: 456, Master_Registration_ID: 'REG_OVERRIDE', Day_of_Registration_Date_AEST: '2025-06-01', Registration_Account_Manager: 'Override Tester', Registration_Created_Source: 'Referral', Registration_ID: 'REGID_OVERRIDE', registrations_pexa_opt_in_flag: 'Y', src_delta_extract_ts: 2025-07-01 21:00:00.000 +1000, inserted_at: 2025-07-01 08:00:00.000 +1000}
+      - input: ref('buyer_seller_volume_per_workspace')
+        rows:
+          - {id: 'SETT_OVERRIDE-2', settlement_id: 456, settlement_date: '2024-08-01 00:00:00.000000000', subscriber_id: 456, workspace_role_id: 2, buyer_settlement_date: null, seller_settlement_date: '2024-08-01 00:00:00.000000000', financial_year: '2024-2025', src_delta_extract_ts: 2025-06-01 21:30:00.000 +1000, updated_at: 2025-06-01 08:30:00.000 +1000}  # Previous FY 
+      - input: ref('send_transaction_details')
+        rows: 
+          - {subscriber_id: 456, conversion_id: 'CONV_OVERRIDE', master_registration_id: 'REG_OVERRIDE', registration_id: 'REGID_OVERRIDE', completed_date_settlement_date: '2024-08-01 00:00:00.000000000', settled_revenue: 1500, settled_turnover: 2000, pexa_commission: 150, financial_year: '2024-2025', src_delta_extract_ts: 2025-06-01 21:45:00.000 +1000, updated_at: 2025-06-01 08:45:00.000 +1000}  # Recent but should be overridden
+    expect:
+      rows:
+        # new Fy should override should override all values use var('updated_at')
+        - {subscriber_id: 456, total_volume_buyer_cfy__c: 0, total_volume_seller_cfy__c: 0, total_revenue_c: 0, settled_turnover_c: 0, pexa_commission_c: 0, src_delta_extract_ts: 2025-07-02 18:00:00.000 +1000}

@@ -1,0 +1,45 @@
+ {{
+    config(
+        materialized='materialized_view_snowflake'
+    )
+}}
+
+SELECT
+    METADATA$FILENAME AS metadata_filename,
+    ActivityId,
+    BccAddress,
+    CcAddress,
+    ClientThreadIdentifier,
+    CreatedById,
+    CreatedDate,
+    FirstOpenedDate,
+    FromAddress,
+    FromName,
+    HasAttachment,
+    Headers,
+    HtmlBody,
+    Id,
+    Incoming,
+    IsBounced,
+    IsClientManaged,
+    IsDeleted,
+    IsExternallyVisible,
+    IsOpened,
+    IsTracked,
+    LastModifiedById,
+    LastModifiedDate,
+    LastOpenedDate,
+    MessageDate,
+    MessageIdentifier,
+    Name,
+    ParentId,
+    RelatedToId,
+    ReplyToEmailMessageId,
+    Status,
+    Subject,
+    SystemModstamp,
+    TextBody,
+    ThreadIdentifier,
+    ToAddress,
+    ValidatedFromAddress
+FROM {{ source('SALESFORCE_S3', 'email_message') }}

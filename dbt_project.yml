@@ -1,0 +1,257 @@
+# Name your project! Project names should contain only lowercase characters
+# and underscores. A good package name should reflect your organization's
+# name or the intended use of these models
+name: 'pexa_one_data_au_group_dbt'
+version: '1.0.0'
+config-version: 2
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'default'
+
+# These configurations specify where dbt should look for different types of files.
+# The `model-paths` config, for example, states that models in this project can be
+# found in the "models/" directory. You probably won't need to change these!
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"  # directory which will store compiled SQL files
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+flags:
+  warn_error_options:
+    silence:
+      - InvalidMacroAnnotation
+
+vars:
+  inserted_at: CONVERT_TIMEZONE('Australia/Sydney',CURRENT_TIMESTAMP(2))
+  updated_at: CONVERT_TIMEZONE('Australia/Sydney',CURRENT_TIMESTAMP(2))
+  local_current_time_ntz: "cast(convert_timezone('Australia/Sydney', current_timestamp) as timestamp_ntz)"
+  dbt_tags__database: "{{env_var('DBT_GOVERNANCE_DB')}}"
+  dbt_tags__schema: "{{env_var('DBT_GOVERNANCE_SCHEMA')}}"
+  dbt_tags__resource_types: ["model", "snapshot", "source"]
+  dbt_tags__policy_data_types: []
+  dbt_tags__opt_in_default_naming_config: false
+  dbt_tags__allowed_tags: ["secure_field", "variant_mask"]
+  dbt_tags__tag_name_separator: "="
+  active_date: '9999-12-31'
+  dim_date_start: '2010-01-01'
+  dim_date_end: '2035-12-31'
+  local_current_date: "CONVERT_TIMEZONE('Australia/Sydney', CURRENT_TIMESTAMP)::DATE"
+  base_date: "1900-01-01 00:00:00"
+  mv_row_access_policy: "compliance.raw_layer_row_access_policy"
+  sf_old_email_cutoff_date: '2025-01-01 00:00:00.000 +1100'
+
+seeds:
+  pexa_one_data_au_group_dbt:
+    common_data_layer:
+      +database: "{{env_var('DBT_CDM_DATABASE')}}"
+      +schema: "{{env_var('DBT_CDM_SCHEMA')}}"
+    logging:
+      +database: "{{env_var('DBT_LOGGING_DB')}}"
+      +schema: "{{env_var('DBT_LOG_MAPPING_SCHEMA')}}"
+    salesforce:
+      +database: "{{env_var('DBT_GROUP_DATASERVICES_DB')}}"
+      +schema: "OUTBOUND_SEEDS"
+    kapiche:
+      +database: "{{env_var('DBT_GROUP_DATASERVICES_DB')}}"
+      +schema: "OUTBOUND_SEEDS"
+    bespoke:
+      +database: "{{env_var('DBT_GROUP_EXT_DATASERVICES_DB')}}"
+      +schema: "OUTBOUND_SEEDS"
+    jira:
+      +database: "{{env_var('DBT_GROUP_RAW_DB')}}"
+      +schema: "{{env_var('DBT_JIRA_RAW_SCHEMA')}}"
+    genesys:
+      +database: "{{env_var('DBT_GROUP_RAW_DB')}}"
+      +schema: "{{env_var('DBT_GENESYS_RAW_SCHEMA')}}"
+    billing_and_invoice:
+      +database: "{{env_var('DBT_GROUP_DATASERVICES_DB')}}"
+      +schema: "{{env_var('DBT_DS_BI_SCHEMA')}}"
+
+on-run-end:
+  - "{{ dbt_artifacts.upload_results(results) }}"
+
+tests:
+  +severity: warn
+# Configuring models
+# Full documentation: https://docs.getdbt.com/docs/configuring-models
+
+# In dbt, the default materialization for a model is a view. This means, when you run
+# dbt run or dbt build, all of your models will be built as a view in your data platform.
+# The configuration below will override this setting for models in the example folder to
+# instead be materialized as tables. Any models you add to the root of the models folder will
+# continue to be built as views. These settings can be overridden in the individual model files
+# using the `{{ config(...) }}` macro.
+
+models:
+
+  dbt_artifacts:
+    +database: "{{env_var('DBT_LOGGING_DB')}}"
+    +schema: "{{env_var('DBT_LOGGING_SCHEMA')}}"
+
+  pexa_one_data_au_group_dbt:
+    # Applies to all files under models/example/
+    +persist_docs:
+      relation: true
+      columns: true
+    +post-hook:
+      - >
+        {% if flags.WHICH in ('run', 'build') %}
+          {{ dbt_tags.apply_column_tags() }}
+        {% endif %}
+
+    internal_data_services:
+      salesforce:
+        +materialized: view
+        +database: "{{env_var('DBT_GROUP_DATASERVICES_DB')}}"
+        +schema: "{{env_var('DBT_DS_SALESFORCE_SCHEMA')}}"
+        +transient: false
+      billing_and_invoice:
+        +database: "{{env_var('DBT_GROUP_DATASERVICES_DB')}}"
+        +schema: "{{env_var('DBT_DS_BI_SCHEMA')}}"
+        table:
+          +materialized: table
+          +transient: true
+        current_view:
+          +materialized: view
+          +transient: false
+
+    external_data_services:
+      kapiche:
+        +materialized: view
+        +database: "{{env_var('DBT_GROUP_EXT_DATASERVICES_DB')}}"
+        +schema: "{{env_var('DBT_EXT_DS_KAPICHE_SCHEMA')}}"
+        +transient: false
+      bespoke_reporting:
+        +query_tag: bespoke_extracts
+        +materialized: view
+        +transient: true
+        +database: "{{env_var('DBT_GROUP_EXT_DATASERVICES_DB')}}"
+        westpac:
+          +schema: "WESTPAC_DATASERVICES"
+        cba:
+          +schema: "CBA_DATASERVICES"
+        anz:
+          +schema: "anz_dataservices"
+        nab:
+          +schema: "NAB_DATASERVICES"
+        stockland:
+          +schema: "STOCKLAND_DATASERVICES"
+          table:
+            +materialized: table
+            +transient: false
+          view: 
+            +materialized: view
+        fms:
+          +schema: "FMS_DATASERVICES"
+        bendigo:
+          +schema: "BENDIGO_DATASERVICES"
+
+    curate:
+      +database: "{{env_var('DBT_GROUP_CURATE_DB')}}"
+      salesforce:
+        +materialized: view
+        +schema: SALESFORCE
+      salesforce_table:
+        +schema: SALESFORCE
+      sendfx:
+        +materialized: table
+        +schema: "SENDFX"
+      kapiche:
+        +schema: "{{env_var('DBT_KAPICHE_SCHEMA')}}"
+      FMS:
+        +schema: "{{env_var('DBT_FMS_SCHEMA')}}"
+        +materialized: view
+      jira:
+        +schema: JIRA
+        +pre-hook: "ALTER SESSION SET TIMEZONE = 'Australia/Sydney'"
+      genesys:
+        +schema: GENESYS
+
+    raw:
+      +database: "{{env_var('DBT_GROUP_RAW_DB')}}"
+      jira:
+        +schema: "{{env_var('DBT_JIRA_RAW_SCHEMA')}}"
+      genesys:
+        +schema: "{{env_var('DBT_GENESYS_RAW_SCHEMA')}}"
+      kapiche:
+        +schema: "{{env_var('DBT_KAPICHE_SCHEMA')}}"
+      fms:
+        +schema: "{{env_var('DBT_FMS_SCHEMA')}}"
+      salesforce:
+        +schema: "{{env_var('DBT_SALESFORCE_RAW_SCHEMA')}}"
+        mat_views:
+          mv_account:
+            +alias: vw_account
+          mv_all_survey_responses__c:
+            +alias: vw_all_survey_responses__c
+          mv_campaign:
+            +alias: vw_campaign
+          mv_case:
+            +alias: vw_case
+          mv_contact:
+            +alias: vw_contact
+          mv_digital_certificate__c:
+            +alias: vw_digital_certificate__c
+          mv_email_message:
+            +alias: vw_email_message
+          mv_event:
+            +alias: vw_event
+          mv_incident:
+            +alias: vw_incident
+          mv_opportunity:
+            +alias: vw_opportunity
+          mv_product2:
+            +alias: vw_product2
+          mv_ps_consumerevent__c:
+            +alias: vw_ps_consumerevent__c
+          mv_ps_consumeroffer__c:
+            +alias: vw_ps_consumeroffer__c
+          mv_ps_jurisdiction__c:
+            +alias: vw_ps_jurisdiction__c
+          mv_ps_offer__c:
+            +alias: vw_ps_offer__c
+          mv_ps_productservicestatus__c:
+            +alias: vw_ps_productservicestatus__c
+          mv_ps_property__c:
+            +alias: vw_ps_property__c
+          mv_ps_subscription__c:
+            +alias: vw_ps_subscription__c
+          mv_task:
+            +alias: vw_task
+          mv_user:
+            +alias: vw_user
+
+    staging:
+      sendfx:
+        +materialized: table
+        +database: "{{env_var('DBT_GROUP_STAGE_DB')}}"
+        +schema: "SENDFX"
+      salesforce:
+        +database: "{{env_var('DBT_GROUP_STAGE_DB')}}"
+        +schema: "SALESFORCE"
+        +materialized: incremental
+        +incremental_strategy: append
+        +transient: false
+      FMS:
+        +database: "{{env_var('DBT_GROUP_STAGE_DB')}}"
+        +schema: "FMS"
+        +materialized: incremental
+        +incremental_strategy: append
+        +transient: false
+        +row_access_policy: "{{ env_var('DBT_GOVERNANCE_DB') }}.{{ env_var('DBT_GOVERNANCE_SCHEMA') }}.stage_row_access_policy on (id)"
+
+    common_data_layer:
+        +database: "{{env_var('DBT_CDM_DATABASE')}}"
+        +schema: "{{env_var('DBT_CDM_SCHEMA')}}"
+
+    logging:
+      +database: "{{env_var('DBT_LOGGING_DB')}}"
+      trustcenter:
+        +schema: "{{env_var('DBT_TRUSTCENTER_SCHEMA')}}"

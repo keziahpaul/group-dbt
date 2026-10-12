@@ -1,0 +1,606 @@
+version: 2
+
+models:
+  - name: manual_send_subscriber_match
+    description: Manual Send Subscriber Match
+    columns:
+      - name: inserted_at
+        description: Inserted At
+        config:
+          meta:
+            alation_oid: oid=102416;otype=attribute
+            alation_title: Inserted At
+
+      - name: inserted_by
+        description: Inserted By
+        config:
+          meta:
+            alation_oid: oid=102446;otype=attribute
+            alation_title: Inserted By
+
+      - name: manual_sub_id
+        description: Manual Sub ID
+        config:
+          meta:
+            alation_oid: oid=83792;otype=attribute
+            alation_title: Manual Sub ID
+
+      - name: match_status
+        description: Match Status
+        config:
+          meta:
+            alation_oid: oid=102441;otype=attribute
+            alation_title: Match Status
+
+      - name: registration_id
+        description: Registration ID
+        config:
+          meta:
+            alation_oid: oid=83807;otype=attribute
+            alation_title: Registration ID
+
+      - name: updated_at
+        description: Updated At
+        config:
+          meta:
+            alation_oid: oid=102429;otype=attribute
+            alation_title: Updated At
+
+      - name: updated_by
+        description: Updated By
+        config:
+          tags:
+            - secure_field=PI_USERID
+          meta:
+            alation_oid: oid=102433;otype=attribute
+            alation_title: Updated By
+    config:
+      meta:
+        alation_oid: oid=3692;otype=table
+        alation_title: Manual Send Subscriber Match
+
+  - name: send_subscriber_match
+    description: Send Subscriber Match
+    columns:
+      - name: abn_acn
+        description: Australian Business Number Australian Company Number
+        config:
+          meta:
+            alation_oid: oid=83702;otype=attribute
+            alation_title: Australian Business Number Australian Company Number
+
+      - name: affiliate_branch
+        description: Affiliate Branch
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+          meta:
+            alation_oid: oid=83667;otype=attribute
+            alation_title: Affiliate Branch
+
+      - name: affiliate_employee
+        description: Affiliate Employee
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=83641;otype=attribute
+            alation_title: Affiliate Employee
+
+      - name: business_name
+        description: Business Name
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+          meta:
+            alation_oid: oid=83814;otype=attribute
+            alation_title: Business Name
+
+      - name: day_of_lead_created_date_aest
+        description: Day of Lead Created Date AEST
+        config:
+          meta:
+            alation_oid: oid=83722;otype=attribute
+            alation_title: Day of Lead Created Date AEST
+
+      - name: day_of_registration_date_aest
+        description: Day of Registration Date AEST
+        config:
+          meta:
+            alation_oid: oid=83674;otype=attribute
+            alation_title: Day of Registration Date AEST
+
+      - name: domain_email_address
+        description: Domain Email Address
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+          meta:
+            alation_oid: oid=83709;otype=attribute
+            alation_title: Domain Email Address
+
+      - name: full_name
+        description: Full Name
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=83648;otype=attribute
+            alation_title: Full Name
+
+      - name: inserted_at
+        description: Inserted At
+        config:
+          meta:
+            alation_oid: oid=83725;otype=attribute
+            alation_title: Inserted At
+
+      - name: master_registration_id
+        description: Master Registration Id
+        config:
+          meta:
+            alation_oid: oid=83632;otype=attribute
+            alation_title: Master Registration Id
+
+      - name: match_method
+        description: Match Method
+        config:
+          meta:
+            alation_oid: oid=83644;otype=attribute
+            alation_title: Match Method
+
+      - name: max_trade_settled_for_accounting_date
+        description: Max Trade Settled For Accounting Date
+        config:
+          meta:
+            alation_oid: oid=83778;otype=attribute
+            alation_title: Max Trade Settled For Accounting Date
+
+      - name: min_trade_settled_for_accounting_date
+        description: Min Trade Settled For Accounting Date
+        config:
+          meta:
+            alation_oid: oid=83689;otype=attribute
+            alation_title: Min Trade Settled For Accounting Date
+
+      - name: purpose
+        description: Purpose
+        config:
+          meta:
+            alation_oid: oid=83631;otype=attribute
+            alation_title: Purpose
+
+      - name: registration_account_manager
+        description: Registration Account Manager
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=83671;otype=attribute
+            alation_title: Registration Account Manager
+
+      - name: registration_account_manager_email
+        description: The email address of the account manager.
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+
+      - name: registration_created_source
+        description: Registration Created Source
+        config:
+          meta:
+            alation_oid: oid=83789;otype=attribute
+            alation_title: Registration Created Source
+
+      - name: registration_id
+        description: Registration Id
+        config:
+          meta:
+            alation_oid: oid=83806;otype=attribute
+            alation_title: Registration Id
+
+      - name: registrations_pexa_opt_in_date_aest
+        description: Registrations PEXA Opt In Date AEST
+        config:
+          meta:
+            alation_oid: oid=83659;otype=attribute
+            alation_title: Registrations PEXA Opt In Date AEST
+
+      - name: registrations_pexa_opt_in_flag
+        description: Registrations Pexa Opt In Flag
+        config:
+          meta:
+            alation_oid: oid=83745;otype=attribute
+            alation_title: Registrations Pexa Opt In Flag
+
+      - name: src_delta_extract_ts
+        description: Source Delta Extract Timestamp
+        config:
+          meta:
+            alation_oid: oid=83758;otype=attribute
+            alation_title: Source Delta Extract Timestamp
+
+      - name: state
+        description: State
+        config:
+          meta:
+            alation_oid: oid=83774;otype=attribute
+            alation_title: State
+
+      - name: subscriber_id
+        description: Subscriber Id
+        config:
+          meta:
+            alation_oid: oid=83804;otype=attribute
+            alation_title: Subscriber Id
+
+      - name: subscriber_status
+        description: Subscriber Status
+        config:
+          meta:
+            alation_oid: oid=83690;otype=attribute
+            alation_title: Subscriber Status
+
+      - name: updated_at
+        description: Updated At
+        config:
+          meta:
+            alation_oid: oid=83684;otype=attribute
+            alation_title: Updated At
+    config:
+      meta:
+        alation_oid: oid=3693;otype=table
+        alation_title: Send Subscriber Match
+
+  - name: send_subscriber_match_exception
+    description: Send Subscriber Match Exception
+    columns:
+      - name: abn_acn
+        description: Australian Business Number Australian Company Number
+        config:
+          meta:
+            alation_oid: oid=83779;otype=attribute
+            alation_title: Australian Business Number Australian Company Number
+
+      - name: affiliate_branch
+        description: Affiliate Branch
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+          meta:
+            alation_oid: oid=83734;otype=attribute
+            alation_title: Affiliate Branch
+
+      - name: affiliate_employee
+        description: Affiliate Employee
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=83719;otype=attribute
+            alation_title: Affiliate Employee
+
+      - name: business_name
+        description: Business Name
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+          meta:
+            alation_oid: oid=83730;otype=attribute
+            alation_title: Business Name
+
+      - name: day_of_lead_created_date_aest
+        config:
+          meta:
+            alation_oid: oid=83657;otype=attribute
+
+      - name: day_of_registration_date_aest
+        config:
+          meta:
+            alation_oid: oid=83676;otype=attribute
+
+      - name: domain_email_address
+        description: Domain Email Address
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+          meta:
+            alation_oid: oid=83769;otype=attribute
+            alation_title: Domain Email Address
+
+      - name: full_name
+        description: Full Name
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=83711;otype=attribute
+            alation_title: Full Name
+
+      - name: master_registration_id
+        description: Master Registration Id
+        config:
+          meta:
+            alation_oid: oid=83743;otype=attribute
+            alation_title: Master Registration Id
+
+      - name: match_method
+        description: Match Method
+        config:
+          meta:
+            alation_oid: oid=83651;otype=attribute
+            alation_title: Match Method
+
+      - name: max_trade_settled_for_accounting_date
+        description: Max Trade Settled For Accounting Date
+        config:
+          meta:
+            alation_oid: oid=83713;otype=attribute
+            alation_title: Max Trade Settled For Accounting Date
+
+      - name: min_trade_settled_for_accounting_date
+        description: Minus Trade Settled For Accounting Date
+        config:
+          meta:
+            alation_oid: oid=83726;otype=attribute
+            alation_title: Minus Trade Settled For Accounting Date
+
+      - name: purpose
+        description: Purpose
+        config:
+          meta:
+            alation_oid: oid=83788;otype=attribute
+            alation_title: Purpose
+
+      - name: registration_account_manager
+        description: Registration Account Manager
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=83763;otype=attribute
+            alation_title: Registration Account Manager
+
+      - name: registration_account_manager_email
+        description: The email address of the account manager.
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+
+      - name: registration_created_source
+        description: Registration Created Source
+        config:
+          meta:
+            alation_oid: oid=83637;otype=attribute
+            alation_title: Registration Created Source
+
+      - name: registration_id
+        description: Registration Id
+        config:
+          meta:
+            alation_oid: oid=83715;otype=attribute
+            alation_title: Registration Id
+
+      - name: registrations_pexa_opt_in_date_aest
+        config:
+          meta:
+            alation_oid: oid=83737;otype=attribute
+
+      - name: registrations_pexa_opt_in_flag
+        description: Registrations Pexa Opt In Flag
+        config:
+          meta:
+            alation_oid: oid=83714;otype=attribute
+            alation_title: Registrations Pexa Opt In Flag
+
+      - name: state
+        description: State
+        config:
+          meta:
+            alation_oid: oid=83750;otype=attribute
+            alation_title: State
+
+      - name: subscriber_id
+        description: Subscriber Id
+        config:
+          meta:
+            alation_oid: oid=83781;otype=attribute
+            alation_title: Subscriber Id
+
+      - name: subscriber_status
+        description: Subscriber Status
+        config:
+          meta:
+            alation_oid: oid=83646;otype=attribute
+            alation_title: Subscriber Status
+    config:
+      meta:
+        alation_oid: oid=3699;otype=table
+        alation_title: Send Subscriber Match Exception
+
+  - name: send_subscriber_match_process
+    description: Send Subscriber Match Process
+    columns:
+      - name: abn_acn
+        description: Australian Business Number Australian Company Number
+        config:
+          meta:
+            alation_oid: oid=83793;otype=attribute
+            alation_title: Australian Business Number Australian Company Number
+
+      - name: affiliate_branch
+        description: Affiliate Branch
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+          meta:
+            alation_oid: oid=83790;otype=attribute
+            alation_title: Affiliate Branch
+
+      - name: affiliate_employee
+        description: Affiliate Employee
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=83811;otype=attribute
+            alation_title: Affiliate Employee
+
+      - name: business_name
+        description: Business Name
+        config:
+          tags:
+            - secure_field=PI_BUSINESS_NAME
+          meta:
+            alation_oid: oid=83777;otype=attribute
+            alation_title: Business Name
+
+      - name: day_of_lead_created_date_aest
+        config:
+          meta:
+            alation_oid: oid=83686;otype=attribute
+
+      - name: day_of_registration_date_aest
+        config:
+          meta:
+            alation_oid: oid=83785;otype=attribute
+
+      - name: domain_email_address
+        description: Domain Email Address
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+          meta:
+            alation_oid: oid=83670;otype=attribute
+            alation_title: Domain Email Address
+
+      - name: full_name
+        description: Full Name
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=83754;otype=attribute
+            alation_title: Full Name
+
+      - name: inserted_at
+        description: Inserted At
+        config:
+          meta:
+            alation_oid: oid=83798;otype=attribute
+            alation_title: Inserted At
+
+      - name: master_registration_id
+        description: Master Registration Id
+        config:
+          meta:
+            alation_oid: oid=83660;otype=attribute
+            alation_title: Master Registration Id
+
+      - name: match_method
+        description: Match Method
+        config:
+          meta:
+            alation_oid: oid=83796;otype=attribute
+            alation_title: Match Method
+
+      - name: max_trade_settled_for_accounting_date
+        description: Max Trade Settled For Accounting Date
+        config:
+          meta:
+            alation_oid: oid=83721;otype=attribute
+            alation_title: Max Trade Settled For Accounting Date
+
+      - name: min_trade_settled_for_accounting_date
+        description: Minus Trade Settled For Accounting Date
+        config:
+          meta:
+            alation_oid: oid=83765;otype=attribute
+            alation_title: Minus Trade Settled For Accounting Date
+
+      - name: purpose
+        description: Purpose
+        config:
+          meta:
+            alation_oid: oid=83762;otype=attribute
+            alation_title: Purpose
+
+      - name: registration_account_manager
+        description: Registration Account Manager
+        config:
+          tags:
+            - secure_field=PI_FULL_NAME
+          meta:
+            alation_oid: oid=83691;otype=attribute
+            alation_title: Registration Account Manager
+
+      - name: registration_account_manager_email
+        description: The email address of the account manager.
+        config:
+          tags:
+            - secure_field=PI_EMAIL
+
+      - name: registration_created_source
+        description: Registration Created Source
+        config:
+          meta:
+            alation_oid: oid=83680;otype=attribute
+            alation_title: Registration Created Source
+
+      - name: registration_id
+        description: Registration Id
+        config:
+          meta:
+            alation_oid: oid=83770;otype=attribute
+            alation_title: Registration Id
+
+      - name: registrations_pexa_opt_in_date_aest
+        config:
+          meta:
+            alation_oid: oid=83800;otype=attribute
+
+      - name: registrations_pexa_opt_in_flag
+        description: Registrations Pexa Opt In Flag
+        config:
+          meta:
+            alation_oid: oid=83748;otype=attribute
+            alation_title: Registrations Pexa Opt In Flag
+
+      - name: src_delta_extract_ts
+        description: Source Delta Extract Timestamp
+        config:
+          meta:
+            alation_oid: oid=83776;otype=attribute
+            alation_title: Source Delta Extract Timestamp
+
+      - name: state
+        description: State
+        config:
+          meta:
+            alation_oid: oid=83642;otype=attribute
+            alation_title: State
+
+      - name: subscriber_id
+        description: Subscriber Id
+        config:
+          meta:
+            alation_oid: oid=83701;otype=attribute
+            alation_title: Subscriber Id
+
+      - name: subscriber_status
+        description: Subscriber Status
+        config:
+          meta:
+            alation_oid: oid=83656;otype=attribute
+            alation_title: Subscriber Status
+
+      - name: updated_at
+        description: Updated At
+        config:
+          meta:
+            alation_oid: oid=83649;otype=attribute
+            alation_title: Updated At
+    config:
+      meta:
+        alation_oid: oid=3697;otype=table
+        alation_title: Send Subscriber Match Process
